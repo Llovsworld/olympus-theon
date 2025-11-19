@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Meditaciones",
+    "slug": "meditaciones-marco-aurelio",
+    "author": "Marco Aurelio",
+    "date": "167 d.C.",
+    "img": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
+    "excerpt": "Serenidad, deber y autocontrol.",
+    "tags": [
+      "Estoicismo",
+      "Carácter"
+    ],
+    "rating": 5,
+    "content": "Notas prácticas para gobernarte a ti mismo."
+  },
+  {
+    "title": "12 Reglas para Vivir",
+    "slug": "12-reglas-para-vivir",
+    "author": "Jordan B. Peterson",
+    "date": "2018",
+    "img": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=1200&auto=format&fit=crop",
+    "excerpt": "Ordena tu vida: hombros atrás, di la verdad y cuida de ti mismo.",
+    "tags": [
+      "Responsabilidad",
+      "Hábitos"
+    ],
+    "rating": 4.5,
+    "content": "Principios para ordenar el caos."
+  },
+  {
+    "title": "El Hombre en Busca de Sentido",
+    "slug": "el-hombre-en-busca-de-sentido",
+    "author": "Viktor Frankl",
+    "date": "1946",
+    "img": "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=1200&auto=format&fit=crop",
+    "excerpt": "Encuentra un porqué para soportar cualquier cómo.",
+    "tags": [
+      "Propósito",
+      "Resiliencia"
+    ],
+    "rating": 5,
+    "content": "Logoterapia aplicada a la vida diaria."
+  }
+]
