@@ -1,25 +1,66 @@
-<!doctype html><html lang="es"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Libro — Olympus Theon</title>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Libro — Olympus Theon">
+  <title>Libro — Olympus Theon</title>
+  
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='8' fill='%23000'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='%23fff' font-size='46' font-family='monospace'%3EOT%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/css/style.css">
-</head><body>
-<a class="skip" href="#contenido">Saltar al contenido</a>
-<header class="header"><div class="container header__inner">
-  <a class="brand" href="index.html"><span class="brand__logo">OT</span><span class="brand__text">Olympus Theon</span></a>
-  <button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menú</button>
-  <nav id="nav" class="nav" aria-label="Principal">
-    <ul><li><a href="index.html">Quiénes somos</a></li><li><a href="blog.html">Blog</a></li><li><a href="libros.html">Libros</a></li><li><a class="btn btn--ghost" href="contacto.html">Contacto</a></li></ul>
-  </nav></div></header>
-<main id="contenido" class="section section--light"><article class="container narrow" id="book">
-  <p><a href="libros.html" class="btn btn--ghost">&larr; Volver a Libros</a></p>
-  <header class="page-header"><h1 id="book-title">Cargando…</h1><p class="post-meta" id="book-meta"></p></header>
-  <div class="post-cover" id="book-cover"></div>
-  <div class="post-body prose" id="book-body"></div></article></main>
-<footer class="footer"><div class="container footer__inner"><p>&copy; <span id="year"></span> Olympus Theon</p></div></footer>
-<script>window.page='book';</script><script defer src="assets/js/main.js"></script><script defer src="assets/js/render.js"></script><script defer src="assets/js/cms.js"></script>
-</body></html>
+
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__logo" aria-hidden="true">OT</span>
+        <span class="brand__text">Olympus Theon</span>
+      </a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menú</button>
+      <nav id="nav" class="nav" role="navigation" aria-label="Principal">
+        <ul>
+          <li><a href="index.html">Quiénes somos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="libros.html">Libros</a></li>
+          <li><a class="btn btn--ghost" href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido" class="section section--light">
+    <article class="container narrow" id="book">
+      <p><a href="libros.html" class="btn btn--ghost">&larr; Volver a Libros</a></p>
+      <header class="page-header">
+        <h1 id="book-title">Cargando…</h1>
+        <p class="post-meta" id="book-meta"></p>
+      </header>
+      <div class="post-cover" id="book-cover"></div>
+      <div class="post-body prose" id="book-body"></div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>&copy; <span id="year"></span> Olympus Theon</p>
+      <nav aria-label="Enlaces de pie de página">
+        <a href="index.html">Quiénes somos</a>
+        <a href="blog.html">Blog</a>
+        <a href="libros.html">Libros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>window.page='book';</script>
+  <script defer src="assets/js/main.js"></script>
+  <script defer src="assets/js/render.js"></script>
+  <script defer src="assets/js/cms.js"></script>
+</body>
+</html>
