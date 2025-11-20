@@ -1,249 +1,320 @@
-// Olympus Theon Admin v2.3 — Refactorización con modularidad mejorada
-(function(){
-  'use strict';
-  // -------------------- Utilerías --------------------
-  const $ = s => document.querySelector(s);
-  const storage = { posts:'ot_posts', books:'ot_books', subs:'ot_subscribers', gh:'ot_github_cfg' };
-  const today = new Date().toISOString().slice(0,10);
+// cms.js – Olympus Theon
+// Editor local (posts / libros) + publicación a GitHub (posts.json / libros.json)
 
-  // Normaliza la cadena para un uso seguro como slug/URL
-  const slugify = (s) => (s||'').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // Quita acentos
-    .replace(/[^a-z0-9]+/g,'-') // Reemplaza no-alfanuméricos con guion
-    .replace(/(^-|-$)/g,''); // Quita guiones al inicio/fin
+(function () {
+  'use strict';
 
-  const arr = (str) => (str||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const getAll = (k) => JSON.parse(localStorage.getItem(k)||'[]');
-  const setAll = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+  const $ = (s) => document.querySelector(s);
 
-  // -------------------- Formularios (Guardar en LocalStorage) --------------------
-  const handleFormSubmit = (formId, storageKey, type) => {
-    const form = $(formId);
-    if (!form) return;
+  const STORAGE_POSTS = 'ot_posts';
+  const STORAGE_BOOKS = 'ot_books';
+  const TODAY = new Date().toISOString().slice(0, 10);
 
-    form.addEventListener('submit', ev => {
-      ev.preventDefault();
-      const fd = new FormData(ev.target);
-      const item = {
-        title: fd.get('title'),
-        author: fd.get('author') || (type === 'post' ? 'Olympus Theon' : ''),
-        date: fd.get('date') || today,
-        img: fd.get('img') || '',
-        tags: arr(fd.get('tags')),
-        excerpt: fd.get('excerpt') || '',
-        content: fd.get('content') || ''
-      };
-      if (type === 'book') item.rating = parseFloat(fd.get('rating')||'0');
-      
-      item.slug = slugify(item.title);
+  const slugify = (s) =>
+    (s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
-      const all = getAll(storageKey);
-      const i = all.findIndex(p => p.slug === item.slug);
-      
-      if(i >= 0) all[i] = item; // Actualizar
-      else all.unshift(item); // Insertar al inicio (más reciente)
-      
-      setAll(storageKey, all);
-      alert(`${type === 'post' ? 'Entrada' : 'Libro'} guardado localmente.`);
-      ev.target.reset();
-    });
+  const parseTags = (str) =>
+    (str || '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
 
-    const previewBtn = $(`#preview-${type}`);
-    if (previewBtn) {
-      previewBtn.addEventListener('click', () => {
-        alert('Previsualización rápida creada arriba (usa el listado correspondiente).');
-      });
-    }
-  };
+  function getAll(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e) {
+      console.error('Error leyendo localStorage', key, e);
+      return [];
+    }
+  }
 
-  handleFormSubmit('#form-post', storage.posts, 'post');
-  handleFormSubmit('#form-book', storage.books, 'book');
+  function setAll(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
 
+  // ---------------------------------------------------------------------------
+  // 1) GUARDAR ENTRADAS (BLOG) EN LOCALSTORAGE
+  // ---------------------------------------------------------------------------
 
-  // -------------------- GitHub Publisher --------------------
-  const GH = {
-    headers(token){
-      return {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json'
-      };
-    },
-    
-    async fetchAPI(url, token, options = {}){
-      const defaultOptions = { headers: GH.headers(token) };
-      const r = await fetch(url, { ...defaultOptions, ...options });
-      return r;
-    },
+  function setupPostForm() {
+    const form =
+      $('#form-post') ||
+      $('#postForm') ||
+      document.querySelector('form[data-type="post"]');
 
-    // Comprueba acceso al repo
-    async getRepo(owner, repo, token){
-      return GH.fetchAPI(`https://api.github.com/repos/${owner}/${repo}`, token);
-    },
-    
-    // Comprueba la rama
-    async getRef(owner, repo, branch, token){
-      return GH.fetchAPI(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${branch}`, token);
-    },
-    
-    // Obtiene el contenido del archivo (incluyendo SHA)
-    async getContent(owner, repo, path, branch, token){
-      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`;
-      return GH.fetchAPI(url, token);
-    },
-    
-    // Sube el contenido del archivo (crea o actualiza si se da SHA)
-    async putContent(owner, repo, path, branch, token, content, sha = null){
-      const body = { 
-        message: `chore: update ${path} via admin`, 
-        content: btoa(unescape(encodeURIComponent(content))), 
-        branch 
-      };
-      if (sha) body.sha = sha;
+    if (!form) return;
 
-      const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-      return GH.fetchAPI(url, token, { method:'PUT', body: JSON.stringify(body) });
-    }
-  };
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
 
-  const diag = (msg, cls='') => { 
-    const box = $('#gh-diagnose'); 
-    if (box) box.innerHTML += `<div class="badge ${cls}">${msg}</div>`; 
-  };
-  const diagClear = () => { 
-    const box = $('#gh-diagnose'); 
-    if (box) box.innerHTML = ''; 
-  };
+      const item = {
+        title: fd.get('title') || '',
+        author: fd.get('author') || 'Olympus Theon',
+        date: fd.get('date') || TODAY,
+        img: fd.get('img') || '',
+        tags: parseTags(fd.get('tags')),
+        excerpt: fd.get('excerpt') || '',
+        content: fd.get('content') || ''
+      };
 
-  function readCfg(){
-    const cfg = JSON.parse(localStorage.getItem(storage.gh)||'{}');
-    if ($('#gh-repo')) $('#gh-repo').value = cfg.repo || '';
-    if ($('#gh-branch')) $('#gh-branch').value = cfg.branch || 'main';
-    if ($('#gh-path-posts')) $('#gh-path-posts').value = cfg.path_posts || 'assets/data/posts.json';
-    if ($('#gh-path-books')) $('#gh-path-books').value = cfg.path_books || 'assets/data/libros.json';
-    
-    // Token intencionalmente NO auto-llenado por defecto
-    if (cfg.save && cfg.token) { 
-      if ($('#gh-token')) $('#gh-token').value = cfg.token; 
-      if ($('#gh-save')) $('#gh-save').checked = true; 
-    }
-  }
+      if (!item.title.trim()) {
+        alert('La entrada necesita al menos un título.');
+        return;
+      }
 
-  function saveCfg(){
-    const cfg = {
-      repo: $('#gh-repo')?.value.trim() || '',
-      branch: $('#gh-branch')?.value.trim() || 'main',
-      path_posts: $('#gh-path-posts')?.value.trim() || 'assets/data/posts.json',
-      path_books: $('#gh-path-books')?.value.trim() || 'assets/data/libros.json',
-      token: $('#gh-token')?.value.trim() || '',
-      save: $('#gh-save')?.checked || false
-    };
-    localStorage.setItem(storage.gh, JSON.stringify(cfg));
-    // Si save es falso, limpia el token del localStorage por seguridad
-    if (!cfg.save) {
-      const tmp = JSON.parse(localStorage.getItem(storage.gh)||'{}'); delete tmp.token; localStorage.setItem(storage.gh, JSON.stringify(tmp));
-    }
-    return cfg;
-  }
+      item.slug = slugify(item.title);
+      const all = getAll(STORAGE_POSTS);
+      const idx = all.findIndex((p) => p.slug === item.slug);
+      if (idx >= 0) {
+        all[idx] = item;
+      } else {
+        all.unshift(item);
+      }
+      setAll(STORAGE_POSTS, all);
 
-  async function testConnection(){
-    diagClear();
-    const cfg = saveCfg(); // Guardar configuración y obtener valores
-    const [owner, repo] = cfg.repo.split('/');
-    if (!owner || !repo || !cfg.token){ diag('Faltan owner/repo o token', 'err'); return; }
+      alert('Entrada guardada en este navegador.');
+      try {
+        form.reset();
+      } catch (e) {}
+    });
+  }
 
-    try {
-      // 1) Repo access
-      let r = await GH.getRepo(owner, repo, cfg.token);
-      if (r.status === 200){ diag('Repo ✓', 'ok'); }
-      else if (r.status === 404){ diag('Repo 404 (token sin acceso o repo mal escrito)', 'err'); return; }
-      else { diag(`Repo error ${r.status}`, 'err'); return; }
+  // ---------------------------------------------------------------------------
+  // 2) GUARDAR LIBROS EN LOCALSTORAGE
+  // ---------------------------------------------------------------------------
 
-      // 2) Branch
-      r = await GH.getRef(owner, repo, cfg.branch, cfg.token);
-      if (r.status === 200){ diag('Branch ✓', 'ok'); }
-      else if (r.status === 404){ diag('Branch 404 (usa "main" o confirma el nombre)', 'err'); return; }
-      else { diag(`Branch error ${r.status}`, 'err'); return; }
+  function setupBookForm() {
+    const form =
+      $('#form-book') ||
+      $('#bookForm') ||
+      document.querySelector('form[data-type="book"]');
 
-      // 3) Paths existence (ok si no existen)
-      const p1 = await GH.getContent(owner, repo, cfg.path_posts, cfg.branch, cfg.token);
-      diag(p1.status === 200 ? 'posts.json existe' : 'posts.json no existe (se creará)', p1.ok ? 'ok' : 'warn');
-      const p2 = await GH.getContent(owner, repo, cfg.path_books, cfg.branch, cfg.token);
-      diag(p2.status === 200 ? 'libros.json existe' : 'libros.json no existe (se creará)', p2.ok ? 'ok' : 'warn');
+    if (!form) return;
 
-      diag('Conexión OK — ya puedes Publicar', 'ok');
-    } catch (e) {
-      diag(`Error de conexión: ${e.message}`, 'err');
-    }
-  }
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
 
-  async function publish(){
-    diagClear();
-    const cfg = saveCfg(); // Guardar configuración y obtener valores
-    const [owner, repo] = cfg.repo.split('/');
-    if (!owner || !repo || !cfg.token){ diag('Faltan owner/repo o token','err'); return; }
+      const item = {
+        title: fd.get('title') || '',
+        author: fd.get('author') || '',
+        date: fd.get('date') || '',
+        img: fd.get('img') || '',
+        tags: parseTags(fd.get('tags')),
+        rating: parseFloat(fd.get('rating') || '0') || 0,
+        excerpt: fd.get('excerpt') || '',
+        content: fd.get('content') || ''
+      };
 
-    // Función auxiliar para leer JSON remoto
-    async function fetchJSON(path){
-      const r = await GH.getContent(owner, repo, path, cfg.branch, cfg.token);
-      if (r.status === 200){
-        const j = await r.json();
-        // La decodificación es necesaria para manejar correctamente el contenido base64 de GitHub
-        const raw = decodeURIComponent(escape(atob((j.content||'').replace(/\n/g,''))));
-        return { data: JSON.parse(raw), sha: j.sha };
-      }
-      if (r.status === 404){ return { data: [], sha: null }; } // Archivo no existe, se creará
-      throw new Error(`Error ${r.status} leyendo ${path}`);
-    }
+      if (!item.title.trim()) {
+        alert('El libro necesita al menos un título.');
+        return;
+      }
 
-    try{
-      // 1) Comprobación de acceso y rama (opcional, pero buena práctica)
-      let r = await GH.getRepo(owner, repo, cfg.token);
-      if (r.status !== 200) throw new Error(`Repo error ${r.status} (token sin acceso o repo mal escrito)`);
-      r = await GH.getRef(owner, repo, cfg.branch, cfg.token);
-      if (r.status !== 200) throw new Error(`Branch error ${r.status} (asegúrate que "${cfg.branch}" exista)`);
-        
-      // 2) Cargar local y remoto
-      const remP = await fetchJSON(cfg.path_posts);
-      const remB = await fetchJSON(cfg.path_books);
-      const localP = getAll(storage.posts), localB = getAll(storage.books);
+      item.slug = slugify(item.title);
+      const all = getAll(STORAGE_BOOKS);
+      const idx = all.findIndex((b) => b.slug === item.slug);
+      if (idx >= 0) {
+        all[idx] = item;
+      } else {
+        all.unshift(item);
+      }
+      setAll(STORAGE_BOOKS, all);
 
-      // 3) Fusionar remoto + local (local sobrescribe remoto si tienen el mismo slug)
-      const mergeData = (remoteData, localData) => {
-        const map = new Map(); 
-        [...(remoteData || []), ...(localData || [])].forEach(x => {
-          const slug = x.slug || slugify(x.title);
-          map.set(slug, { ...x, slug });
-        });
-        return Array.from(map.values());
-      };
+      alert('Libro guardado en este navegador.');
+      try {
+        form.reset();
+      } catch (e) {}
+    });
+  }
 
-      const mergedP = mergeData(remP.data, localP);
-      const mergedB = mergeData(remB.data, localB);
+  // ---------------------------------------------------------------------------
+  // 3) PUBLICAR A GITHUB – githubPublish()
+  // ---------------------------------------------------------------------------
 
-      // 4) PUT posts
-      let put = await GH.putContent(owner, repo, cfg.path_posts, cfg.branch, cfg.token, JSON.stringify(mergedP, null, 2), remP.sha);
-      if (!put.ok){ const t = await put.text(); throw new Error(`Error subiendo ${cfg.path_posts}: ${put.status} - ${t}`); }
-      diag('posts.json actualizado', 'ok');
+  async function githubPublish() {
+    // Campos del formulario de GitHub
+    const repoInput =
+      document.getElementById('gh-repo') ||
+      document.getElementById('github-repo');
+    const branchInput =
+      document.getElementById('gh-branch') ||
+      document.getElementById('github-branch');
+    const postsInput =
+      document.getElementById('gh-path-posts') ||
+      document.getElementById('github-posts-path');
+    const booksInput =
+      document.getElementById('gh-path-books') ||
+      document.getElementById('github-books-path');
+    const tokenInput =
+      document.getElementById('gh-token') ||
+      document.getElementById('github-token');
 
-      // 5) PUT libros
-      put = await GH.putContent(owner, repo, cfg.path_books, cfg.branch, cfg.token, JSON.stringify(mergedB, null, 2), remB.sha);
-      if (!put.ok){ const t = await put.text(); throw new Error(`Error subiendo ${cfg.path_books}: ${put.status} - ${t}`); }
-      diag('libros.json actualizado', 'ok');
+    const repo = repoInput ? repoInput.value.trim() : '';
+    const branch = branchInput ? branchInput.value.trim() || 'main' : 'main';
+    const pathPosts = postsInput
+      ? postsInput.value.trim() || 'assets/data/posts.json'
+      : 'assets/data/posts.json';
+    const pathBooks = booksInput
+      ? booksInput.value.trim() || 'assets/data/libros.json'
+      : 'assets/data/libros.json';
+    const token = tokenInput ? tokenInput.value.trim() : '';
 
-      diag('Publicado a GitHub ✓', 'ok');
-      alert('Publicado a GitHub (JSON actualizado en tu repo).');
-    } catch(e){
-      diag(`Fallo publicando: ${e.message}`, 'err');
-      alert(e.message || 'Fallo publicando en GitHub.');
-    }
-  }
+    if (!repo || !token) {
+      alert('Faltan owner/repo o token de GitHub.');
+      return;
+    }
 
-  // -------------------- Inicialización --------------------
-  if (window.page === 'admin'){
-    readCfg();
-    $('#gh-test')?.addEventListener('click', testConnection);
-    $('#gh-publish')?.addEventListener('click', publish);
-  }
+    const parts = repo.split('/');
+    if (parts.length !== 2) {
+      alert(
+        'El repo debe tener formato owner/repo, por ejemplo: Llowsworld/olympus-theon'
+      );
+      return;
+    }
+
+    const [owner, repoName] = parts;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json'
+    };
+
+    const localPosts = getAll(STORAGE_POSTS);
+    const localBooks = getAll(STORAGE_BOOKS);
+
+    const decodeFile = (j) => {
+      const raw = atob((j.content || '').replace(/\n/g, ''));
+      const jsonStr = decodeURIComponent(escape(raw));
+      return JSON.parse(jsonStr || '[]');
+    };
+
+    async function loadRemote(path) {
+      const url = `https://api.github.com/repos/${owner}/${repoName}/contents/${path}?ref=${encodeURIComponent(
+        branch
+      )}`;
+      const r = await fetch(url, { headers });
+
+      if (r.status === 404) {
+        // El archivo aún no existe: lista vacía, sin sha
+        return { data: [], sha: null };
+      }
+
+      if (!r.ok) {
+        const txt = await r.text();
+        throw new Error(`Error leyendo ${path}: ${r.status} - ${txt}`);
+      }
+
+      const j = await r.json();
+      return { data: decodeFile(j), sha: j.sha };
+    }
+
+    async function putFile(path, content, sha) {
+      const body = {
+        message: `chore: update ${path} via admin`,
+        content: btoa(unescape(encodeURIComponent(content))),
+        branch
+      };
+      if (sha) body.sha = sha;
+
+      const url = `https://api.github.com/repos/${owner}/${repoName}/contents/${path}`;
+      const r = await fetch(url, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
+      });
+
+      if (!r.ok) {
+        const txt = await r.text();
+        throw new Error(`Error subiendo ${path}: ${r.status} - ${txt}`);
+      }
+    }
+
+    try {
+      // 1) Comprobar repo
+      let r = await fetch(
+        `https://api.github.com/repos/${owner}/${repoName}`,
+        { headers }
+      );
+      if (!r.ok) {
+        const txt = await r.text();
+        throw new Error(
+          `El repo o el token no son válidos: ${r.status} - ${txt}`
+        );
+      }
+
+      // 2) Comprobar rama
+      r = await fetch(
+        `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${branch}`,
+        { headers }
+      );
+      if (!r.ok) {
+        const txt = await r.text();
+        throw new Error(
+          `La rama "${branch}" no existe o no es accesible: ${r.status} - ${txt}`
+        );
+      }
+
+      // 3) Leer remoto
+      const remPosts = await loadRemote(pathPosts);
+      const remBooks = await loadRemote(pathBooks);
+
+      // 4) Fusionar remoto + local por slug (local tiene prioridad)
+      const mapP = new Map();
+      (remPosts.data || []).forEach((x) => {
+        const slug = x.slug || slugify(x.title);
+        mapP.set(slug, { ...x, slug });
+      });
+      (localPosts || []).forEach((x) => {
+        const slug = x.slug || slugify(x.title);
+        mapP.set(slug, { ...x, slug });
+      });
+      const mergedPosts = Array.from(mapP.values());
+
+      const mapB = new Map();
+      (remBooks.data || []).forEach((x) => {
+        const slug = x.slug || slugify(x.title);
+        mapB.set(slug, { ...x, slug });
+      });
+      (localBooks || []).forEach((x) => {
+        const slug = x.slug || slugify(x.title);
+        mapB.set(slug, { ...x, slug });
+      });
+      const mergedBooks = Array.from(mapB.values());
+
+      // 5) Subir a GitHub
+      await putFile(
+        pathPosts,
+        JSON.stringify(mergedPosts, null, 2),
+        remPosts.sha
+      );
+      await putFile(
+        pathBooks,
+        JSON.stringify(mergedBooks, null, 2),
+        remBooks.sha
+      );
+
+      alert('Publicado a GitHub (posts.json y libros.json actualizados).');
+    } catch (e) {
+      console.error(e);
+      alert(e.message || 'Error publicando en GitHub.');
+    }
+  }
+
+  // Exponer la función para que el botón del HTML pueda usarla
+  window.githubPublish = githubPublish;
+
+  // Inicializar formularios cuando cargue la página
+  window.addEventListener('DOMContentLoaded', () => {
+    setupPostForm();
+    setupBookForm();
+  });
 })();
