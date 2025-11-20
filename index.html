@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Olympus Theon — Filosofía Man Up en blanco y negro. Quiénes somos, blog, libros, contacto.">
+  <meta name="description" content="Olympus Theon — Filosofía Man Up. Quiénes somos, blog, libros y contacto.">
   <title>Olympus Theon — Quiénes somos</title>
   
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,12 +18,9 @@
   <a class="skip" href="#contenido">Saltar al contenido</a>
   <header class="header" role="banner">
     <div class="container header__inner">
-      <a class="brand" href="index.html" aria-label="Inicio — Olympus Theon">
-        <span class="brand__logo" aria-hidden="true">OT</span>
-        <span class="brand__text">Olympus Theon</span>
-      </a>
+      <a class="brand" href="index.html"><span class="brand__logo">OT</span><span class="brand__text">Olympus Theon</span></a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menú</button>
-      <nav id="nav" class="nav" role="navigation" aria-label="Principal">
+      <nav id="nav" class="nav" aria-label="Principal">
         <ul>
           <li><a class="active" href="index.html">Quiénes somos</a></li>
           <li><a href="blog.html">Blog</a></li>
@@ -34,84 +31,14 @@
       </nav>
     </div>
   </header>
-
-  <main id="contenido">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero__text reveal">
-        <p class="kicker">Filosofía Man Up</p>
-        <h1>Excelencia en blanco y negro</h1>
-        <p class="lead">En <strong>Olympus Theon</strong> promovemos una vida con propósito,
-        disciplina y pensamiento crítico. Un enfoque directo, sin adornos: blanco y negro.</p>
-        <div class="hero__cta">
-          <a class="btn" href="blog.html">Leer el Blog</a>
-          <a class="btn btn--ghost" href="libros.html">Explorar Libros</a>
-        </div>
-      </div>
-
-      <!-- Collage/Mosaico -->
-      <div class="mosaic reveal" aria-label="Galería de imágenes en blanco y negro">
-        <img src="https://images.unsplash.com/photo-1523246191915-4fd7fefa421a?q=80&w=1280&auto=format&fit=crop" alt="Profesor escribiendo en pizarra" loading="lazy">
-        <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1280&auto=format&fit=crop" alt="Libros apilados" loading="lazy">
-        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1280&auto=format&fit=crop" alt="Personas conversando" loading="lazy">
-        <img src="https://images.unsplash.com/photo-1456327102063-fb5054efe647?q=80&w=1280&auto=format&fit=crop" alt="Aula con estudiantes" loading="lazy">
-        <img src="https://images.unsplash.com/photo-1551829142-0fef54f0c552?q=80&w=1280&auto=format&fit=crop" alt="Lápiz y mensaje 'Learn'" loading="lazy">
-      </div>
-    </section>
-
-    <!-- QUIÉNES SOMOS -->
-    <section class="section section--light">
-      <div class="container">
-        <h2 class="reveal">Quiénes somos</h2>
-        <p class="reveal">Somos una iniciativa independiente dedicada a la <em>filosofía práctica</em>.
-        Defendemos la responsabilidad personal, el autocontrol y la superación diaria;
-        una guía clara —en blanco y negro— para actuar cuando otros dudan.</p>
-        <div class="grid grid--3">
-          <div class="card reveal">
-            <h3>Misión</h3>
-            <p>Convertir ideas en <strong>hábitos</strong> que fortalezcan carácter, cuerpo y mente.</p>
-          </div>
-          <div class="card reveal">
-            <h3>Visión</h3>
-            <p>Crear una comunidad que valora el esfuerzo, el honor y la verdad.</p>
-          </div>
-          <div class="card reveal">
-            <h3>Valores</h3>
-            <ul class="list">
-              <li>Disciplina antes que motivación</li>
-              <li>Acción sobre excusas</li>
-              <li>Humildad, servicio y aprendizaje continuo</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta">
-      <div class="container cta__inner">
-        <h2>¿Listo para empezar?</h2>
-        <p>Suscríbete para recibir nuevas ideas. (sin spam)</p>
-        <form class="subscribe" id="subscribe-form" autocomplete="on">
-          <input type="email" id="sub-email" placeholder="Tu email" required>
-          <button class="btn" type="submit">Suscribirme</button>
-        </form>
-        <p class="help">*Guardado localmente; puedes exportar los suscriptores desde <a href="admin.html">Admin</a>.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p>&copy; <span id="year"></span> Olympus Theon</p>
-      <nav aria-label="Enlaces de pie de página">
-        <a href="index.html">Quiénes somos</a>
-        <a href="blog.html">Blog</a>
-        <a href="libros.html">Libros</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
+  <main id="contenido" class="section">
+    <div class="container">
+      <h1>Olympus Theon</h1>
+      <p class="lead">Filosofía práctica en blanco y negro: disciplina, responsabilidad y propósito.</p>
+      <p>Visita el <a href="blog.html">Blog</a> o la sección de <a href="libros.html">Libros</a>.</p>
     </div>
-  </footer>
-
+  </main>
+  <footer class="footer"><div class="container footer__inner"><p>&copy; <span id="year"></span> Olympus Theon</p></div></footer>
   <script defer src="assets/js/main.js"></script>
   <script defer src="assets/js/render.js"></script>
 </body>

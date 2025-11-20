@@ -1,28 +1,13 @@
 [
   {
-    "title": "Empieza por hacer tu cama",
-    "slug": "empieza-por-hacer-tu-cama",
-    "author": "Olympus Theon",
+    "title": "Bienvenido a Olympus Theon",
+    "slug": "bienvenido",
+    "author": "OT",
     "date": "2025-11-19",
-    "img": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
-    "excerpt": "Pequeñas victorias que construyen disciplina diaria.",
+    "excerpt": "Primer post de prueba",
     "tags": [
-      "Hábitos",
-      "Disciplina"
+      "intro"
     ],
-    "content": "# La cama primero\n\n**Orden** antes que caos. Empieza el día con una acción simple que afirma quién eres."
-  },
-  {
-    "title": "Verdad sin excusas",
-    "slug": "verdad-sin-excusas",
-    "author": "Olympus Theon",
-    "date": "2025-10-10",
-    "img": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
-    "excerpt": "Las excusas son mentiras que nos contamos a nosotros mismos.",
-    "tags": [
-      "Carácter",
-      "Responsabilidad"
-    ],
-    "content": "## Decir la verdad\n\nDi la verdad, **especialmente** cuando es incómodo. Tu futuro yo te lo agradecerá."
+    "content": "Hola mundo"
   }
 ]
