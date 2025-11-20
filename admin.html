@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Admin — Olympus Theon">
+  <title>Olympus Theon — Admin</title>
+  
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='8' fill='%23000'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='%23fff' font-size='46' font-family='monospace'%3EOT%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__logo" aria-hidden="true">OT</span>
+        <span class="brand__text">Olympus Theon</span>
+      </a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav">Menú</button>
+      <nav id="nav" class="nav" role="navigation" aria-label="Principal">
+        <ul>
+          <li><a href="index.html">Quiénes somos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="libros.html">Libros</a></li>
+          <li><a class="btn btn--ghost" href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido" class="section section--light">
+    <div class="container">
+      <header class="page-header">
+        <h1>Admin — Editor (tipo Substack)</h1>
+        <p class="lead">Crea y edita <strong>Entradas (Blog)</strong> y <strong>Libros</strong> directamente desde el navegador. Los cambios se guardan en <code>localStorage</code> y puedes <strong>exportar</strong> / <strong>importar</strong> JSON o publicar a GitHub.</p>
+      </header>
+
+      <section class="grid grid--3">
+        <div class="card">
+          <h3>Nueva Entrada (Blog)</h3>
+          <form id="form-post" class="form">
+            <input name="title" placeholder="Título" required>
+            <input name="author" placeholder="Autor (opcional)">
+            <input name="date" placeholder="Fecha (YYYY-MM-DD)" value="2025-11-19">
+            <input name="img" placeholder="URL de portada (opcional)">
+            <input name="tags" placeholder="Tags separadas por coma">
+            <textarea name="excerpt" rows="3" placeholder="Extracto"></textarea>
+            <textarea name="content" rows="8" placeholder="Contenido (HTML o Markdown simple)"></textarea>
+            <div class="actions">
+              <button class="btn" type="submit">Guardar</button>
+              <button class="btn btn--ghost" type="button" id="preview-post">Previsualizar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Nuevo Libro</h3>
+          <form id="form-book" class="form">
+            <input name="title" placeholder="Título" required>
+            <input name="author" placeholder="Autor" required>
+            <input name="date" placeholder="Año">
+            <input name="img" placeholder="URL de portada (opcional)">
+            <input name="tags" placeholder="Tags separadas por coma">
+            <input name="rating" type="number" step="0.5" min="0" max="5" placeholder="Valoración (0–5)">
+            <textarea name="excerpt" rows="3" placeholder="Resumen"></textarea>
+            <textarea name="content" rows="8" placeholder="Notas/Reseña (HTML o Markdown simple)"></textarea>
+            <div class="actions">
+              <button class="btn" type="submit">Guardar</button>
+              <button class="btn btn--ghost" type="button" id="preview-book">Previsualizar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Suscriptores (Newsletter)</h3>
+          <p>Se guardan localmente cuando alguien usa el formulario de la home.</p>
+          <div class="actions">
+            <button class="btn" id="export-subs">Exportar CSV</button>
+            <button class="btn btn--ghost" id="clear-subs">Borrar todo</button>
+          </div>
+          <hr>
+          <h3>Importar / Exportar</h3>
+          <div class="actions">
+            <input type="file" id="import-file" accept=".json">
+            <button class="btn" id="export-json">Exportar JSON</button>
+            <button class="btn btn--ghost" id="reset-data">Resetear (vaciar localStorage)</button>
+          </div>
+          <hr>
+          <h3>Publicar en GitHub (opcional)</h3>
+          <p>Introduce tu token y repo para subir <code>assets/data/*.json</code> a tu repositorio (GitHub Pages o similar).</p>
+          <form id="github-form" class="form">
+            <input id="gh-repo" placeholder="owner/repo (p.ej. tuusuario/olympus-theon)">
+            <input id="gh-branch" placeholder="branch (p.ej. main)" value="main">
+            <input id="gh-path-posts" placeholder="ruta posts.json" value="assets/data/posts.json">
+            <input id="gh-path-books" placeholder="ruta libros.json" value="assets/data/libros.json">
+            <input id="gh-token" placeholder="GitHub Personal Access Token">
+            <div class="actions">
+              <button class="btn" id="gh-publish" type="button">Publicar a GitHub</button>
+            </div>
+          </form>
+          <p class="help">*Tu token se guarda solo en tu navegador (localStorage). Puedes borrarlo cuando quieras.</p>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <h2>Vista previa</h2>
+        <div class="grid grid--3" id="preview-area"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>&copy; <span id="year"></span> Olympus Theon</p>
+      <nav aria-label="Enlaces de pie de página">
+        <a href="index.html">Quiénes somos</a>
+        <a href="blog.html">Blog</a>
+        <a href="libros.html">Libros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>window.page='admin';</script>
+  <script defer src="assets/js/main.js"></script>
+  <script defer src="assets/js/render.js"></script>
+  <script defer src="assets/js/cms.js"></script>
+</body>
+</html>
