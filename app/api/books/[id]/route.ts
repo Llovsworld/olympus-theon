@@ -19,9 +19,8 @@ export async function DELETE(
 
         const { id } = await params;
 
-        // Check if book exists
         const book = await prisma.book.findUnique({
-            where: { id: parseInt(id) },
+            where: { id },
         });
 
         if (!book) {
@@ -31,9 +30,8 @@ export async function DELETE(
             );
         }
 
-        // Delete the book
         await prisma.book.delete({
-            where: { id: parseInt(id) },
+            where: { id },
         });
 
         return NextResponse.json(
