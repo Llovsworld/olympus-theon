@@ -1,0 +1,36 @@
+{
+    "Header": {
+        "home": "Inicio",
+        "story": "Historia",
+        "ceo": "CEO",
+        "blog": "Blog",
+        "contact": "Contacto",
+        "books": "Libros"
+    },
+    "Hero": {
+        "title": "Masculinidad. Visión. Poder.",
+        "subtitle": "Redefiniendo lo que significa ser un hombre en el mundo moderno.",
+        "cta": "Comienza tu Viaje"
+    },
+    "Story": {
+        "title": "Nuestra Historia",
+        "description": "Olympus Theon nació del deseo de restaurar las virtudes perdidas de la masculinidad."
+    },
+    "CEO": {
+        "title": "Conoce al CEO",
+        "subtitle": "Visionario. Líder. Mentor.",
+        "description": "Liderando la carga hacia una nueva era de masculinidad."
+    },
+    "Footer": {
+        "rights": "Todos los derechos reservados."
+    },
+    "Newsletter": {
+        "title": "ÚNETE A LA ÉLITE",
+        "description": "Recibe notificaciones sobre nuevos posts y libros. Sin spam, cancela cuando quieras.",
+        "placeholder": "tu@email.com",
+        "subscribe": "SUSCRIBIRME",
+        "success": "¡Suscripción exitosa!",
+        "error": "Error al suscribirse. Por favor, inténtalo de nuevo.",
+        "invalidEmail": "Por favor, introduce un email válido."
+    }
+}
