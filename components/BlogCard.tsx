@@ -122,7 +122,7 @@ export default function BlogCard({ post }: BlogCardProps) {
                             letterSpacing: '0.1em',
                             fontWeight: 600
                         }}>
-                            {new Date(post.createdAt).toLocaleDateString('en-US', {
+                            {new Date(post.createdAt).toLocaleDateString('es-ES', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric'
@@ -136,7 +136,7 @@ export default function BlogCard({ post }: BlogCardProps) {
                             letterSpacing: '0.1em',
                             fontWeight: 600
                         }}>
-                            {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min read
+                            {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
                         </span>
                     </div>
                 </div>

@@ -23,10 +23,14 @@ export default async function BookPage({ params }: BookPageProps) {
         notFound();
     }
 
+    // Calculate reading time (200 words per minute average)
+    const wordCount = book.content ? book.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
+    const readingTime = Math.max(Math.ceil(wordCount / 200), 1);
+
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
             <ViewTracker type="book" slug={slug} />
-            <ReadingProgress />
+            <ReadingProgress totalReadingTime={readingTime} />
 
             {/* Immersive Hero Section */}
             <div style={{
@@ -92,7 +96,7 @@ export default async function BookPage({ params }: BookPageProps) {
                             marginBottom: '1.5rem',
                             backdropFilter: 'blur(5px)'
                         }}>
-                            Book
+                            Libro
                         </span>
                     </ScrollReveal>
 
@@ -120,7 +124,7 @@ export default async function BookPage({ params }: BookPageProps) {
                             letterSpacing: '0.05em'
                         }}>
                             <span>
-                                {new Date(book.createdAt).toLocaleDateString('en-US', {
+                                {new Date(book.createdAt).toLocaleDateString('es-ES', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
@@ -130,7 +134,7 @@ export default async function BookPage({ params }: BookPageProps) {
                                 <>
                                     <span style={{ width: '4px', height: '4px', background: '#FFD700', borderRadius: '50%' }} />
                                     <span>
-                                        {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min read
+                                        {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
                                     </span>
                                 </>
                             )}
@@ -153,7 +157,7 @@ export default async function BookPage({ params }: BookPageProps) {
                                         fontSize: '1rem'
                                     }}
                                 >
-                                    Get This Book
+                                    Obtener este libro
                                 </a>
                             </div>
                         </ScrollReveal>

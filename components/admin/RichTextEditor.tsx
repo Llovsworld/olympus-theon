@@ -6,7 +6,14 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Youtube from '@tiptap/extension-youtube';
-import { useCallback, useState, useRef } from 'react';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight';
+import { useCallback, useState, useRef, useMemo } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 
 interface RichTextEditorProps {
@@ -36,7 +43,11 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
 
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                // Disable extensions we configure manually to avoid duplicates
+                link: false,
+                underline: false,
+            }),
             EditorImage,
             Link.configure({
                 openOnClick: false,
@@ -44,6 +55,19 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
             Youtube.configure({
                 controls: true,
                 nocookie: true,
+            }),
+            Table.configure({
+                resizable: true,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell,
+            TextAlign.configure({
+                types: ['heading', 'paragraph'],
+            }),
+            Underline,
+            Highlight.configure({
+                multicolor: false,
             }),
             Placeholder.configure({
                 placeholder,
@@ -57,11 +81,23 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
         },
         editorProps: {
             attributes: {
-                class: 'prose prose-lg max-w-none focus:outline-none min-h-[300px] p-4',
-                style: 'color: #ededed; line-height: 1.75;'
+                class: 'prose prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
+                style: 'color: #ededed; line-height: 1.8; font-size: 1.05rem;'
             },
         },
     });
+
+    // Word and character count
+    const wordCount = useMemo(() => {
+        if (!editor) return 0;
+        const text = editor.state.doc.textContent;
+        return text.trim() ? text.trim().split(/\s+/).length : 0;
+    }, [editor?.state.doc.textContent]);
+
+    const charCount = useMemo(() => {
+        if (!editor) return 0;
+        return editor.state.doc.textContent.length;
+    }, [editor?.state.doc.textContent]);
 
     const openPrompt = useCallback((config: PromptConfig) => {
         setPromptConfig(config);
@@ -205,26 +241,50 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
     return (
         <>
             <div style={{
-                border: '1px solid var(--border)',
-                borderRadius: '4px',
-                background: 'rgba(255, 255, 255, 0.02)'
+                border: '1px solid #2a2a2a',
+                borderRadius: '8px',
+                background: 'rgba(10, 10, 10, 0.95)',
+                overflow: 'hidden'
             }}>
                 {/* Toolbar */}
                 <div style={{
-                    borderBottom: '1px solid var(--border)',
-                    padding: '0.75rem',
+                    borderBottom: '1px solid #2a2a2a',
+                    padding: '0.5rem 0.75rem',
                     display: 'flex',
-                    gap: '0.5rem',
-                    flexWrap: 'wrap'
+                    gap: '0.25rem',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    background: 'rgba(255, 255, 255, 0.02)'
                 }}>
+                    {/* Undo/Redo */}
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().undo().run()}
+                        disabled={!editor.can().undo()}
+                        style={buttonStyle(false)}
+                        title="Deshacer (Ctrl+Z)"
+                    >
+                        ↶
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().redo().run()}
+                        disabled={!editor.can().redo()}
+                        style={buttonStyle(false)}
+                        title="Rehacer (Ctrl+Y)"
+                    >
+                        ↷
+                    </button>
+
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
+
                     {/* Text Formatting */}
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleBold().run()}
                         disabled={!editor.can().chain().focus().toggleBold().run()}
-                        className={editor.isActive('bold') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('bold'))}
-                        title="Bold"
+                        title="Negrita (Ctrl+B)"
                     >
                         <strong>B</strong>
                     </button>
@@ -232,116 +292,239 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
                         type="button"
                         onClick={() => editor.chain().focus().toggleItalic().run()}
                         disabled={!editor.can().chain().focus().toggleItalic().run()}
-                        className={editor.isActive('italic') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('italic'))}
-                        title="Italic"
+                        title="Cursiva (Ctrl+I)"
                     >
                         <em>I</em>
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().toggleUnderline().run()}
+                        style={buttonStyle(editor.isActive('underline'))}
+                        title="Subrayado (Ctrl+U)"
+                    >
+                        <span style={{ textDecoration: 'underline' }}>U</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().toggleStrike().run()}
+                        style={buttonStyle(editor.isActive('strike'))}
+                        title="Tachado"
+                    >
+                        <span style={{ textDecoration: 'line-through' }}>S</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().toggleHighlight().run()}
+                        style={buttonStyle(editor.isActive('highlight'))}
+                        title="Resaltar"
+                    >
+                        <span style={{ background: '#ffb703', color: '#000', padding: '0 3px', borderRadius: '2px' }}>H</span>
+                    </button>
 
-                    <div style={{ width: '1px', background: 'var(--border)' }}></div>
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
 
                     {/* Headings */}
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                        className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('heading', { level: 1 }))}
-                        title="Heading 1"
+                        title="Título 1"
                     >
                         H1
                     </button>
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                        className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('heading', { level: 2 }))}
-                        title="Heading 2"
+                        title="Título 2"
                     >
                         H2
                     </button>
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                        className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('heading', { level: 3 }))}
-                        title="Heading 3"
+                        title="Título 3"
                     >
                         H3
                     </button>
 
-                    <div style={{ width: '1px', background: 'var(--border)' }}></div>
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
+
+                    {/* Alignment */}
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                        style={buttonStyle(editor.isActive({ textAlign: 'left' }))}
+                        title="Alinear izquierda"
+                    >
+                        ⫷
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                        style={buttonStyle(editor.isActive({ textAlign: 'center' }))}
+                        title="Centrar"
+                    >
+                        ☰
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                        style={buttonStyle(editor.isActive({ textAlign: 'right' }))}
+                        title="Alinear derecha"
+                    >
+                        ⫸
+                    </button>
+
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
 
                     {/* Lists */}
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleBulletList().run()}
-                        className={editor.isActive('bulletList') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('bulletList'))}
-                        title="Bullet List"
+                        title="Lista con viñetas"
                     >
-                        • List
+                        • ≡
                     </button>
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                        className={editor.isActive('orderedList') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('orderedList'))}
-                        title="Ordered List"
+                        title="Lista numerada"
                     >
-                        1. List
+                        1. ≡
                     </button>
 
-                    <div style={{ width: '1px', background: 'var(--border)' }}></div>
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
 
-                    {/* Quote & Code */}
+                    {/* Quote & Code & HR */}
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                        className={editor.isActive('blockquote') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('blockquote'))}
-                        title="Quote"
+                        title="Cita"
                     >
-                        " Quote
+                        ❝
                     </button>
                     <button
                         type="button"
                         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                        className={editor.isActive('codeBlock') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('codeBlock'))}
-                        title="Code Block"
+                        title="Bloque de código"
                     >
-                        {'< >'}
+                        {'</>'}
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                        style={buttonStyle(false)}
+                        title="Línea separadora"
+                    >
+                        ―
+                    </button>
+                </div>
 
-                    <div style={{ width: '1px', background: 'var(--border)' }}></div>
-
+                {/* Secondary Toolbar - Media & Tables */}
+                <div style={{
+                    borderBottom: '1px solid #2a2a2a',
+                    padding: '0.5rem 0.75rem',
+                    display: 'flex',
+                    gap: '0.5rem',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    background: 'rgba(255, 255, 255, 0.01)'
+                }}>
                     {/* Media */}
                     <button
                         type="button"
                         onClick={addImage}
                         style={buttonStyle(false)}
-                        title="Add Image"
+                        title="Insertar imagen"
                     >
-                        🖼️ Image
+                        🖼️ Imagen
                     </button>
                     <button
                         type="button"
                         onClick={addYouTubeVideo}
                         style={buttonStyle(false)}
-                        title="Add YouTube Video"
+                        title="Insertar video de YouTube"
                     >
                         ▶️ Video
                     </button>
                     <button
                         type="button"
                         onClick={addLink}
-                        className={editor.isActive('link') ? 'is-active' : ''}
                         style={buttonStyle(editor.isActive('link'))}
-                        title="Add Link"
+                        title="Insertar enlace"
                     >
-                        🔗 Link
+                        🔗 Enlace
                     </button>
+
+                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
+
+                    {/* Table */}
+                    <button
+                        type="button"
+                        onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+                        style={buttonStyle(false)}
+                        title="Insertar tabla 3x3"
+                    >
+                        📊 Tabla
+                    </button>
+
+                    {editor.isActive('table') && (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                                style={{ ...buttonStyle(false), fontSize: '0.75rem', padding: '0.3rem 0.5rem' }}
+                                title="Añadir columna"
+                            >
+                                +Col
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => editor.chain().focus().addRowAfter().run()}
+                                style={{ ...buttonStyle(false), fontSize: '0.75rem', padding: '0.3rem 0.5rem' }}
+                                title="Añadir fila"
+                            >
+                                +Fila
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => editor.chain().focus().deleteColumn().run()}
+                                style={{ ...buttonStyle(false), fontSize: '0.75rem', padding: '0.3rem 0.5rem' }}
+                                title="Eliminar columna"
+                            >
+                                -Col
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => editor.chain().focus().deleteRow().run()}
+                                style={{ ...buttonStyle(false), fontSize: '0.75rem', padding: '0.3rem 0.5rem' }}
+                                title="Eliminar fila"
+                            >
+                                -Fila
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => editor.chain().focus().deleteTable().run()}
+                                style={{ ...buttonStyle(false), color: '#ef4444' }}
+                                title="Eliminar tabla"
+                            >
+                                🗑️
+                            </button>
+                        </>
+                    )}
+
+                    {/* Word Count - Right aligned */}
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: '1rem', fontSize: '0.75rem', color: '#666' }}>
+                        <span>{wordCount} palabras</span>
+                        <span>{charCount} caracteres</span>
+                    </div>
                 </div>
 
                 {/* Editor Content */}
@@ -549,6 +732,71 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
                     height: auto !important;
                 }
             }
+
+            /* Table Styles */
+            .ProseMirror table {
+                border-collapse: collapse;
+                margin: 1.5rem 0;
+                overflow: hidden;
+                width: 100%;
+                table-layout: fixed;
+            }
+            .ProseMirror table td,
+            .ProseMirror table th {
+                border: 1px solid #333;
+                box-sizing: border-box;
+                min-width: 1em;
+                padding: 0.75rem 1rem;
+                position: relative;
+                vertical-align: top;
+            }
+            .ProseMirror table th {
+                background-color: rgba(255, 255, 255, 0.08);
+                font-weight: 600;
+                text-align: left;
+                color: #ededed;
+            }
+            .ProseMirror table td {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+            .ProseMirror table .selectedCell:after {
+                background: rgba(255, 183, 3, 0.2);
+                content: "";
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                pointer-events: none;
+                position: absolute;
+                z-index: 2;
+            }
+            .ProseMirror table .column-resize-handle {
+                background-color: #ffb703;
+                bottom: -2px;
+                pointer-events: none;
+                position: absolute;
+                right: -2px;
+                top: 0;
+                width: 4px;
+            }
+            .ProseMirror .tableWrapper {
+                overflow-x: auto;
+            }
+            
+            /* Highlight mark */
+            .ProseMirror mark {
+                background-color: #ffb703;
+                color: #000;
+                padding: 0.1em 0.2em;
+                border-radius: 2px;
+            }
+            
+            /* Horizontal rule */
+            .ProseMirror hr {
+                border: none;
+                border-top: 2px solid #333;
+                margin: 2rem 0;
+            }
         `}</style>
         </>
     );
@@ -556,14 +804,14 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
 
 function buttonStyle(isActive: boolean) {
     return {
-        padding: '0.5rem 0.75rem',
-        background: isActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-        border: '1px solid ' + (isActive ? 'var(--foreground)' : 'var(--border)'),
-        color: isActive ? 'var(--foreground)' : '#aaa',
+        padding: '0.4rem 0.6rem',
+        background: isActive ? 'rgba(255, 183, 3, 0.15)' : 'transparent',
+        border: '1px solid ' + (isActive ? '#ffb703' : '#444'),
+        color: isActive ? '#ffb703' : '#aaa',
         fontSize: '0.85rem',
-        borderRadius: '2px',
+        borderRadius: '4px',
         cursor: 'pointer',
-        transition: 'all 0.2s',
+        transition: 'all 0.15s ease',
     };
 }
 

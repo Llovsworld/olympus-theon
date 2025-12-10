@@ -137,7 +137,7 @@ export default function BookCard({ book }: BookCardProps) {
                             letterSpacing: '0.1em',
                             fontWeight: 600
                         }}>
-                            Details →
+                            Ver detalles →
                         </span>
                     </div>
                 </div>

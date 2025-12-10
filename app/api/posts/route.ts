@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { title, slug, content, featuredImage, published = false } = body;
+        const { title, slug, content, excerpt, metaDescription, category, featuredImage, published = false } = body;
 
         // Check if slug already exists
         const existingPost = await prisma.post.findUnique({
@@ -50,6 +50,9 @@ export async function POST(request: Request) {
                 title,
                 slug,
                 content,
+                excerpt: excerpt || null,
+                metaDescription: metaDescription || null,
+                category: category || null,
                 featuredImage,
                 published: published === true,
             },

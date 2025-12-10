@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { title, slug, description, content, coverImage, link, published = false } = body;
+        const { title, slug, author, description, content, coverImage, link, published = false } = body;
 
         // Check for duplicate slug
         const existingBook = await prisma.book.findUnique({
@@ -48,6 +48,7 @@ export async function POST(request: Request) {
             data: {
                 title,
                 slug,
+                author: author || null,
                 description,
                 content,
                 coverImage,

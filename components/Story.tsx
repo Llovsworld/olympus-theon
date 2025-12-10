@@ -81,12 +81,12 @@ export default function StorySection() {
                                     style={{ objectFit: 'cover' }}
                                     unoptimized
                                 />
-                                {/* Quote Overlay */}
+                                {/* CEO Info Overlay - Inside Image */}
                                 <div className="ceo-philosophy-quote-overlay">
-                                    <p className="ceo-philosophy-quote-label">FILOSOFÍA DE TRABAJO</p>
+                                    <p className="ceo-philosophy-quote-label">Alejandro Lloveras Sauras</p>
                                     <p className="ceo-philosophy-quote-text">
-                                        "La sofisticación no está en la complejidad, sino en la
-                                        simplicidad ejecutada con maestría absoluta"
+                                        Fundador y CEO de Olympus Theon. Especialista en transformación
+                                        personal y desarrollo de alto rendimiento físico y mental.
                                     </p>
                                 </div>
                             </div>

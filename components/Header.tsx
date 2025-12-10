@@ -24,11 +24,13 @@ export default function Header() {
 
     return (
         <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-            <div className="container header-content">
-                <Link href="/" className="logo">OLYMPUS THEON</Link>
-                <nav className="nav">
+            <div className="container header-content-centered">
+                <nav className="nav-left">
                     <Link href="/blog" className={`nav-link ${isActive('/blog') ? 'active' : ''}`}>Blog</Link>
                     <Link href="/books" className={`nav-link ${isActive('/books') ? 'active' : ''}`}>Libros</Link>
+                </nav>
+                <Link href="/" className="logo-centered">OLYMPUS THEON</Link>
+                <nav className="nav-right">
                     <Link href="/programas" className={`nav-link ${isActive('/programas') ? 'active' : ''}`}>Programas</Link>
                     <Link href="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`}>Contacto</Link>
                 </nav>

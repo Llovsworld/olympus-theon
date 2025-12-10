@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import PageTransition from "@/components/PageTransition";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,7 +24,9 @@ export default function RootLayout({
             </head>
             <body className={inter.className} style={{ backgroundColor: '#050505', color: '#ededed' }} suppressHydrationWarning>
                 <Providers>
-                    {children}
+                    <PageTransition>
+                        {children}
+                    </PageTransition>
                 </Providers>
             </body>
         </html>

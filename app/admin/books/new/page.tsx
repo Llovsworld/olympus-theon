@@ -10,6 +10,7 @@ export default function NewBookPage() {
     const router = useRouter();
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
+    const [author, setAuthor] = useState('');
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [coverImage, setCoverImage] = useState('');
@@ -27,6 +28,8 @@ export default function NewBookPage() {
                 const parsed = JSON.parse(savedData);
                 setTitle(parsed.title || '');
                 setSlug(parsed.slug || '');
+                setAuthor(parsed.author || '');
+                setDescription(parsed.description || '');
                 setContent(parsed.content || '');
                 setCoverImage(parsed.coverImage || '');
                 setLink(parsed.link || '');
@@ -43,6 +46,8 @@ export default function NewBookPage() {
                 localStorage.setItem('draft-book', JSON.stringify({
                     title,
                     slug,
+                    author,
+                    description,
                     content,
                     coverImage,
                     link
@@ -52,7 +57,7 @@ export default function NewBookPage() {
         }, 1000);
 
         return () => clearTimeout(timeoutId);
-    }, [title, slug, content, coverImage, link]);
+    }, [title, slug, author, description, content, coverImage, link]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -103,7 +108,8 @@ export default function NewBookPage() {
                 body: JSON.stringify({
                     title,
                     slug: slug || generateSlug(title),
-                    description: '',
+                    author: author || null,
+                    description: description || '',
                     content,
                     coverImage,
                     link,
@@ -143,7 +149,8 @@ export default function NewBookPage() {
                 body: JSON.stringify({
                     title,
                     slug: slug || generateSlug(title),
-                    description: '',
+                    author: author || null,
+                    description: description || '',
                     content,
                     coverImage,
                     link,
@@ -308,7 +315,7 @@ export default function NewBookPage() {
                 />
 
                 {/* URL Slug */}
-                <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #1f1f1f' }}>
+                <div style={{ marginBottom: '2rem' }}>
                     <label style={{
                         display: 'block',
                         fontSize: '0.85rem',
@@ -336,6 +343,67 @@ export default function NewBookPage() {
                     />
                 </div>
 
+                {/* Author */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '500'
+                    }}>
+                        Autor del Libro
+                    </label>
+                    <input
+                        type="text"
+                        value={author}
+                        onChange={(e) => setAuthor(e.target.value)}
+                        placeholder="Nombre del autor..."
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)'
+                        }}
+                    />
+                </div>
+
+                {/* Description */}
+                <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #1f1f1f' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '500'
+                    }}>
+                        Descripción del Libro
+                        <span style={{ color: '#555', fontWeight: '400', marginLeft: '0.5rem' }}>(para listados)</span>
+                    </label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Breve descripción del libro que aparecerá en los listados..."
+                        rows={3}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)',
+                            resize: 'vertical',
+                            fontFamily: 'inherit'
+                        }}
+                    />
+                    <p style={{ fontSize: '0.8rem', color: '#555', marginTop: '0.25rem' }}>
+                        {description.length}/300 caracteres recomendados
+                    </p>
+                </div>
 
 
                 {/* Purchase Link */}

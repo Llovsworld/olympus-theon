@@ -51,7 +51,7 @@ export default function BlogList({ posts }: BlogListProps) {
                 </div>
                 <input
                     type="text"
-                    placeholder="Search articles..."
+                    placeholder="Buscar artículos..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
@@ -115,7 +115,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                             zIndex: 10,
                                             borderRadius: '2px'
                                         }}>
-                                            Featured
+                                            Destacado
                                         </div>
 
                                         {post.featuredImage && (
@@ -194,7 +194,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                                     letterSpacing: '0.1em',
                                                     fontWeight: 600
                                                 }}>
-                                                    {new Date(post.createdAt).toLocaleDateString('en-US', {
+                                                    {new Date(post.createdAt).toLocaleDateString('es-ES', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
@@ -208,7 +208,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                                     letterSpacing: '0.1em',
                                                     fontWeight: 600
                                                 }}>
-                                                    {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min read
+                                                    {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
                                                 </span>
                                             </div>
                                         </div>
@@ -232,7 +232,7 @@ export default function BlogList({ posts }: BlogListProps) {
                         padding: '4rem 0',
                         color: '#888'
                     }}>
-                        <p style={{ fontSize: '1.2rem' }}>No matching articles found.</p>
+                        <p style={{ fontSize: '1.2rem' }}>No se encontraron artículos.</p>
                     </div>
                 )}
             </div>

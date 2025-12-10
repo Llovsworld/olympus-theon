@@ -12,11 +12,24 @@ export default function NewPostPage() {
     const [subtitle, setSubtitle] = useState('');
     const [slug, setSlug] = useState('');
     const [content, setContent] = useState('');
+    const [excerpt, setExcerpt] = useState('');
+    const [metaDescription, setMetaDescription] = useState('');
+    const [category, setCategory] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(false);
     const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | ''>('');
     const [showPreview, setShowPreview] = useState(false);
+
+    const categories = [
+        'Mindset',
+        'Productividad',
+        'Fitness',
+        'Negocios',
+        'Desarrollo Personal',
+        'Lifestyle',
+        'Motivación'
+    ];
 
     // Auto-save to localStorage
     useEffect(() => {
@@ -28,6 +41,9 @@ export default function NewPostPage() {
                 setSubtitle(parsed.subtitle || '');
                 setSlug(parsed.slug || '');
                 setContent(parsed.content || '');
+                setExcerpt(parsed.excerpt || '');
+                setMetaDescription(parsed.metaDescription || '');
+                setCategory(parsed.category || '');
                 setFeaturedImage(parsed.featuredImage || '');
             } catch (e) {
                 console.error('Failed to load draft:', e);
@@ -44,6 +60,9 @@ export default function NewPostPage() {
                     subtitle,
                     slug,
                     content,
+                    excerpt,
+                    metaDescription,
+                    category,
                     featuredImage
                 }));
                 setTimeout(() => setAutoSaveStatus('saved'), 500);
@@ -51,7 +70,7 @@ export default function NewPostPage() {
         }, 1000);
 
         return () => clearTimeout(timeoutId);
-    }, [title, subtitle, slug, content, featuredImage]);
+    }, [title, subtitle, slug, content, excerpt, metaDescription, category, featuredImage]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -103,6 +122,9 @@ export default function NewPostPage() {
                     title,
                     slug: slug || generateSlug(title),
                     content,
+                    excerpt,
+                    metaDescription,
+                    category,
                     featuredImage,
                     published: false
                 }),
@@ -145,6 +167,9 @@ export default function NewPostPage() {
                     title,
                     slug: slug || generateSlug(title),
                     content,
+                    excerpt,
+                    metaDescription,
+                    category,
                     featuredImage,
                     published: true
                 }),
@@ -326,7 +351,7 @@ export default function NewPostPage() {
                 />
 
                 {/* URL Slug */}
-                <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #1f1f1f' }}>
+                <div style={{ marginBottom: '2rem' }}>
                     <label style={{
                         display: 'block',
                         fontSize: '0.85rem',
@@ -352,6 +377,106 @@ export default function NewPostPage() {
                             background: 'rgba(255,255,255,0.05)'
                         }}
                     />
+                </div>
+
+                {/* Category */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '500'
+                    }}>
+                        Categoría
+                    </label>
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <option value="">Seleccionar categoría...</option>
+                        {categories.map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Excerpt */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '500'
+                    }}>
+                        Extracto / Resumen
+                        <span style={{ color: '#555', fontWeight: '400', marginLeft: '0.5rem' }}>(para listados)</span>
+                    </label>
+                    <textarea
+                        value={excerpt}
+                        onChange={(e) => setExcerpt(e.target.value)}
+                        placeholder="Un breve resumen del post que aparecerá en los listados..."
+                        rows={3}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)',
+                            resize: 'vertical',
+                            fontFamily: 'inherit'
+                        }}
+                    />
+                    <p style={{ fontSize: '0.8rem', color: '#555', marginTop: '0.25rem' }}>
+                        {excerpt.length}/200 caracteres recomendados
+                    </p>
+                </div>
+
+                {/* Meta Description (SEO) */}
+                <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #1f1f1f' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '500'
+                    }}>
+                        Meta Descripción SEO
+                        <span style={{ color: '#555', fontWeight: '400', marginLeft: '0.5rem' }}>(para buscadores)</span>
+                    </label>
+                    <textarea
+                        value={metaDescription}
+                        onChange={(e) => setMetaDescription(e.target.value)}
+                        placeholder="Descripción que aparecerá en los resultados de Google..."
+                        rows={2}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)',
+                            resize: 'vertical',
+                            fontFamily: 'inherit'
+                        }}
+                    />
+                    <p style={{ fontSize: '0.8rem', color: metaDescription.length > 160 ? '#ef4444' : '#555', marginTop: '0.25rem' }}>
+                        {metaDescription.length}/160 caracteres óptimos para SEO
+                    </p>
                 </div>
 
                 {/* Featured Image */}

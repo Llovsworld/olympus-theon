@@ -1,7 +1,8 @@
 import { Resend } from 'resend';
 import { prisma } from '@/lib/prisma';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Only initialize Resend if API key is present
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function sendNewsletter(type: 'post' | 'book', item: { title: string; slug: string; description?: string; content?: string }) {
     if (!process.env.RESEND_API_KEY) {
@@ -44,6 +45,11 @@ export async function sendNewsletter(type: 'post' | 'book', item: { title: strin
         // For simplicity, we'll send to the first batch or loop. Resend allows 'bcc' for bulk or individual calls.
         // Best practice for bulk: Loop and send individual emails or use Resend's batch API.
         // For this MVP, we will loop.
+
+        if (!resend) {
+            console.warn('⚠️ Resend client not initialized. Newsletter will not be sent.');
+            return;
+        }
 
         const emailPromises = subscribers.map((sub: { email: string }) =>
             resend.emails.send({

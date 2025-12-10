@@ -67,6 +67,20 @@ export default function Hero() {
                     </Link>
                 </div>
             </div>
+
+            {/* Scroll Indicator */}
+            <div className="scroll-indicator" onClick={() => {
+                document.getElementById('method')?.scrollIntoView({ behavior: 'smooth' });
+            }}>
+                <div className="scroll-indicator-line"></div>
+                <div className="scroll-indicator-arrows">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="7 13 12 18 17 13"></polyline>
+                        <polyline points="7 6 12 11 17 6"></polyline>
+                    </svg>
+                </div>
+                <span className="scroll-indicator-text">SCROLL</span>
+            </div>
         </section>
     );
 }

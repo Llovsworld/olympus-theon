@@ -90,7 +90,7 @@ export default function ContactPage() {
                             textTransform: 'uppercase',
                             color: '#fff'
                         }}>
-                            Contact
+                            Contacto
                         </div>
                         <h1 style={{
                             fontSize: 'clamp(3rem, 8vw, 6rem)',
@@ -101,7 +101,7 @@ export default function ContactPage() {
                             letterSpacing: '-0.04em',
                             textTransform: 'uppercase'
                         }}>
-                            Begin Your<br />Transformation
+                            Comienza Tu<br />Transformación
                         </h1>
                         <div style={{
                             width: '80px',
@@ -118,7 +118,7 @@ export default function ContactPage() {
                             lineHeight: '1.7',
                             fontWeight: '300'
                         }}>
-                            Every elite man's journey starts with a single step. Whether you're ready to forge your path or have questions about our philosophy, we're here to guide you.
+                            El viaje de todo hombre de élite comienza con un primer paso. Ya sea que estés listo para forjar tu camino o tengas preguntas sobre nuestra filosofía, estamos aquí para guiarte.
                         </p>
                     </div>
                 </ScrollReveal>
@@ -126,8 +126,8 @@ export default function ContactPage() {
                 {/* Main Content Grid */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                    gap: '6rem',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))',
+                    gap: '4rem',
                     marginBottom: '6rem'
                 }}>
                     {/* Left: Why Contact Us */}
@@ -140,21 +140,21 @@ export default function ContactPage() {
                                 color: '#666',
                                 marginBottom: '2rem'
                             }}>
-                                Why Reach Out
+                                Por Qué Contactarnos
                             </h2>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
                                 {[
                                     {
-                                        title: 'Personal Coaching',
-                                        description: 'One-on-one guidance tailored to your transformation journey'
+                                        title: 'Coaching Personal',
+                                        description: 'Orientación personalizada adaptada a tu viaje de transformación'
                                     },
                                     {
-                                        title: 'Book Inquiries',
-                                        description: 'Learn more about our publications and philosophy'
+                                        title: 'Consultas sobre Libros',
+                                        description: 'Conoce más sobre nuestras publicaciones y filosofía'
                                     },
                                     {
-                                        title: 'Partnership Opportunities',
-                                        description: 'Collaborate with us to forge excellence together'
+                                        title: 'Oportunidades de Colaboración',
+                                        description: 'Colabora con nosotros para forjar la excelencia juntos'
                                     }
                                 ].map((item, index) => (
                                     <div key={index} style={{
@@ -208,7 +208,7 @@ export default function ContactPage() {
                                 fontWeight: '700',
                                 letterSpacing: '-0.02em'
                             }}>
-                                Send a Message
+                                Enviar un Mensaje
                             </h2>
                             <p style={{
                                 fontSize: '0.9rem',
@@ -217,7 +217,7 @@ export default function ContactPage() {
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.1em'
                             }}>
-                                We respond within 24 hours
+                                Respondemos en 24 horas
                             </p>
 
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -260,7 +260,7 @@ export default function ContactPage() {
                                             fontWeight: '400'
                                         }}
                                     >
-                                        Your Name
+                                        Tu Nombre
                                     </label>
                                 </div>
 
@@ -303,7 +303,7 @@ export default function ContactPage() {
                                             fontWeight: '400'
                                         }}
                                     >
-                                        Email Address
+                                        Correo Electrónico
                                     </label>
                                 </div>
 
@@ -348,7 +348,7 @@ export default function ContactPage() {
                                             fontWeight: '400'
                                         }}
                                     >
-                                        Your Message
+                                        Tu Mensaje
                                     </label>
                                 </div>
 
@@ -384,7 +384,7 @@ export default function ContactPage() {
                                         }
                                     }}
                                 >
-                                    {status === 'loading' ? 'Sending...' : 'Send Message'}
+                                    {status === 'loading' ? 'Enviando...' : 'Enviar Mensaje'}
                                 </button>
 
                                 {status === 'success' && (
@@ -396,7 +396,7 @@ export default function ContactPage() {
                                         fontSize: '0.9rem',
                                         letterSpacing: '0.02em'
                                     }}>
-                                        <strong>Message received.</strong> We'll be in touch within 24 hours.
+                                        <strong>Mensaje recibido.</strong> Te contactaremos en las próximas 24 horas.
                                     </div>
                                 )}
 
@@ -408,7 +408,7 @@ export default function ContactPage() {
                                         color: '#ffaaaa',
                                         fontSize: '0.9rem'
                                     }}>
-                                        Failed to send. Please try again or contact us directly.
+                                        Error al enviar. Por favor intenta de nuevo o contáctanos directamente.
                                     </div>
                                 )}
                             </form>
@@ -430,7 +430,7 @@ export default function ContactPage() {
                             color: '#666',
                             marginBottom: '3rem'
                         }}>
-                            Or Contact Us Directly
+                            O Contáctanos Directamente
                         </h3>
                         <div style={{
                             display: 'flex',
@@ -504,7 +504,7 @@ export default function ContactPage() {
                                     </svg>
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
-                                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Email</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Correo</div>
                                     <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: '500' }}>contact@olympus.com</div>
                                 </div>
                             </a>
@@ -515,5 +515,3 @@ export default function ContactPage() {
         </div>
     );
 }
-
-

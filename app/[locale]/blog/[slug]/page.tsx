@@ -34,10 +34,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         orderBy: { createdAt: 'desc' }
     });
 
+    // Calculate reading time (200 words per minute average)
+    const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / 200);
+
     return (
         <div style={{ background: '#050505', minHeight: '100vh', color: '#ededed' }}>
             <ViewTracker type="post" slug={slug} />
-            <ReadingProgress />
+            <ReadingProgress totalReadingTime={readingTime} />
             {/* Immersive Hero Section */}
             <div style={{
                 position: 'relative',
@@ -99,7 +103,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                 fontWeight: 600
                             }}
                         >
-                            ← The Blog
+                            ← Volver al Blog
                         </Link>
                     </ScrollReveal>
 
@@ -175,7 +179,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em'
                         }}>
-                            Read Next
+                            Sigue leyendo
                         </h3>
                         <div style={{
                             display: 'grid',

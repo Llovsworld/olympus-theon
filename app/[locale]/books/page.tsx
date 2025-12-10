@@ -30,9 +30,12 @@ export default async function BooksPage() {
                         color: '#fff',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        textShadow: '0 4px 10px rgba(0,0,0,0.5)'
+                        background: 'linear-gradient(180deg, #FFFFFF 0%, #A0A0A0 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 0 30px rgba(255, 255, 255, 0.1)'
                     }}>
-                        The Library
+                        BIBLIOTECA
                     </h1>
                     <p style={{
                         color: '#ccc',

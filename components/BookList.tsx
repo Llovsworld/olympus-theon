@@ -52,7 +52,7 @@ export default function BookList({ books }: BookListProps) {
                 </div>
                 <input
                     type="text"
-                    placeholder="Search library..."
+                    placeholder="Buscar en biblioteca..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
@@ -116,7 +116,7 @@ export default function BookList({ books }: BookListProps) {
                                             zIndex: 10,
                                             borderRadius: '2px'
                                         }}>
-                                            Featured Book
+                                            Libro Destacado
                                         </div>
 
                                         <div style={{
@@ -204,7 +204,7 @@ export default function BookList({ books }: BookListProps) {
                                                         letterSpacing: '0.1em',
                                                         fontWeight: 600
                                                     }}>
-                                                        {new Date(book.createdAt).toLocaleDateString('en-US', {
+                                                        {new Date(book.createdAt).toLocaleDateString('es-ES', {
                                                             year: 'numeric',
                                                             month: 'long',
                                                             day: 'numeric'
@@ -220,7 +220,7 @@ export default function BookList({ books }: BookListProps) {
                                                                 letterSpacing: '0.1em',
                                                                 fontWeight: 600
                                                             }}>
-                                                                {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min read
+                                                                {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
                                                             </span>
                                                         </>
                                                     )}
@@ -247,7 +247,7 @@ export default function BookList({ books }: BookListProps) {
                         padding: '4rem 0',
                         color: '#888'
                     }}>
-                        <p style={{ fontSize: '1.2rem' }}>No matching books found.</p>
+                        <p style={{ fontSize: '1.2rem' }}>No se encontraron libros.</p>
                     </div>
                 )}
             </div>

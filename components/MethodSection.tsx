@@ -1,117 +1,145 @@
 import ScrollReveal from './ScrollReveal';
 import Link from 'next/link';
-import TiltCard from './TiltCard';
-import ParallaxSection from './ParallaxSection';
+import Image from 'next/image';
 
 export default function MethodSection() {
     return (
-        <section className="method-section">
+        <section className="method-section-alt">
             <div className="container">
-                <ParallaxSection speed={0.2}>
-                    <ScrollReveal variant="fade" delay={0}>
-                        <h2 className="method-title">NUESTRO MÉTODO: LA TRÍADA DEL PODER</h2>
-                    </ScrollReveal>
-                </ParallaxSection>
+                <ScrollReveal variant="fade" delay={0}>
+                    <h2 className="method-title-main">NUESTRO MÉTODO: LA TRÍADA DEL PODER</h2>
+                </ScrollReveal>
 
-                <div className="method-grid">
-                    {/* Bloque 1: Reprogramación Mental */}
-                    <ScrollReveal variant="slideScale" direction="up" delay={200}>
-                        <TiltCard className="method-card">
-                            <div className="method-card-number">I</div>
-                            <div className="method-icon-container">
-                                <div className="method-icon">
-                                    {/* Brain/Gear Icon */}
-                                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <path d="M9.5 2c-1.82 0-3.53.5-5 1.35C2.99 4.75 2 6.8 2 9c0 5.25 3.5 8.5 7 10.5 3.5-2 7-5.25 7-10.5 0-2.2-.99-4.25-2.5-5.65C11.03 2.5 9.32 2 7.5 2" strokeLinecap="round" strokeLinejoin="round" />
-                                        <circle cx="12" cy="9" r="1.5" />
-                                        <circle cx="8" cy="9" r="1.5" />
-                                        <path d="M12 13c-1.5 0-2.5 1-2.5 2M14.5 13c1.5 0 2.5 1 2.5 2" strokeLinecap="round" />
-                                        <path d="M12 9v2M8 9v2" strokeLinecap="round" />
-                                    </svg>
+                <div className="method-rows">
+                    {/* Row 1: Mental Reprogramming */}
+                    <div className="method-row">
+                        <ScrollReveal variant="fade" delay={200} className="method-image-col">
+                            <div className="method-image-container">
+                                <div className="method-tag">ESTRATEGIA MENTAL</div>
+                                <Image
+                                    src="/hero-car.png"
+                                    alt="Reprogramación Mental"
+                                    fill
+                                    className="method-image"
+                                    style={{ objectFit: 'cover' }}
+                                />
+                            </div>
+                        </ScrollReveal>
+                        <ScrollReveal variant="fade" delay={300} className="method-content-col">
+                            <h3 className="method-title-large">REPROGRAMACIÓN<br />MENTAL</h3>
+                            <p className="method-description">
+                                Eliminamos creencias limitantes e instalamos modelos mentales de alto rendimiento.
+                                Adopta la estoicidad operativa para la toma de decisiones bajo presión y
+                                rediseña tu arquitectura cognitiva para el éxito.
+                            </p>
+                            <div className="method-stats-grid">
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">+300%</span>
+                                    <span className="method-stat-label">FOCO</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">24/7</span>
+                                    <span className="method-stat-label">CLARIDAD</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">100%</span>
+                                    <span className="method-stat-label">CONTROL</span>
                                 </div>
                             </div>
-                            <h3 className="method-card-title">
-                                REPROGRAMACIÓN<br />MENTAL
-                            </h3>
-                            <div className="method-card-text-container">
-                                <p className="method-card-text">
-                                    Eliminamos creencias limitantes e instalamos <strong>modelos mentales de alto rendimiento</strong>. Adopta la estoicidad operativa para la toma de decisiones bajo presión.
-                                </p>
-                            </div>
-                        </TiltCard>
-                    </ScrollReveal>
+                            <Link href="/programas" className="method-link">
+                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                            </Link>
+                        </ScrollReveal>
+                    </div>
 
-                    {/* Bloque 2: Optimización Física */}
-                    <ScrollReveal variant="slideScale" direction="up" delay={400}>
-                        <TiltCard className="method-card">
-                            <div className="method-card-number">II</div>
-                            <div className="method-icon-container">
-                                <div className="method-icon">
-                                    {/* Dumbbell/Muscle Icon */}
-                                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <path d="M6.5 6L6.5 18" strokeLinecap="round" />
-                                        <path d="M17.5 6L17.5 18" strokeLinecap="round" />
-                                        <rect x="3" y="8" width="3" height="8" rx="1" />
-                                        <rect x="18" y="8" width="3" height="8" rx="1" />
-                                        <path d="M6.5 12L17.5 12" strokeLinecap="round" />
-                                        <circle cx="4.5" cy="7" r="1" />
-                                        <circle cx="4.5" cy="17" r="1" />
-                                        <circle cx="19.5" cy="7" r="1" />
-                                        <circle cx="19.5" cy="17" r="1" />
-                                    </svg>
+                    {/* Row 2: Physical Optimization (Reversed) */}
+                    <div className="method-row reverse">
+                        <ScrollReveal variant="fade" delay={200} className="method-image-col">
+                            <div className="method-image-container">
+                                <div className="method-tag">ALTO RENDIMIENTO</div>
+                                <Image
+                                    src="/hero-gym.png"
+                                    alt="Optimización Física"
+                                    fill
+                                    className="method-image"
+                                    style={{ objectFit: 'cover' }}
+                                />
+                            </div>
+                        </ScrollReveal>
+                        <ScrollReveal variant="fade" delay={300} className="method-content-col">
+                            <h3 className="method-title-large">OPTIMIZACIÓN<br />FÍSICA</h3>
+                            <p className="method-description">
+                                No es solo fitness, es ingeniería corporal. Protocolos de entrenamiento y
+                                nutrición diseñados científicamente para construir una presencia imponente,
+                                una estética superior y una energía inagotable.
+                            </p>
+                            <div className="method-stats-grid">
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">+5kg</span>
+                                    <span className="method-stat-label">MÚSCULO</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">-10%</span>
+                                    <span className="method-stat-label">GRASA</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">MAX</span>
+                                    <span className="method-stat-label">ENERGÍA</span>
                                 </div>
                             </div>
-                            <h3 className="method-card-title">
-                                OPTIMIZACIÓN<br />FÍSICA
-                            </h3>
-                            <div className="method-card-text-container">
-                                <p className="method-card-text">
-                                    No es solo fitness, es <strong>ingeniería corporal</strong>. Protocolos de entrenamiento y nutrición diseñados para construir una presencia imponente y una energía inagotable.
-                                </p>
-                            </div>
-                        </TiltCard>
-                    </ScrollReveal>
+                            <Link href="/programas" className="method-link">
+                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                            </Link>
+                        </ScrollReveal>
+                    </div>
 
-                    {/* Bloque 3: Dominio Espiritual */}
-                    <ScrollReveal variant="slideScale" direction="up" delay={600}>
-                        <TiltCard className="method-card">
-                            <div className="method-card-number">III</div>
-                            <div className="method-icon-container">
-                                <div className="method-icon">
-                                    {/* Greek Column/Flame Icon */}
-                                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <path d="M6 20h12" strokeLinecap="round" />
-                                        <path d="M8 20V8a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v12" strokeLinecap="round" />
-                                        <path d="M9 7V4h6v3" strokeLinecap="round" />
-                                        <path d="M10 11h4M10 14h4" strokeLinecap="round" />
-                                        <path d="M7 3h10" strokeLinecap="round" strokeWidth="2" />
-                                    </svg>
+                    {/* Row 3: Spiritual Domain */}
+                    <div className="method-row">
+                        <ScrollReveal variant="fade" delay={200} className="method-image-col">
+                            <div className="method-image-container">
+                                <div className="method-tag">COMUNIDAD & PROPÓSITO</div>
+                                <Image
+                                    src="/story_background.png"
+                                    alt="Dominio Espiritual"
+                                    fill
+                                    className="method-image"
+                                    style={{ objectFit: 'cover' }}
+                                />
+                            </div>
+                        </ScrollReveal>
+                        <ScrollReveal variant="fade" delay={300} className="method-content-col">
+                            <h3 className="method-title-large">DOMINIO ESPIRITUAL<br />Y PROPÓSITO</h3>
+                            <p className="method-description">
+                                Alinea tus acciones con tu propósito vital. Desarrolla una brújula interna
+                                inquebrantable que te guíe más allá del éxito material y conecta con una
+                                hermandad global de hombres de alto valor.
+                            </p>
+                            <div className="method-stats-grid">
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">150+</span>
+                                    <span className="method-stat-label">MIEMBROS</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">∞</span>
+                                    <span className="method-stat-label">NETWORKING</span>
+                                </div>
+                                <div className="method-stat-item">
+                                    <span className="method-stat-value">1</span>
+                                    <span className="method-stat-label">LEGADO</span>
                                 </div>
                             </div>
-                            <h3 className="method-card-title">
-                                DOMINIO ESPIRITUAL<br />Y PROPÓSITO
-                            </h3>
-                            <div className="method-card-text-container">
-                                <p className="method-card-text">
-                                    Alinea tus acciones con tu propósito vital. Desarrolla una <strong>brújula interna inquebrantable</strong> que te guíe más allá del éxito material.
-                                </p>
-                            </div>
-                        </TiltCard>
-                    </ScrollReveal>
+                            <Link href="/programas" className="method-link">
+                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                            </Link>
+                        </ScrollReveal>
+                    </div>
                 </div>
 
-                {/* Línea de conexión visual de la tríada */}
-                <div className="method-triad-line">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-
-                {/* CTA Button to Programs */}
-                <ScrollReveal variant="fade" delay={800}>
-                    <div className="method-cta-container">
-                        <Link href="/programas" className="btn-outline-large">
-                            VER DETALLES DEL PROGRAMA
+                {/* Main CTA to Programs Page */}
+                <ScrollReveal variant="fade" delay={400}>
+                    <div className="method-main-cta">
+                        <Link href="/programas" className="btn-method-cta">
+                            VER TODOS LOS PROGRAMAS
                         </Link>
                     </div>
                 </ScrollReveal>
