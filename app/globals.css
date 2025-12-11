@@ -1287,7 +1287,7 @@ h6 {
 
 /* CEO Section Modern Redesign */
 .ceo-section {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background: transparent;
   position: relative;
   overflow: hidden;
@@ -1550,10 +1550,10 @@ h6 {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
   /* Image takes less space than text */
-  gap: 4rem;
+  gap: 3rem;
   align-items: center;
-  max-width: 1000px;
-  /* Wider container */
+  max-width: 900px;
+  /* Slightly smaller container */
   margin: 0 auto;
 }
 
@@ -1601,11 +1601,11 @@ h6 {
 }
 
 .ceo-name {
-  font-size: clamp(1.5rem, 4vw, 3.5rem);
-  /* Responsive font size */
+  font-size: clamp(1.3rem, 3vw, 2.5rem);
+  /* Responsive font size - reduced */
   white-space: nowrap;
   /* Force single line */
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   font-family: var(--font-heading);
   line-height: 1.1;
   background: linear-gradient(to right, #ffffff, #a1a1a1);
@@ -1629,21 +1629,21 @@ h6 {
 }
 
 .ceo-bio {
-  font-size: 1.1rem;
-  line-height: 1.7;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: #ccc;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   max-width: 100%;
   text-align: left;
 }
 
 .ceo-quote {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-style: italic;
   color: #fff;
   border-left: 2px solid var(--foreground);
-  padding-left: 1.5rem;
+  padding-left: 1.2rem;
   margin-top: 0;
   border-top: none;
   text-align: left;
@@ -2255,7 +2255,7 @@ h6 {
 
 /* Testimonials Section */
 .testimonials-section {
-  padding: 5rem 0;
+  padding: 3.5rem 0;
   background: transparent;
   min-height: auto;
   display: flex;
@@ -2277,10 +2277,10 @@ h6 {
 }
 
 .testimonials-title {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 5rem;
+  margin-bottom: 3rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ffffff;
@@ -2327,14 +2327,14 @@ h6 {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 4px;
-  padding: 3rem 2.5rem;
+  padding: 2rem 1.8rem;
   position: relative;
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  min-width: 450px;
-  max-width: 450px;
-  min-height: 420px;
+  min-width: 360px;
+  max-width: 360px;
+  min-height: 340px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -4493,15 +4493,15 @@ h6 {
 
 /* Programs Page Premium Styles */
 .programs-hero {
-  padding: 8rem 0 4rem;
+  padding: 5rem 0 3rem;
   text-align: center;
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
 }
 
 .programs-hero-title {
-  font-size: 4rem;
+  font-size: 2.8rem;
   font-weight: 900;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   letter-spacing: -0.02em;
   background: linear-gradient(180deg, #FFFFFF 0%, #A0A0A0 100%);
   -webkit-background-clip: text;
@@ -4510,14 +4510,14 @@ h6 {
 }
 
 .programs-hero-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.6);
-  max-width: 600px;
+  max-width: 550px;
   margin: 0 auto;
 }
 
 .programs-grid-section {
-  padding: 4rem 0 8rem;
+  padding: 3rem 0 5rem;
 }
 
 .programs-grid {
@@ -4534,9 +4534,9 @@ h6 {
   background: rgba(10, 10, 10, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 4rem 2rem 2.5rem;
-  /* Restore generous padding */
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem 2rem;
+  /* Reduced padding */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -4550,8 +4550,8 @@ h6 {
   overflow: hidden;
   height: 100%;
   /* Ensure equal height in grid */
-  min-height: 450px;
-  /* Force minimum tallness */
+  min-height: 350px;
+  /* Reduced minimum height */
 }
 
 .program-card:hover {

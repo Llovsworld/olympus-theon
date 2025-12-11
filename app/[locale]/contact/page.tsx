@@ -70,15 +70,15 @@ export default function ContactPage() {
             <div style={{
                 position: 'relative',
                 zIndex: 10,
-                maxWidth: '1400px',
+                maxWidth: '1200px',
                 margin: '0 auto',
-                padding: '10rem 2rem 6rem'
+                padding: '7rem 2rem 4rem'
             }}>
                 {/* Hero Section */}
                 <ScrollReveal variant="fade">
                     <div style={{
                         textAlign: 'center',
-                        marginBottom: '8rem'
+                        marginBottom: '5rem'
                     }}>
                         <div style={{
                             display: 'inline-block',
@@ -93,10 +93,10 @@ export default function ContactPage() {
                             Contacto
                         </div>
                         <h1 style={{
-                            fontSize: 'clamp(3rem, 8vw, 6rem)',
+                            fontSize: 'clamp(2rem, 6vw, 4rem)',
                             fontWeight: '800',
                             lineHeight: '0.95',
-                            marginBottom: '2rem',
+                            marginBottom: '1.5rem',
                             color: '#ffffff',
                             letterSpacing: '-0.04em',
                             textTransform: 'uppercase'
@@ -111,11 +111,11 @@ export default function ContactPage() {
                             opacity: 0.3
                         }} />
                         <p style={{
-                            fontSize: '1.3rem',
+                            fontSize: '1.05rem',
                             color: '#a0a0a0',
-                            maxWidth: '700px',
+                            maxWidth: '600px',
                             margin: '0 auto',
-                            lineHeight: '1.7',
+                            lineHeight: '1.65',
                             fontWeight: '300'
                         }}>
                             El viaje de todo hombre de élite comienza con un primer paso. Ya sea que estés listo para forjar tu camino o tengas preguntas sobre nuestra filosofía, estamos aquí para guiarte.
@@ -126,9 +126,9 @@ export default function ContactPage() {
                 {/* Main Content Grid */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))',
-                    gap: '4rem',
-                    marginBottom: '6rem'
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))',
+                    gap: '3rem',
+                    marginBottom: '4rem'
                 }}>
                     {/* Left: Why Contact Us */}
                     <div>
