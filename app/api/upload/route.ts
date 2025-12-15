@@ -1,6 +1,5 @@
+import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -11,42 +10,19 @@ export async function POST(request: Request) {
     }
 
     try {
-        const formData = await request.formData();
-        const file = formData.get('file') as File;
+        const { searchParams } = new URL(request.url);
+        const filename = searchParams.get('filename');
 
-        if (!file) {
+        // Simple check to ensure we have a request body (file)
+        if (!request.body) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
-        }
+        const blob = await put(filename || `upload-${Date.now()}`, request.body, {
+            access: 'public',
+        });
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 });
-        }
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Generate unique filename
-        const ext = path.extname(file.name);
-        const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`;
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-        const filepath = path.join(uploadDir, filename);
-
-        // Create uploads directory if it doesn't exist
-        await mkdir(uploadDir, { recursive: true });
-
-        // Save file
-        await writeFile(filepath, buffer);
-
-        // Return public URL
-        const publicUrl = `/uploads/${filename}`;
-        return NextResponse.json({ url: publicUrl });
+        return NextResponse.json({ url: blob.url });
     } catch (error) {
         console.error('Upload error:', error);
         return NextResponse.json(
