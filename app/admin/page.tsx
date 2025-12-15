@@ -22,147 +22,209 @@ export default async function AdminDashboard() {
         redirect('/admin/login');
     }
 
-    // Fetch real data
-    const [postCount, bookCount, recentPosts, postViews, bookViews] = await Promise.all([
-        prisma.post.count(),
-        prisma.book.count(),
-        prisma.post.findMany({
-            take: 5,
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                title: true,
-                published: true,
-                createdAt: true,
-                slug: true
-            }
-        }),
-        prisma.post.aggregate({
-            _sum: {
-                views: true
-            }
-        }),
-        prisma.book.aggregate({
-            _sum: {
-                views: true
-            }
-        })
-    ]);
+    try {
+        // Fetch real data
+        const [postCount, bookCount, recentPosts, postViews, bookViews] = await Promise.all([
+            prisma.post.count(),
+            prisma.book.count(),
+            prisma.post.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    id: true,
+                    title: true,
+                    published: true,
+                    createdAt: true,
+                    slug: true
+                }
+            }),
+            prisma.post.aggregate({
+                _sum: {
+                    views: true
+                }
+            }),
+            prisma.book.aggregate({
+                _sum: {
+                    views: true
+                }
+            })
+        ]);
 
-    const totalViews = (postViews._sum.views || 0) + (bookViews._sum.views || 0);
+        const totalViews = (postViews._sum.views || 0) + (bookViews._sum.views || 0);
 
-    return (
-        <div className="animate-fade-in">
-            <header style={{ marginBottom: '3rem' }}>
-                <h1 style={{
-                    fontSize: '2.5rem',
-                    fontWeight: '800',
-                    marginBottom: '0.5rem',
-                    background: 'linear-gradient(to right, #fff, #888)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                }}>
-                    Dashboard
-                </h1>
-                <p style={{ color: '#666' }}>Welcome back, Admin. Here's what's happening today.</p>
-            </header>
-
-            {/* Stats Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '1.5rem',
-                marginBottom: '4rem'
-            }}>
-                <StatCard
-                    title="Total Posts"
-                    value={postCount}
-                    icon={<FileText size={24} color="#4caf50" />}
-                    trend="+2 this week"
-                />
-                <StatCard
-                    title="Total Books"
-                    value={bookCount}
-                    icon={<BookOpen size={24} color="#2196f3" />}
-                    trend="Stable"
-                />
-                <StatCard
-                    title="Total Views"
-                    value={totalViews}
-                    icon={<Eye size={24} color="#ff9800" />}
-                    trend="All time"
-                />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
-                {/* Recent Activity */}
-                <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>Recent Posts</h2>
-                        <Link href="/admin/posts/manage" style={{ color: '#888', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            View All <ArrowRight size={14} />
-                        </Link>
-                    </div>
-
-                    <div style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid var(--border)',
-                        borderRadius: '8px',
-                        overflow: 'hidden'
+        return (
+            <div className="animate-fade-in">
+                <header style={{ marginBottom: '3rem' }}>
+                    <h1 style={{
+                        fontSize: '2.5rem',
+                        fontWeight: '800',
+                        marginBottom: '0.5rem',
+                        background: 'linear-gradient(to right, #fff, #888)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
                     }}>
-                        {recentPosts.length > 0 ? (
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid var(--border)', textAlign: 'left' }}>
-                                        <th style={thStyle}>Title</th>
-                                        <th style={thStyle}>Status</th>
-                                        <th style={thStyle}>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recentPosts.map((post) => (
-                                        <tr key={post.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                                            <td style={tdStyle}>{post.title}</td>
-                                            <td style={tdStyle}>
-                                                <span style={{
-                                                    padding: '0.25rem 0.5rem',
-                                                    borderRadius: '99px',
-                                                    fontSize: '0.75rem',
-                                                    background: post.published ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 193, 7, 0.1)',
-                                                    color: post.published ? '#4caf50' : '#ffc107',
-                                                    border: `1px solid ${post.published ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 193, 7, 0.2)'}`
-                                                }}>
-                                                    {post.published ? 'Published' : 'Draft'}
-                                                </span>
-                                            </td>
-                                            <td style={{ ...tdStyle, color: '#666' }}>
-                                                {new Date(post.createdAt).toLocaleDateString()}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <div style={{ padding: '3rem', textAlign: 'center', color: '#666' }}>
-                                No posts yet. Start writing!
-                            </div>
-                        )}
-                    </div>
+                        Dashboard
+                    </h1>
+                    <p style={{ color: '#666' }}>Welcome back, Admin. Here's what's happening today.</p>
+                </header>
+
+                {/* Stats Grid */}
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                    gap: '1.5rem',
+                    marginBottom: '4rem'
+                }}>
+                    <StatCard
+                        title="Total Posts"
+                        value={postCount}
+                        icon={<FileText size={24} color="#4caf50" />}
+                        trend="+2 this week"
+                    />
+                    <StatCard
+                        title="Total Books"
+                        value={bookCount}
+                        icon={<BookOpen size={24} color="#2196f3" />}
+                        trend="Stable"
+                    />
+                    <StatCard
+                        title="Total Views"
+                        value={totalViews}
+                        icon={<Eye size={24} color="#ff9800" />}
+                        trend="All time"
+                    />
                 </div>
 
-                {/* Quick Actions */}
-                <div>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem' }}>Quick Actions</h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <ActionLink href="/admin/posts/new" icon={<Plus size={20} />} title="New Post" desc="Write a new blog post" primary />
-                        <ActionLink href="/admin/books/new" icon={<BookOpen size={20} />} title="New Book" desc="Upload a book to the library" />
-                        <ActionLink href="/admin/media" icon={<ImageIcon size={20} />} title="Media Library" desc="Manage uploaded images" />
-                        <ActionLink href="/admin/settings" icon={<Settings size={20} />} title="Settings" desc="Configure site options" />
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
+                    {/* Recent Activity */}
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>Recent Posts</h2>
+                            <Link href="/admin/posts/manage" style={{ color: '#888', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                View All <ArrowRight size={14} />
+                            </Link>
+                        </div>
+
+                        <div style={{
+                            background: 'rgba(255,255,255,0.02)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '8px',
+                            overflow: 'hidden'
+                        }}>
+                            {recentPosts.length > 0 ? (
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: '1px solid var(--border)', textAlign: 'left' }}>
+                                            <th style={thStyle}>Title</th>
+                                            <th style={thStyle}>Status</th>
+                                            <th style={thStyle}>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {recentPosts.map((post) => (
+                                            <tr key={post.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                                                <td style={tdStyle}>{post.title}</td>
+                                                <td style={tdStyle}>
+                                                    <span style={{
+                                                        padding: '0.25rem 0.5rem',
+                                                        borderRadius: '99px',
+                                                        fontSize: '0.75rem',
+                                                        background: post.published ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 193, 7, 0.1)',
+                                                        color: post.published ? '#4caf50' : '#ffc107',
+                                                        border: `1px solid ${post.published ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 193, 7, 0.2)'}`
+                                                    }}>
+                                                        {post.published ? 'Published' : 'Draft'}
+                                                    </span>
+                                                </td>
+                                                <td style={{ ...tdStyle, color: '#666' }}>
+                                                    {new Date(post.createdAt).toLocaleDateString()}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div style={{ padding: '3rem', textAlign: 'center', color: '#666' }}>
+                                    No posts yet. Start writing!
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div>
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem' }}>Quick Actions</h2>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <ActionLink href="/admin/posts/new" icon={<Plus size={20} />} title="New Post" desc="Write a new blog post" primary />
+                            <ActionLink href="/admin/books/new" icon={<BookOpen size={20} />} title="New Book" desc="Upload a book to the library" />
+                            <ActionLink href="/admin/media" icon={<ImageIcon size={20} />} title="Media Library" desc="Manage uploaded images" />
+                            <ActionLink href="/admin/settings" icon={<Settings size={20} />} title="Settings" desc="Configure site options" />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    } catch (error) {
+        console.error("Admin Dashboard Error:", error);
+        return (
+            <div style={{
+                padding: '4rem',
+                textAlign: 'center',
+                maxWidth: '600px',
+                margin: '0 auto',
+                animation: 'fadeIn 0.5s ease-out'
+            }}>
+                <div style={{
+                    fontSize: '4rem',
+                    marginBottom: '1rem',
+                    opacity: 0.5
+                }}>
+                    🔧
+                </div>
+                <h1 style={{
+                    fontSize: '2rem',
+                    fontWeight: '800',
+                    marginBottom: '1rem',
+                    color: 'var(--foreground)'
+                }}>
+                    Configuration Required
+                </h1>
+                <p style={{
+                    color: '#888',
+                    marginBottom: '2rem',
+                    lineHeight: 1.6
+                }}>
+                    The admin panel cannot connect to the database. This usually means the <code>DATABASE_URL</code> environment variable is missing or incorrect.
+                </p>
+                <div style={{
+                    background: 'rgba(255, 100, 100, 0.1)',
+                    border: '1px solid rgba(255, 100, 100, 0.2)',
+                    padding: '1.5rem',
+                    borderRadius: '8px',
+                    textAlign: 'left',
+                    marginBottom: '2rem'
+                }}>
+                    <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#ff6b6b' }}>Action Required on Vercel:</p>
+                    <ol style={{ paddingLeft: '1.5rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <li>Go to <strong>Settings</strong> &gt; <strong>Environment Variables</strong></li>
+                        <li>Add <code>DATABASE_URL</code> (Postgres connection string)</li>
+                        <li>Add <code>NEXTAUTH_SECRET</code> (Random string for security)</li>
+                        <li>Add <code>ADMIN_USERNAME</code> & <code>ADMIN_PASSWORD</code></li>
+                    </ol>
+                </div>
+                <Link
+                    href="/"
+                    className="btn"
+                    style={{
+                        display: 'inline-block',
+                        padding: '1rem 2rem'
+                    }}
+                >
+                    Return to Home
+                </Link>
+            </div>
+        );
+    }
 }
 
 function StatCard({ title, value, icon, trend }: { title: string, value: string | number, icon: React.ReactNode, trend: string }) {
