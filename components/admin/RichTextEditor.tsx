@@ -81,8 +81,8 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
         },
         editorProps: {
             attributes: {
-                class: 'prose prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
-                style: 'color: #ededed; line-height: 1.8; font-size: 1.05rem;'
+                class: 'prose prose-invert prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
+                style: 'line-height: 1.8; font-size: 1.05rem;'
             },
         },
     });

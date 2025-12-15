@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface ImageUploaderProps {
     onUpload: (url: string) => void;
@@ -12,6 +12,13 @@ export default function ImageUploader({ onUpload, label = "Upload Image", curren
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(currentImage || '');
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Sync preview with prop when loading drafts
+    useEffect(() => {
+        if (currentImage) {
+            setPreview(currentImage);
+        }
+    }, [currentImage]);
 
     async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
