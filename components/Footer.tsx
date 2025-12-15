@@ -74,25 +74,25 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Column 2: Empresa */}
+                    {/* Column 2: Navigation */}
                     <div className="footer-links-col">
-                        <h4 className="footer-col-title">EMPRESA</h4>
+                        <h4 className="footer-col-title">NAVEGACIÓN</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/#story">Sobre Nosotros</Link>
-                            <Link href="/programas">Portfolio</Link>
-                            <Link href="/#method">Metodología</Link>
                             <Link href="/blog">Blog</Link>
+                            <Link href="/books">Libros</Link>
+                            <Link href="/programas">Programas</Link>
+                            <Link href="/contact">Contacto</Link>
                         </nav>
                     </div>
 
-                    {/* Column 3: Servicios */}
+                    {/* Column 3: Contenido */}
                     <div className="footer-links-col">
-                        <h4 className="footer-col-title">SERVICIOS</h4>
+                        <h4 className="footer-col-title">CONTENIDO</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/programas">Estrategia Digital</Link>
-                            <Link href="/programas">Identidad de Marca</Link>
-                            <Link href="/programas">Desarrollo Web</Link>
-                            <Link href="/contact">Consultoría</Link>
+                            <Link href="/#method">Metodología</Link>
+                            <Link href="/#story">Sobre el CEO</Link>
+                            <Link href="/#testimonials">Testimonios</Link>
+                            <Link href="#newsletter">Newsletter</Link>
                         </nav>
                     </div>
 

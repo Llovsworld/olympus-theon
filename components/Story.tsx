@@ -11,7 +11,7 @@ export default function StorySection() {
                     <div className="ceo-philosophy-content">
                         <ScrollReveal variant="fade" delay={0}>
                             <div className="ceo-top-ticker">
-                                ESTRATEGIA ESTOICA • ALTO RENDIMIENTO FÍSICO • COMUNIDAD GLOBAL • +500 MIEMBROS ACTIVOS
+                                ABRAZA LA OSCURIDAD. ELLA TE MOSTRARÁ LA LUZ.
                             </div>
                             <h2 className="ceo-philosophy-title">
                                 EXCELENCIA<br />

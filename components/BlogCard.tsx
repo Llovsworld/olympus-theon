@@ -54,6 +54,10 @@ export default function BlogCard({ post }: BlogCardProps) {
                         <img
                             src={post.featuredImage}
                             alt={post.title}
+                            loading="lazy"
+                            decoding="async"
+                            width="800"
+                            height="450"
                             style={{
                                 width: '100%',
                                 height: '100%',

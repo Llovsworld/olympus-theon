@@ -26,6 +26,7 @@ export default function Hero() {
                 playsInline
                 preload="auto"
                 className="ken-burns"
+                poster="/hero-gym.png" // Fallback image for faster LCP perception
                 style={{
                     position: 'absolute',
                     top: 0,

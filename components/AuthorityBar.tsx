@@ -6,7 +6,7 @@ export default function AuthorityBar() {
             <div className="container">
                 <ScrollReveal variant="fade" delay={500}>
                     <p className="authority-text">
-                        ESTRATEGIA ESTOICA • ALTO RENDIMIENTO FÍSICO • COMUNIDAD GLOBAL • +500 MIEMBROS ACTIVOS
+                        ABRAZA LA OSCURIDAD. ELLA TE MOSTRARÁ LA LUZ.
                     </p>
                 </ScrollReveal>
             </div>

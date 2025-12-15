@@ -46,6 +46,10 @@ export default function BookCard({ book }: BookCardProps) {
                         <img
                             src={book.coverImage}
                             alt={book.title}
+                            loading="lazy"
+                            decoding="async"
+                            width="600"
+                            height="900"
                             style={{
                                 width: '100%',
                                 height: '100%',

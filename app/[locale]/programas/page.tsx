@@ -1,18 +1,29 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import ProgramsFAQ from '@/components/ProgramsFAQ';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Programas",
+    description: "Arsenal de desarrollo personal. The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+    openGraph: {
+        title: "Programas | Olympus Theon",
+        description: "The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+    },
+};
 
 export default function ProgramasPage() {
     return (
         <main>
             {/* Hero Section */}
-            <section className="programs-hero">
+            {/* Hero Section */}
+            <section className="page-hero programs-hero-bg">
                 <div className="container">
                     <ScrollReveal variant="fade">
-                        <h1 className="programs-hero-title">ARSENAL DE DESARROLLO</h1>
+                        <h1 className="page-hero-title">ARSENAL DE DESARROLLO</h1>
                     </ScrollReveal>
                     <ScrollReveal variant="fade" delay={200}>
-                        <p className="programs-hero-subtitle">Elige tu camino hacia la excelencia</p>
+                        <p className="page-hero-subtitle">Elige tu camino hacia la excelencia</p>
                     </ScrollReveal>
                 </div>
             </section>
