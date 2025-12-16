@@ -33,7 +33,7 @@ export default function BlogList({ posts }: BlogListProps) {
             {/* Search Bar */}
             <div style={{
                 maxWidth: '600px',
-                margin: '0 auto 4rem',
+                margin: '3rem auto',
                 position: 'relative'
             }}>
                 <div style={{
@@ -41,7 +41,7 @@ export default function BlogList({ posts }: BlogListProps) {
                     left: '1.5rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    color: '#666',
+                    color: 'rgba(255, 255, 255, 0.5)',
                     pointerEvents: 'none'
                 }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -57,8 +57,8 @@ export default function BlogList({ posts }: BlogListProps) {
                     style={{
                         width: '100%',
                         padding: '1rem 1rem 1rem 3.5rem',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
                         borderRadius: '50px',
                         color: '#fff',
                         fontSize: '1rem',
@@ -66,7 +66,7 @@ export default function BlogList({ posts }: BlogListProps) {
                         transition: 'all 0.3s ease',
                         backdropFilter: 'blur(10px)'
                     }}
-                    className="focus:border-yellow-500/50 focus:bg-white/10"
+                    className="focus:border-yellow-500/50 focus:bg-white/10 placeholder-white/30"
                 />
             </div>
 

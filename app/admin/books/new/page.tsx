@@ -19,6 +19,7 @@ export default function NewBookPage() {
     const [loading, setLoading] = useState(false);
     const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | ''>('');
     const [showPreview, setShowPreview] = useState(false);
+    const [editorKey, setEditorKey] = useState(0);
 
     // Auto-save to localStorage
     useEffect(() => {
@@ -33,6 +34,8 @@ export default function NewBookPage() {
                 setContent(parsed.content || '');
                 setCoverImage(parsed.coverImage || '');
                 setLink(parsed.link || '');
+                // Force editor remount to show loaded content
+                setEditorKey(k => k + 1);
             } catch (e) {
                 console.error('Failed to load draft:', e);
             }
@@ -466,6 +469,7 @@ export default function NewBookPage() {
                         background: 'rgba(255,255,255,0.02)'
                     }}>
                         <RichTextEditor
+                            key={editorKey}
                             content={content}
                             onChange={setContent}
                             placeholder="Write the full book content here..."

@@ -21,6 +21,8 @@ export default function NewPostPage() {
     const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | ''>('');
     const [showPreview, setShowPreview] = useState(false);
 
+    const [editorKey, setEditorKey] = useState(0);
+
     const categories = [
         'Mindset',
         'Productividad',
@@ -45,6 +47,8 @@ export default function NewPostPage() {
                 setMetaDescription(parsed.metaDescription || '');
                 setCategory(parsed.category || '');
                 setFeaturedImage(parsed.featuredImage || '');
+                // Force editor remount to show loaded content
+                setEditorKey(k => k + 1);
             } catch (e) {
                 console.error('Failed to load draft:', e);
             }
@@ -497,6 +501,7 @@ export default function NewPostPage() {
                     background: 'rgba(255,255,255,0.02)'
                 }}>
                     <RichTextEditor
+                        key={editorKey} // Remounts editor when drafts load
                         content={content}
                         onChange={setContent}
                         placeholder="Start writing your post..."

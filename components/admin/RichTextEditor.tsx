@@ -13,7 +13,7 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
-import { useCallback, useState, useRef, useMemo } from 'react';
+import { useCallback, useState, useRef, useMemo, useEffect } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 
 interface RichTextEditorProps {
@@ -40,52 +40,73 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
     const [imageWidth, setImageWidth] = useState('');
     const [imageHeight, setImageHeight] = useState('');
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    // SSR safety - ensure editor only renders on client
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    const extensions = useMemo(() => [
+        StarterKit.configure({
+            // Disable extensions we configure manually to avoid duplicates
+            link: false,
+            underline: false,
+        }),
+        EditorImage,
+        Link.configure({
+            openOnClick: false,
+        }),
+        Youtube.configure({
+            controls: true,
+            nocookie: true,
+        }),
+        Table.configure({
+            resizable: true,
+        }),
+        TableRow,
+        TableHeader,
+        TableCell,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
+        Underline,
+        Highlight.configure({
+            multicolor: false,
+        }),
+        Placeholder.configure({
+            placeholder,
+        }),
+    ], [placeholder]);
+
+    const editorProps = useMemo(() => ({
+        attributes: {
+            class: 'prose prose-invert prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
+            style: 'color: #ffffff; line-height: 1.8; font-size: 1.05rem;'
+        },
+    }), []);
+
+    // Use a ref for onChange to guarantee we always call the latest version
+    // without forcing useEditor to re-initialize (which would cause focus loss).
+    const onChangeRef = useRef(onChange);
+    useEffect(() => {
+        onChangeRef.current = onChange;
+    }, [onChange]);
 
     const editor = useEditor({
-        extensions: [
-            StarterKit.configure({
-                // Disable extensions we configure manually to avoid duplicates
-                link: false,
-                underline: false,
-            }),
-            EditorImage,
-            Link.configure({
-                openOnClick: false,
-            }),
-            Youtube.configure({
-                controls: true,
-                nocookie: true,
-            }),
-            Table.configure({
-                resizable: true,
-            }),
-            TableRow,
-            TableHeader,
-            TableCell,
-            TextAlign.configure({
-                types: ['heading', 'paragraph'],
-            }),
-            Underline,
-            Highlight.configure({
-                multicolor: false,
-            }),
-            Placeholder.configure({
-                placeholder,
-            }),
-        ],
-        content,
+        extensions,
+        content, // Initial content only. Updates are ignored to prevent cursors jumping.
         immediatelyRender: false,
         editable: true,
         onUpdate: ({ editor }) => {
-            onChange(editor.getHTML());
+            // Use the ref to call the most recent handler
+            onChangeRef.current(editor.getHTML());
         },
-        editorProps: {
-            attributes: {
-                class: 'prose prose-invert prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
-                style: 'line-height: 1.8; font-size: 1.05rem;'
-            },
-        },
-    });
+        editorProps,
+    }, []); // Empty array ensures editor is created ONCE and never re-initialized
+
+    // Manual content sync removed to strictly prevent focus-loss loops.
+    // Content updates (like draft loading) are now handled by parent key-remounting.
 
     // Word and character count
     const wordCount = useMemo(() => {
@@ -233,6 +254,25 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
             },
         });
     }, [editor, openPrompt]);
+
+    // SSR loading state
+    if (!isMounted) {
+        return (
+            <div style={{
+                border: '1px solid #2a2a2a',
+                borderRadius: '8px',
+                background: 'rgba(10, 10, 10, 0.95)',
+                minHeight: '400px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#666',
+                fontSize: '0.9rem'
+            }}>
+                Cargando editor...
+            </div>
+        );
+    }
 
     if (!editor) {
         return null;
@@ -682,6 +722,29 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
             </div>
 
             <style jsx global>{`
+            /* Force white text for all editor content */
+            .ProseMirror, 
+            .ProseMirror p, 
+            .ProseMirror h1, 
+            .ProseMirror h2, 
+            .ProseMirror h3, 
+            .ProseMirror h4, 
+            .ProseMirror ul, 
+            .ProseMirror ol, 
+            .ProseMirror li,
+            .ProseMirror blockquote {
+                color: #ffffff !important;
+            }
+
+            /* Placeholder style */
+            .ProseMirror p.is-editor-empty:first-child::before {
+                color: #666 !important;
+                content: attr(data-placeholder);
+                float: left;
+                height: 0;
+                pointer-events: none;
+            }
+
             .ProseMirror .resizable-image-wrapper {
                 position: relative;
                 display: inline-block;

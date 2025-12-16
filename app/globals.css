@@ -596,6 +596,14 @@ h6 {
 }
 
 @media (max-width: 768px) {
+
+  /* Disable scroll-snap on mobile for smoother scrolling */
+  html,
+  body {
+    scroll-snap-type: none !important;
+    -webkit-scroll-snap-type: none !important;
+  }
+
   .hero {
     padding: 6rem var(--space-3) 4rem;
     padding-bottom: max(4rem, env(safe-area-inset-bottom, 4rem));
@@ -1688,7 +1696,8 @@ h6 {
 
 @media (max-width: 768px) {
   .cta-section {
-    padding: 6rem 0;
+    padding: 6rem 0 8rem;
+    /* Extra bottom padding to prevent overlap */
   }
 
   .cta-buttons-primary {
@@ -1708,6 +1717,12 @@ h6 {
 
   .cta-whatsapp-container {
     margin-bottom: 5rem;
+  }
+
+  /* Better spacing for testimonials before CTA */
+  .testimonials-section,
+  .testimonials-section-centered {
+    padding-bottom: 5rem;
   }
 }
 
