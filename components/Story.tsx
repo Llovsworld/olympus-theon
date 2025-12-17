@@ -46,20 +46,20 @@ export default function StorySection() {
                         </ScrollReveal>
 
                         <ScrollReveal variant="fade" delay={300}>
-                            <div className="ceo-philosophy-stats">
-                                <div className="ceo-philosophy-stat">
+                            <div className="ceo-philosophy-stats" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-around', gap: '0.5rem' }}>
+                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
                                     <div className="ceo-philosophy-stat-value">150+</div>
                                     <div className="ceo-philosophy-stat-label">
                                         PROYECTOS<br />COMPLETADOS
                                     </div>
                                 </div>
-                                <div className="ceo-philosophy-stat">
+                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
                                     <div className="ceo-philosophy-stat-value">98%</div>
                                     <div className="ceo-philosophy-stat-label">
                                         SATISFACCIÓN<br />CLIENTE
                                     </div>
                                 </div>
-                                <div className="ceo-philosophy-stat">
+                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
                                     <div className="ceo-philosophy-stat-value">12+</div>
                                     <div className="ceo-philosophy-stat-label">
                                         AÑOS<br />EXPERIENCIA
@@ -74,12 +74,12 @@ export default function StorySection() {
                         <ScrollReveal variant="scale" delay={0}>
                             <div className="ceo-philosophy-image-wrapper">
                                 <Image
-                                    src="/ceo_portrait.jpg?v=2"
+                                    src="/ceo_portrait.jpg"
                                     alt="Alejandro Lloveras Sauras - CEO"
                                     fill
+                                    loading="lazy"
                                     className="ceo-philosophy-photo"
                                     style={{ objectFit: 'cover' }}
-                                    unoptimized
                                 />
                                 {/* CEO Info Overlay - Inside Image */}
                                 <div className="ceo-philosophy-quote-overlay">

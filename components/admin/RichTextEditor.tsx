@@ -13,7 +13,7 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
-import { useCallback, useState, useRef, useMemo, useEffect } from 'react';
+import { useCallback, useState, useRef, useMemo, useEffect, memo } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 
 interface RichTextEditorProps {
@@ -31,7 +31,7 @@ type PromptConfig = {
     onSubmit: (value: string) => void;
 };
 
-export default function RichTextEditor({ content, onChange, placeholder = "Start writing..." }: RichTextEditorProps) {
+const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..." }: RichTextEditorProps) => {
     const [promptConfig, setPromptConfig] = useState<PromptConfig | null>(null);
     const [promptValue, setPromptValue] = useState('');
     const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -42,9 +42,17 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
     const [uploadingImage, setUploadingImage] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
+    // Safari detection and composition tracking refs
+    const isSafariRef = useRef(false);
+    const isComposingRef = useRef(false);
+    const pendingContentRef = useRef<string | null>(null);
+
     // SSR safety - ensure editor only renders on client
     useEffect(() => {
         setIsMounted(true);
+        // Detect Safari browser
+        const ua = navigator.userAgent.toLowerCase();
+        isSafariRef.current = ua.includes('safari') && !ua.includes('chrome') && !ua.includes('chromium');
     }, []);
 
     const extensions = useMemo(() => [
@@ -84,6 +92,26 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
             class: 'prose prose-invert prose-lg max-w-none focus:outline-none min-h-[400px] p-6',
             style: 'color: #ffffff; line-height: 1.8; font-size: 1.05rem;'
         },
+        // Track composition events to prevent Safari interruption
+        handleDOMEvents: {
+            compositionstart: () => {
+                isComposingRef.current = true;
+                return false;
+            },
+            compositionend: () => {
+                isComposingRef.current = false;
+                // Flush any pending content after composition ends
+                if (pendingContentRef.current !== null) {
+                    const content = pendingContentRef.current;
+                    pendingContentRef.current = null;
+                    // Use requestAnimationFrame to ensure DOM is stable
+                    requestAnimationFrame(() => {
+                        onChangeRef.current(content);
+                    });
+                }
+                return false;
+            },
+        },
     }), []);
 
     // Use a ref for onChange to guarantee we always call the latest version
@@ -93,14 +121,57 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
         onChangeRef.current = onChange;
     }, [onChange]);
 
+    // Debounced onChange to prevent Safari contenteditable interruption
+    // Safari needs longer debounce and must skip during composition
+    const debouncedOnChange = useMemo(() => {
+        let timeoutId: ReturnType<typeof setTimeout>;
+        let rafId: number;
+        return (html: string) => {
+            clearTimeout(timeoutId);
+            if (rafId) cancelAnimationFrame(rafId);
+
+            // During composition, store but don't send
+            if (isComposingRef.current) {
+                pendingContentRef.current = html;
+                return;
+            }
+
+            // Safari needs much longer debounce (400ms vs 150ms)
+            const delay = isSafariRef.current ? 400 : 150;
+
+            timeoutId = setTimeout(() => {
+                // Double-check we're not composing before sending
+                if (isComposingRef.current) {
+                    pendingContentRef.current = html;
+                    return;
+                }
+                // Use RAF to ensure we don't interrupt rendering
+                rafId = requestAnimationFrame(() => {
+                    onChangeRef.current(html);
+                });
+            }, delay);
+        };
+    }, []);
+
     const editor = useEditor({
         extensions,
         content, // Initial content only. Updates are ignored to prevent cursors jumping.
         immediatelyRender: false,
         editable: true,
         onUpdate: ({ editor }) => {
-            // Use the ref to call the most recent handler
-            onChangeRef.current(editor.getHTML());
+            // Safari: Skip onUpdate entirely - we use onBlur instead
+            if (isSafariRef.current) {
+                return;
+            }
+            // Chrome/Firefox: use debounced handler
+            debouncedOnChange(editor.getHTML());
+        },
+        onBlur: ({ editor }) => {
+            // Safari: Only sync content when editor loses focus
+            // This completely avoids any interruption during typing
+            if (isSafariRef.current) {
+                onChangeRef.current(editor.getHTML());
+            }
         },
         editorProps,
     }, []); // Empty array ensures editor is created ONCE and never re-initialized
@@ -284,7 +355,10 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
                 border: '1px solid #2a2a2a',
                 borderRadius: '8px',
                 background: 'rgba(10, 10, 10, 0.95)',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '400px'
             }}>
                 {/* Toolbar */}
                 <div style={{
@@ -568,7 +642,18 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
                 </div>
 
                 {/* Editor Content */}
-                <EditorContent editor={editor} />
+                {/* Editor Content */}
+                <div
+                    style={{
+                        height: '500px', // Fixed height for stability in Safari
+                        overflowY: 'auto',
+                        cursor: 'text',
+                        paddingBottom: '2rem'
+                    }}
+                    onClick={() => editor?.commands.focus()}
+                >
+                    <EditorContent editor={editor} style={{ height: '100%' }} />
+                </div>
 
                 {promptConfig && (
                     <div style={promptOverlayStyle}>
@@ -723,6 +808,14 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
 
             <style jsx global>{`
             /* Force white text for all editor content */
+            .ProseMirror {
+                min-height: 100%; /* Ensure it fills the wrapper */
+                outline: none;
+                padding-bottom: 2rem;
+                /* Safari fix: prevents focus loss on every keystroke (GitHub issue #6187) */
+                -webkit-user-select: text;
+                user-select: text;
+            }
             .ProseMirror, 
             .ProseMirror p, 
             .ProseMirror h1, 
@@ -863,7 +956,9 @@ export default function RichTextEditor({ content, onChange, placeholder = "Start
         `}</style>
         </>
     );
-}
+});
+
+export default RichTextEditor;
 
 function buttonStyle(isActive: boolean) {
     return {

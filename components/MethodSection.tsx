@@ -20,6 +20,7 @@ export default function MethodSection() {
                                     src="/hero-car.png"
                                     alt="Reprogramación Mental"
                                     fill
+                                    priority
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -61,6 +62,7 @@ export default function MethodSection() {
                                     src="/hero-gym.png"
                                     alt="Optimización Física"
                                     fill
+                                    loading="lazy"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -102,6 +104,7 @@ export default function MethodSection() {
                                     src="/story_background.png"
                                     alt="Dominio Espiritual"
                                     fill
+                                    loading="lazy"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />

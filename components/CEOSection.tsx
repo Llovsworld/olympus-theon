@@ -9,11 +9,11 @@ export default function CEOSection() {
                     <ScrollReveal direction="left" variant="slideScale" duration={1000}>
                         <div className="ceo-image-wrapper">
                             <Image
-                                src="/ceo_portrait.jpg?v=2"
+                                src="/ceo_portrait.jpg"
                                 alt="Alejandro Lloveras Sauras"
                                 fill
+                                loading="lazy"
                                 className="ceo-image"
-                                unoptimized
                             />
                         </div>
                     </ScrollReveal>

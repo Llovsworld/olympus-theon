@@ -67,9 +67,16 @@ export default function RootLayout({
     return (
         <html lang="es" suppressHydrationWarning>
             <head>
-                {/* Preconnect for performance */}
+                {/* DNS Prefetch and Preconnect */}
+                <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+                {/* Preload critical resources */}
+                <link rel="preload" href="/hero-video.mp4" as="video" type="video/mp4" />
+                <link rel="preload" href="/hero-gym.png" as="image" />
+
+                {/* Google Fonts */}
                 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
 
                 {/* JSON-LD Structured Data */}

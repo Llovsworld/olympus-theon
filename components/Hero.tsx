@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 export default function Hero() {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [videoReady, setVideoReady] = useState(false);
 
     useEffect(() => {
         if (videoRef.current) {
@@ -16,8 +17,8 @@ export default function Hero() {
     }, []);
 
     return (
-        <section className="hero" style={{ position: 'relative', overflow: 'hidden', isolation: 'isolate', minHeight: '100vh' }}>
-            {/* Video Background */}
+        <section className="hero" style={{ position: 'relative', overflow: 'hidden', isolation: 'isolate', minHeight: '100vh', backgroundColor: '#000' }}>
+            {/* Video Background - hidden until ready */}
             <video
                 ref={videoRef}
                 autoPlay
@@ -26,7 +27,9 @@ export default function Hero() {
                 playsInline
                 preload="auto"
                 className="ken-burns"
-                poster="/hero-gym.png" // Fallback image for faster LCP perception
+                poster="/hero-gym.png"
+                onCanPlay={() => setVideoReady(true)}
+                onLoadedData={() => setVideoReady(true)}
                 style={{
                     position: 'absolute',
                     top: 0,
@@ -35,9 +38,11 @@ export default function Hero() {
                     height: '100%',
                     objectFit: 'cover',
                     zIndex: -1,
+                    opacity: videoReady ? 1 : 0,
+                    transition: 'opacity 0.3s ease-in-out',
                 }}
             >
-                <source src="/hero-video.mp4?v=1" type="video/mp4" />
+                <source src="/hero-video.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
