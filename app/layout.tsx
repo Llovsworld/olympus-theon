@@ -73,7 +73,6 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
                 {/* Preload critical resources */}
-                <link rel="preload" href="/hero-video.mp4" as="video" type="video/mp4" />
                 <link rel="preload" href="/hero-gym.png" as="image" />
 
                 {/* Google Fonts */}
