@@ -26,7 +26,7 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Show preview immediately
+        // Show preview immediately with local data URL
         const reader = new FileReader();
         reader.onloadend = () => {
             setPreview(reader.result as string);
@@ -50,6 +50,8 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
             }
 
             const data = await response.json();
+            // Update preview with actual Blob URL instead of data URL
+            setPreview(data.url);
             onUpload(data.url);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to upload image';
