@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 interface Post {
-    id: number;
+    id: string;
     title: string;
     slug: string;
     published: boolean;
@@ -19,7 +19,7 @@ export default function PostsManagementPage() {
     const { data: session, status } = useSession();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default function PostsManagementPage() {
         }
     };
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id: string) => {
         setDeleting(true);
         try {
             const res = await fetch(`/api/posts/${id}`, {
