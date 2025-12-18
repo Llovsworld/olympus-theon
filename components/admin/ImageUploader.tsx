@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
 interface ImageUploaderProps {
     onUpload: (url: string) => void;
@@ -8,9 +9,10 @@ interface ImageUploaderProps {
     currentImage?: string;
 }
 
-export default function ImageUploader({ onUpload, label = "Upload Image", currentImage }: ImageUploaderProps) {
+export default function ImageUploader({ onUpload, label = "Imagen Destacada", currentImage }: ImageUploaderProps) {
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(currentImage || '');
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Sync preview with prop when loading drafts
@@ -24,7 +26,7 @@ export default function ImageUploader({ onUpload, label = "Upload Image", curren
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Show preview
+        // Show preview immediately
         const reader = new FileReader();
         reader.onloadend = () => {
             setPreview(reader.result as string);
@@ -52,48 +54,41 @@ export default function ImageUploader({ onUpload, label = "Upload Image", curren
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to upload image';
             console.error('Upload error:', error);
-            alert(`Failed to upload image: ${message}`);
+            alert(`Error al subir imagen: ${message}`);
             setPreview(currentImage || '');
         } finally {
             setUploading(false);
         }
     }
 
+    function handleRemove(e: React.MouseEvent) {
+        e.stopPropagation();
+        setPreview('');
+        onUpload('');
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
+
     return (
         <div>
-            <label style={{
-                display: 'block',
-                marginBottom: '0.5rem',
-                fontSize: '0.9rem',
-                color: '#888',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-            }}>
+            <label className="admin-label">
                 {label}
             </label>
 
-            <div style={{
-                border: '2px dashed var(--border)',
-                borderRadius: '4px',
-                padding: '2rem',
-                textAlign: 'center',
-                background: 'rgba(255, 255, 255, 0.02)',
-                cursor: 'pointer',
-                transition: 'all 0.3s'
-            }}
-                onClick={() => fileInputRef.current?.click()}
+            <div
+                className={`admin-uploader ${isDragging ? 'dragging' : ''}`}
+                onClick={() => !uploading && fileInputRef.current?.click()}
                 onDragOver={(e) => {
                     e.preventDefault();
-                    e.currentTarget.style.borderColor = 'var(--foreground)';
+                    setIsDragging(true);
                 }}
-                onDragLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--border)';
-                }}
+                onDragLeave={() => setIsDragging(false)}
                 onDrop={(e) => {
                     e.preventDefault();
-                    e.currentTarget.style.borderColor = 'var(--border)';
+                    setIsDragging(false);
                     const file = e.dataTransfer.files[0];
-                    if (file) {
+                    if (file && !uploading) {
                         const input = fileInputRef.current;
                         if (input) {
                             const dataTransfer = new DataTransfer();
@@ -104,30 +99,40 @@ export default function ImageUploader({ onUpload, label = "Upload Image", curren
                     }
                 }}
             >
-                {preview ? (
-                    <div>
+                {uploading ? (
+                    <div className="admin-uploader-loading">
+                        <div className="admin-spinner"></div>
+                        <p className="admin-uploader-text">Subiendo imagen...</p>
+                    </div>
+                ) : preview ? (
+                    <div style={{ position: 'relative' }}>
                         <img
                             src={preview}
                             alt="Preview"
-                            style={{
-                                maxWidth: '100%',
-                                maxHeight: '300px',
-                                borderRadius: '4px',
-                                marginBottom: '1rem'
-                            }}
+                            className="admin-uploader-preview"
                         />
-                        <p style={{ color: '#888', fontSize: '0.9rem' }}>
-                            Click to change image
+                        <p className="admin-uploader-text" style={{ marginTop: '0.5rem' }}>
+                            Haz click para cambiar
                         </p>
+                        <button
+                            type="button"
+                            className="admin-uploader-remove"
+                            onClick={handleRemove}
+                            title="Eliminar imagen"
+                        >
+                            <X size={16} />
+                        </button>
                     </div>
                 ) : (
                     <div>
-                        <p style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</p>
-                        <p style={{ color: '#888', marginBottom: '0.5rem' }}>
-                            {uploading ? 'Uploading...' : 'Click or drag image here'}
+                        <div className="admin-uploader-icon">
+                            {isDragging ? <Upload size={48} /> : <ImageIcon size={48} />}
+                        </div>
+                        <p className="admin-uploader-text">
+                            {isDragging ? 'Suelta la imagen aquí' : 'Click o arrastra una imagen'}
                         </p>
-                        <p style={{ color: '#666', fontSize: '0.85rem' }}>
-                            Max 5MB • JPG, PNG, GIF, WEBP
+                        <p className="admin-uploader-hint">
+                            Max 5MB · JPG, PNG, GIF, WEBP
                         </p>
                     </div>
                 )}

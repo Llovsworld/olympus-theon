@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { Plus, Trash2, ExternalLink, AlertTriangle } from 'lucide-react';
 
 interface Book {
     id: string;
@@ -60,7 +61,7 @@ export default function BooksManagementPage() {
             }
         } catch (error) {
             console.error('Error deleting book:', error);
-            alert('Failed to delete book');
+            alert('Error al eliminar el libro');
         } finally {
             setDeleting(false);
         }
@@ -69,13 +70,12 @@ export default function BooksManagementPage() {
     if (status === 'loading' || loading) {
         return (
             <div style={{
-                minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: '#0a0a0a'
+                minHeight: '50vh'
             }}>
-                <div style={{ color: '#FFD700', fontSize: '1.2rem' }}>Loading...</div>
+                <div className="admin-spinner" style={{ width: '48px', height: '48px' }}></div>
             </div>
         );
     }
@@ -85,179 +85,131 @@ export default function BooksManagementPage() {
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: '#0a0a0a',
-            padding: '4rem 2rem',
-            color: '#e0e0e0'
-        }}>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '3rem'
-                }}>
+        <div className="admin-fade-enter">
+            {/* Header */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '2rem'
+            }}>
+                <div>
                     <h1 style={{
-                        fontSize: '2.5rem',
+                        fontSize: '2rem',
                         fontWeight: '700',
                         background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                         WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent'
+                        WebkitTextFillColor: 'transparent',
+                        marginBottom: '0.5rem'
                     }}>
-                        Manage Books
+                        Gestionar Libros
                     </h1>
-                    <Link
-                        href="/admin/books/new"
-                        style={{
-                            padding: '0.75rem 1.5rem',
-                            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                            color: '#000',
-                            textDecoration: 'none',
-                            borderRadius: '4px',
-                            fontWeight: '600',
-                            transition: 'transform 0.2s'
-                        }}
-                    >
-                        + New Book
+                    <p className="admin-text-muted">
+                        {books.length} libro{books.length !== 1 ? 's' : ''} en total
+                    </p>
+                </div>
+                <Link href="/admin/books/new" className="admin-btn admin-btn-primary">
+                    <Plus size={18} />
+                    Nuevo Libro
+                </Link>
+            </div>
+
+            {books.length === 0 ? (
+                <div className="admin-card" style={{ textAlign: 'center', padding: '4rem' }}>
+                    <p className="admin-text-muted" style={{ fontSize: '1.1rem' }}>
+                        No hay libros todavía. ¡Añade tu primer libro!
+                    </p>
+                    <Link href="/admin/books/new" className="admin-btn admin-btn-primary" style={{ marginTop: '1.5rem' }}>
+                        <Plus size={18} />
+                        Añadir Libro
                     </Link>
                 </div>
-
-                {books.length === 0 ? (
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '4rem',
-                        color: '#888'
-                    }}>
-                        No books yet. Upload your first book!
-                    </div>
-                ) : (
-                    <div style={{
-                        background: '#111',
-                        borderRadius: '8px',
-                        overflow: 'hidden'
-                    }}>
-                        <table style={{
-                            width: '100%',
-                            borderCollapse: 'collapse'
-                        }}>
-                            <thead>
-                                <tr style={{
-                                    background: '#1a1a1a',
-                                    borderBottom: '2px solid #FFD700'
-                                }}>
-                                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600' }}>Title</th>
-                                    <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600' }}>Slug</th>
-                                    <th style={{ padding: '1rem', textAlign: 'center', fontWeight: '600' }}>Status</th>
-                                    <th style={{ padding: '1rem', textAlign: 'center', fontWeight: '600' }}>Created</th>
-                                    <th style={{ padding: '1rem', textAlign: 'center', fontWeight: '600' }}>Actions</th>
+            ) : (
+                <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Slug</th>
+                                <th style={{ textAlign: 'center' }}>Estado</th>
+                                <th style={{ textAlign: 'center' }}>Creado</th>
+                                <th style={{ textAlign: 'center' }}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {books.map((book) => (
+                                <tr key={book.id}>
+                                    <td>
+                                        <Link
+                                            href={`/books/${book.slug}`}
+                                            target="_blank"
+                                            style={{
+                                                color: 'var(--admin-text)',
+                                                textDecoration: 'none',
+                                                fontWeight: '500',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem'
+                                            }}
+                                        >
+                                            {book.title}
+                                            <ExternalLink size={14} style={{ opacity: 0.5 }} />
+                                        </Link>
+                                    </td>
+                                    <td style={{ color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                                        /{book.slug}
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <span className={`admin-badge ${book.published ? 'admin-badge-success' : 'admin-badge-warning'}`}>
+                                            {book.published ? 'Publicado' : 'Borrador'}
+                                        </span>
+                                    </td>
+                                    <td style={{ textAlign: 'center', color: 'var(--admin-text-muted)', fontSize: '0.9rem' }}>
+                                        {new Date(book.createdAt).toLocaleDateString('es-ES')}
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <button
+                                            onClick={() => setDeleteId(book.id)}
+                                            className="admin-btn admin-btn-danger"
+                                            style={{ padding: '0.5rem 1rem' }}
+                                        >
+                                            <Trash2 size={16} />
+                                            Eliminar
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {books.map((book) => (
-                                    <tr key={book.id} style={{
-                                        borderBottom: '1px solid #222',
-                                        transition: 'background 0.2s'
-                                    }}>
-                                        <td style={{ padding: '1rem' }}>
-                                            <Link
-                                                href={`/books/${book.slug}`}
-                                                target="_blank"
-                                                style={{
-                                                    color: '#fff',
-                                                    textDecoration: 'none',
-                                                    fontWeight: '500'
-                                                }}
-                                            >
-                                                {book.title}
-                                            </Link>
-                                        </td>
-                                        <td style={{ padding: '1rem', color: '#888', fontSize: '0.9rem' }}>
-                                            /{book.slug}
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            <span style={{
-                                                padding: '0.25rem 0.75rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.8rem',
-                                                fontWeight: '600',
-                                                background: book.published ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 165, 0, 0.1)',
-                                                color: book.published ? '#0f0' : '#FFA500'
-                                            }}>
-                                                {book.published ? 'Published' : 'Draft'}
-                                            </span>
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center', color: '#888', fontSize: '0.9rem' }}>
-                                            {new Date(book.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            <button
-                                                onClick={() => setDeleteId(book.id)}
-                                                style={{
-                                                    padding: '0.5rem 1rem',
-                                                    background: 'rgba(255, 0, 0, 0.1)',
-                                                    color: '#ff4444',
-                                                    border: '1px solid rgba(255, 0, 0, 0.3)',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer',
-                                                    fontWeight: '500',
-                                                    transition: 'all 0.2s'
-                                                }}
-                                                onMouseOver={(e) => {
-                                                    e.currentTarget.style.background = 'rgba(255, 0, 0, 0.2)';
-                                                    e.currentTarget.style.borderColor = '#ff4444';
-                                                }}
-                                                onMouseOut={(e) => {
-                                                    e.currentTarget.style.background = 'rgba(255, 0, 0, 0.1)';
-                                                    e.currentTarget.style.borderColor = 'rgba(255, 0, 0, 0.3)';
-                                                }}
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
 
             {/* Delete Confirmation Modal */}
             {deleteId !== null && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.8)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        background: '#1a1a1a',
-                        padding: '2rem',
-                        borderRadius: '8px',
-                        maxWidth: '500px',
-                        width: '90%',
-                        border: '1px solid #333'
-                    }}>
-                        <h2 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: '1rem',
-                            color: '#fff'
-                        }}>
-                            Confirm Delete
-                        </h2>
+                <div className="admin-modal-overlay" onClick={() => !deleting && setDeleteId(null)}>
+                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                            <div style={{
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '50%',
+                                background: 'rgba(239, 68, 68, 0.15)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <AlertTriangle size={24} color="#ef4444" />
+                            </div>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--admin-text)' }}>
+                                Confirmar Eliminación
+                            </h2>
+                        </div>
                         <p style={{
-                            color: '#ccc',
+                            color: 'var(--admin-text-secondary)',
                             marginBottom: '2rem',
                             lineHeight: '1.6'
                         }}>
-                            Are you sure you want to delete this book? This action cannot be undone.
+                            ¿Estás seguro de que quieres eliminar este libro? Esta acción no se puede deshacer.
                         </p>
                         <div style={{
                             display: 'flex',
@@ -267,34 +219,16 @@ export default function BooksManagementPage() {
                             <button
                                 onClick={() => setDeleteId(null)}
                                 disabled={deleting}
-                                style={{
-                                    padding: '0.75rem 1.5rem',
-                                    background: '#333',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: deleting ? 'not-allowed' : 'pointer',
-                                    fontWeight: '500',
-                                    opacity: deleting ? 0.5 : 1
-                                }}
+                                className="admin-btn admin-btn-secondary"
                             >
-                                Cancel
+                                Cancelar
                             </button>
                             <button
                                 onClick={() => handleDelete(deleteId)}
                                 disabled={deleting}
-                                style={{
-                                    padding: '0.75rem 1.5rem',
-                                    background: '#ff4444',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: deleting ? 'not-allowed' : 'pointer',
-                                    fontWeight: '500',
-                                    opacity: deleting ? 0.5 : 1
-                                }}
+                                className="admin-btn admin-btn-danger"
                             >
-                                {deleting ? 'Deleting...' : 'Delete'}
+                                {deleting ? 'Eliminando...' : 'Eliminar'}
                             </button>
                         </div>
                     </div>
