@@ -10,16 +10,30 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { searchParams } = new URL(request.url);
-        const filename = searchParams.get('filename');
+        const formData = await request.formData();
+        const file = formData.get('file') as File;
 
-        // Simple check to ensure we have a request body (file)
-        if (!request.body) {
+        if (!file) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
-        const blob = await put(filename || `upload-${Date.now()}`, request.body, {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            return NextResponse.json({ error: 'Invalid file type. Only JPG, PNG, GIF, WEBP allowed.' }, { status: 400 });
+        }
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            return NextResponse.json({ error: 'File too large. Max 5MB allowed.' }, { status: 400 });
+        }
+
+        const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+
+        // Pass token explicitly to ensure it's used
+        const blob = await put(filename, file, {
             access: 'public',
+            token: process.env.BLOB_READ_WRITE_TOKEN,
         });
 
         return NextResponse.json({ url: blob.url });
