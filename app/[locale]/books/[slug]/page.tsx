@@ -40,7 +40,8 @@ export default async function BookPage({ params }: BookPageProps) {
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                paddingTop: '80px' // Account for sticky header height
             }}>
                 {book.coverImage ? (
                     <>

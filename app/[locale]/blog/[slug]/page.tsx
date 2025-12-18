@@ -50,7 +50,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                paddingTop: '80px' // Account for sticky header height
             }}>
                 {post.featuredImage ? (
                     <>
