@@ -8,8 +8,6 @@ import {
     BookOpen,
     Eye,
     Plus,
-    Settings,
-    Image as ImageIcon,
     ArrowRight
 } from 'lucide-react';
 
@@ -157,8 +155,8 @@ export default async function AdminDashboard() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <ActionLink href="/admin/posts/new" icon={<Plus size={20} />} title="New Post" desc="Write a new blog post" primary />
                             <ActionLink href="/admin/books/new" icon={<BookOpen size={20} />} title="New Book" desc="Upload a book to the library" />
-                            <ActionLink href="/admin/media" icon={<ImageIcon size={20} />} title="Media Library" desc="Manage uploaded images" />
-                            <ActionLink href="/admin/settings" icon={<Settings size={20} />} title="Settings" desc="Configure site options" />
+                            <ActionLink href="/admin/posts" icon={<FileText size={20} />} title="Gestionar Posts" desc="Ver y editar posts" />
+                            <ActionLink href="/admin/books" icon={<BookOpen size={20} />} title="Gestionar Libros" desc="Ver y editar libros" />
                         </div>
                     </div>
                 </div>
