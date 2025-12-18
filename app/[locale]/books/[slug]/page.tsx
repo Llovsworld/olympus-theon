@@ -35,13 +35,13 @@ export default async function BookPage({ params }: BookPageProps) {
             {/* Immersive Hero Section */}
             <div style={{
                 position: 'relative',
-                height: '80vh',
+                minHeight: 'calc(100vh - 100px)',
                 width: '100%',
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                paddingTop: '80px' // Account for sticky header height
+                marginTop: '100px' // Account for sticky header height
             }}>
                 {book.coverImage ? (
                     <>

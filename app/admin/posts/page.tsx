@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Plus, Trash2, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, AlertTriangle, Pencil } from 'lucide-react';
 
 interface Post {
     id: string;
@@ -168,14 +168,24 @@ export default function PostsManagementPage() {
                                         {new Date(post.createdAt).toLocaleDateString('es-ES')}
                                     </td>
                                     <td style={{ textAlign: 'center' }}>
-                                        <button
-                                            onClick={() => setDeleteId(post.id)}
-                                            className="admin-btn admin-btn-danger"
-                                            style={{ padding: '0.5rem 1rem' }}
-                                        >
-                                            <Trash2 size={16} />
-                                            Eliminar
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                            <Link
+                                                href={`/admin/posts/edit/${post.id}`}
+                                                className="admin-btn admin-btn-secondary"
+                                                style={{ padding: '0.5rem 1rem' }}
+                                            >
+                                                <Pencil size={16} />
+                                                Editar
+                                            </Link>
+                                            <button
+                                                onClick={() => setDeleteId(post.id)}
+                                                className="admin-btn admin-btn-danger"
+                                                style={{ padding: '0.5rem 1rem' }}
+                                            >
+                                                <Trash2 size={16} />
+                                                Eliminar
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
