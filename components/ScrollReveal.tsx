@@ -22,7 +22,7 @@ export default function ScrollReveal({
     direction = 'up',
     variant = 'slide',
     delay = 0,
-    duration = 800
+    duration = 500  // Faster default for snappier feel
 }: ScrollRevealProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);

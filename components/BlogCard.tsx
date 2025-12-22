@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { memo } from 'react';
 
 interface BlogCardProps {
     post: {
@@ -19,23 +19,13 @@ function getPlainTextExcerpt(html: string, maxLength: number = 150): string {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
-export default function BlogCard({ post }: BlogCardProps) {
-    const [isHovered, setIsHovered] = useState(false);
-
+function BlogCard({ post }: BlogCardProps) {
     return (
         <Link
             href={`/blog/${post.slug}`}
             className="blog-card-link"
         >
-            <article
-                className="blog-card"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                style={{
-                    transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
-                    boxShadow: isHovered ? '0 20px 40px rgba(0, 0, 0, 0.4)' : '0 4px 10px rgba(0,0,0,0.2)'
-                }}
-            >
+            <article className="blog-card">
                 {post.featuredImage && (
                     <div className="blog-card-image">
                         <img
@@ -43,9 +33,6 @@ export default function BlogCard({ post }: BlogCardProps) {
                             alt={post.title}
                             loading="lazy"
                             decoding="async"
-                            style={{
-                                transform: isHovered ? 'scale(1.08)' : 'scale(1)'
-                            }}
                         />
                         <div className="blog-card-image-overlay" />
                     </div>
@@ -79,3 +66,4 @@ export default function BlogCard({ post }: BlogCardProps) {
     );
 }
 
+export default memo(BlogCard);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
@@ -13,11 +13,11 @@ export default function PageTransition({ children }: { children: React.ReactNode
         // Start exit animation
         setIsAnimating(true);
 
-        // Wait for animation, then update content
+        // Wait for animation, then update content - faster timing
         const timer = setTimeout(() => {
             setDisplayChildren(children);
             setIsAnimating(false);
-        }, 800);
+        }, 400);
 
         return () => clearTimeout(timer);
     }, [pathname, children]);
@@ -39,10 +39,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
                     // Start animation
                     setIsAnimating(true);
 
-                    // Navigate after delay
+                    // Navigate after shorter delay for snappier feel
                     setTimeout(() => {
                         router.push(url.pathname + url.search + url.hash);
-                    }, 500); // Wait for wipe to cover screen
+                    }, 300);
                 }
             }
         };
@@ -74,3 +74,4 @@ export default function PageTransition({ children }: { children: React.ReactNode
         </>
     );
 }
+
