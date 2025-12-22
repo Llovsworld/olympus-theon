@@ -5129,21 +5129,29 @@ h6 {
 
 /* Responsive grid that works on all screen sizes */
 .responsive-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: var(--space-4);
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  /* Mobile first - single column */
+  gap: var(--space-3) !important;
 }
 
-/* Single column on very small screens */
-@media (max-width: 480px) {
+/* Tablet - 2 columns */
+@media (min-width: 640px) {
   .responsive-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-4) !important;
+  }
+}
+
+/* Desktop - 3 columns */
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 
 /* Ensure no horizontal overflow on mobile */
-@media (max-width: 480px) {
+@media (max-width: 639px) {
   .container {
     padding-inline: 1rem;
   }
@@ -5165,24 +5173,71 @@ h6 {
   }
 }
 
-/* Tablet adjustments */
+/* ============================================
+   BLOG/BOOKS CARD STYLES - Mobile Optimized
+   ============================================ */
+
+/* Base card styles */
+.blog-card,
+.book-card,
+.responsive-grid>article,
+.responsive-grid>div>article {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobile card improvements */
+@media (max-width: 639px) {
+  .responsive-grid {
+    padding: 0 0.5rem;
+  }
+
+  .responsive-grid>article,
+  .responsive-grid>div>article,
+  .responsive-grid>div>a>article {
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Smaller featured badge on mobile */
+  .responsive-grid>div>a>article>div:first-child {
+    font-size: 0.6rem !important;
+    padding: 0.3rem 0.6rem !important;
+  }
+
+  /* Smaller title on mobile */
+  .responsive-grid h2 {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Smaller excerpt on mobile */
+  .responsive-grid p {
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Smaller meta info on mobile */
+  .responsive-grid time,
+  .responsive-grid span {
+    font-size: 0.65rem !important;
+  }
+
+  /* Compact card padding */
+  .responsive-grid>div>a>article>div:last-child,
+  .responsive-grid>article>div:last-child {
+    padding: 1rem !important;
+  }
+}
+
+/* Tablet card improvements */
 @media (min-width: 481px) and (max-width: 768px) {
-  .responsive-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .responsive-grid h2 {
+    font-size: 1.1rem;
   }
-}
 
-/* Large tablet / small desktop */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .responsive-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Desktop */
-@media (min-width: 1025px) {
-  .responsive-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .responsive-grid p {
+    font-size: 0.9rem;
   }
 }
 
