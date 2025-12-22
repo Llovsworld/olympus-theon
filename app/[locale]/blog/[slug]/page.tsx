@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
+import SocialShare from '@/components/SocialShare';
 import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -217,6 +218,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     }}
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
+
+                {/* Social Share Section */}
+                <div style={{
+                    marginTop: '4rem',
+                    paddingTop: '2rem',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                    <SocialShare
+                        url={`https://olympustheon.com/blog/${slug}`}
+                        title={post.title}
+                        description={post.metaDescription || post.excerpt || undefined}
+                    />
+                </div>
             </article>
 
             {/* Read Next Section */}

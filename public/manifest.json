@@ -1,0 +1,31 @@
+{
+    "name": "Olympus Theon",
+    "short_name": "Olympus",
+    "description": "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching y desarrollo personal.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#050505",
+    "theme_color": "#FFD700",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/olympus_logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/olympus_logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "lifestyle",
+        "education",
+        "health"
+    ],
+    "lang": "es",
+    "prefer_related_applications": false
+}

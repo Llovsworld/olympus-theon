@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import PageTransition from "@/components/PageTransition";
-import Script from "next/script";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -57,6 +57,7 @@ export const metadata: Metadata = {
         icon: "/olympus_logo.png",
         apple: "/olympus_logo.png",
     },
+    manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -67,6 +68,15 @@ export default function RootLayout({
     return (
         <html lang="es" suppressHydrationWarning>
             <head>
+                {/* PWA Meta Tags */}
+                <meta name="application-name" content="Olympus Theon" />
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+                <meta name="apple-mobile-web-app-title" content="Olympus Theon" />
+                <meta name="mobile-web-app-capable" content="yes" />
+                <meta name="theme-color" content="#050505" />
+                <link rel="apple-touch-icon" href="/olympus_logo.png" />
+
                 {/* DNS Prefetch and Preconnect */}
                 <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -77,6 +87,7 @@ export default function RootLayout({
 
                 {/* Google Fonts */}
                 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
+
 
                 {/* JSON-LD Structured Data */}
                 <script
@@ -119,6 +130,7 @@ export default function RootLayout({
                 />
             </head>
             <body className={inter.className} style={{ backgroundColor: '#050505', color: '#ededed' }} suppressHydrationWarning>
+                <ServiceWorkerRegistration />
                 <Providers>
                     <PageTransition>
                         {children}
