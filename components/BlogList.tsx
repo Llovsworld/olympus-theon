@@ -71,12 +71,7 @@ export default function BlogList({ posts }: BlogListProps) {
             </div>
 
             {/* Posts Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '2rem',
-                marginTop: '0'
-            }}>
+            <div className="responsive-grid" style={{ marginTop: '0' }}>
                 {filteredPosts.map((post, index) => {
                     // Only show featured style for the very first post AND if there is no search query
                     const isFeatured = index === 0 && !searchQuery;
