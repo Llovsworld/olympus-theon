@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,59 @@ interface BlogPostPageProps {
     params: Promise<{
         slug: string;
     }>;
+}
+
+// Dynamic SEO metadata for each blog post
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+    const { slug } = await params;
+
+    const post = await prisma.post.findUnique({
+        where: { slug },
+        select: {
+            title: true,
+            excerpt: true,
+            metaDescription: true,
+            content: true,
+            featuredImage: true,
+            createdAt: true,
+        }
+    });
+
+    if (!post) {
+        return {
+            title: 'Post no encontrado',
+        };
+    }
+
+    // Generate description from excerpt, metaDescription, or content
+    const description = post.metaDescription || post.excerpt ||
+        post.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...';
+
+    return {
+        title: post.title,
+        description,
+        openGraph: {
+            title: `${post.title} | Olympus Theon`,
+            description,
+            type: 'article',
+            publishedTime: post.createdAt.toISOString(),
+            authors: ['Olympus Theon'],
+            images: post.featuredImage ? [
+                {
+                    url: post.featuredImage,
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                }
+            ] : undefined,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description,
+            images: post.featuredImage ? [post.featuredImage] : undefined,
+        },
+    };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {

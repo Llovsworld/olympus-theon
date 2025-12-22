@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,55 @@ interface BookPageProps {
     params: Promise<{
         slug: string;
     }>;
+}
+
+// Dynamic SEO metadata for each book
+export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
+    const { slug } = await params;
+
+    const book = await prisma.book.findUnique({
+        where: { slug },
+        select: {
+            title: true,
+            author: true,
+            description: true,
+            coverImage: true,
+            createdAt: true,
+        }
+    });
+
+    if (!book) {
+        return {
+            title: 'Libro no encontrado',
+        };
+    }
+
+    const description = book.description || `Lee ${book.title} en Olympus Theon`;
+
+    return {
+        title: book.title,
+        description,
+        openGraph: {
+            title: `${book.title} | Biblioteca Olympus Theon`,
+            description,
+            type: 'book',
+            authors: book.author ? [book.author] : undefined,
+            images: book.coverImage ? [
+                {
+                    url: book.coverImage,
+                    width: 800,
+                    height: 1200,
+                    alt: book.title,
+                }
+            ] : undefined,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: book.title,
+            description,
+            images: book.coverImage ? [book.coverImage] : undefined,
+        },
+    };
 }
 
 export default async function BookPage({ params }: BookPageProps) {
