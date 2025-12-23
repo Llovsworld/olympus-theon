@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching y desarrollo personal.",
         images: [
             {
-                url: "/hero-gym.png",
+                url: "/og-image.png",
                 width: 1200,
                 height: 630,
                 alt: "Olympus Theon - Forjando Hombres de Élite",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Olympus Theon | Forjando Hombres de Élite",
         description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto.",
-        images: ["/hero-gym.png"],
+        images: ["/og-image.png"],
     },
     robots: {
         index: true,
