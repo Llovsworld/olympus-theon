@@ -657,19 +657,21 @@ h6 {
   }
 
   .hero {
-    padding: 6rem var(--space-3) 4rem;
-    padding-bottom: max(4rem, env(safe-area-inset-bottom, 4rem));
+    padding: 5rem var(--space-3) 2rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
     min-height: calc(100vh - env(safe-area-inset-top, 0px));
   }
 
   .hero-title {
-    font-size: clamp(2rem, 8vw, 2.5rem);
+    font-size: clamp(1.75rem, 7vw, 2rem);
+    margin-bottom: 1rem;
   }
 
   .hero-subtitle {
-    font-size: 1rem;
-    padding: 0 1rem;
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
     max-width: 100%;
+    margin-bottom: 1.5rem;
   }
 
   .hero-actions {
@@ -1361,24 +1363,24 @@ h6 {
 
 @media (max-width: 768px) {
   .story-section {
-    padding: 6rem 0;
+    padding: 3rem 0;
     background-attachment: scroll;
     /* Better mobile performance */
   }
 
   .story-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 
   .story-text {
-    font-size: 1.1rem;
-    padding: 0 1rem;
+    font-size: 1rem;
+    padding: 0 0.5rem;
   }
 
   .story-logo {
-    width: 200px;
-    height: 200px;
-    right: -50px;
+    width: 150px;
+    height: 150px;
+    right: -40px;
     opacity: 0.05;
   }
 }
@@ -1748,16 +1750,26 @@ h6 {
 
 @media (max-width: 768px) {
   .cta-section {
-    padding: 6rem 0 8rem;
-    /* Extra bottom padding to prevent overlap */
+    padding: 3rem 0 4rem;
+  }
+
+  .cta-main-title {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-main-description {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
   }
 
   .cta-buttons-primary {
     flex-direction: column;
     align-items: stretch;
-    max-width: 400px;
+    max-width: 320px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 1.5rem;
   }
 
   .btn-cta-consultation,
@@ -1765,16 +1777,37 @@ h6 {
   .btn-cta-whatsapp {
     width: 100%;
     min-width: unset;
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
   }
 
   .cta-whatsapp-container {
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
+  }
+
+  .cta-benefits {
+    gap: 2rem;
+    padding-top: 2rem;
+  }
+
+  .cta-benefit-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+  }
+
+  .cta-benefit-title {
+    font-size: 0.9rem;
+  }
+
+  .cta-benefit-text {
+    font-size: 0.85rem;
   }
 
   /* Better spacing for testimonials before CTA */
   .testimonials-section,
   .testimonials-section-centered {
-    padding-bottom: 5rem;
+    padding-bottom: 2rem;
   }
 }
 
@@ -2386,20 +2419,41 @@ h6 {
 
 @media (max-width: 768px) {
   .method-section-alt {
-    padding: 6rem 0;
+    padding: 3rem 0;
   }
 
   .method-rows {
-    gap: 6rem;
+    gap: 3rem;
+  }
+
+  .method-image-container {
+    height: 280px;
+  }
+
+  .method-title-large {
+    font-size: 1.8rem;
+  }
+
+  .method-description {
+    font-size: 1rem;
   }
 
   .method-stats-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .method-stat-value {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .method-stat-label {
+    font-size: 0.6rem;
+  }
+
+  .method-main-cta {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
   }
 }
 
@@ -2813,12 +2867,12 @@ h6 {
 /* Responsive */
 @media (max-width: 768px) {
   .testimonials-section {
-    padding: 6rem 0;
+    padding: 3rem 0;
   }
 
   .testimonials-title {
-    font-size: 1.8rem;
-    margin-bottom: 3rem;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .testimonials-scroll-container {
@@ -2828,14 +2882,14 @@ h6 {
   }
 
   .testimonials-scroll-wrapper {
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .testimonial-card {
-    padding: 2.5rem 1.5rem;
-    min-width: 320px;
-    max-width: 320px;
-    min-height: 400px;
+    padding: 1.5rem 1.25rem;
+    min-width: 290px;
+    max-width: 290px;
+    min-height: 300px;
   }
 
   .testimonial-quote-container {
