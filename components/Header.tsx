@@ -7,30 +7,24 @@ import { useState, useEffect } from 'react';
 export default function Header() {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-
-            // Scrolled styling
+            // Scrolled styling - header always visible
             setScrolled(currentScrollY > 50);
 
-            // Hide/Show logic
-            if (currentScrollY > lastScrollY && currentScrollY > 80) { // Scrolling down & passed threshold
-                setIsVisible(false);
-            } else { // Scrolling up
-                setIsVisible(true);
-            }
-
-            setLastScrollY(currentScrollY);
+            // Calculate scroll progress
+            const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = windowHeight > 0 ? (currentScrollY / windowHeight) * 100 : 0;
+            setScrollProgress(Math.min(100, Math.max(0, progress)));
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [lastScrollY]);
+    }, []);
 
     // Close mobile menu when route changes
     useEffect(() => {
@@ -44,7 +38,13 @@ export default function Header() {
 
     return (
         <>
-            <header className={`header ${scrolled ? 'scrolled' : ''} ${!isVisible ? 'header-hidden' : ''}`}>
+            <header className={`header ${scrolled ? 'scrolled compact' : ''}`}>
+                {/* Reading Progress Bar */}
+                <div
+                    className="reading-progress-bar"
+                    style={{ width: `${scrollProgress}%` }}
+                />
+
                 <div className="container header-content-centered">
                     {/* Hamburger Button (mobile only) */}
                     <button
@@ -64,7 +64,7 @@ export default function Header() {
                     </nav>
 
                     {/* Logo */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className="logo-wrapper">
                         <Link href="/" className="logo-centered">OLYMPUS THEON</Link>
                         <span className="header-tagline">Trust the process</span>
                     </div>

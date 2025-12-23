@@ -48,21 +48,21 @@ export default function StorySection() {
                         <ScrollReveal variant="fade" delay={300}>
                             <div className="ceo-philosophy-stats" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-around', gap: '0.5rem' }}>
                                 <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
-                                    <div className="ceo-philosophy-stat-value">150+</div>
-                                    <div className="ceo-philosophy-stat-label">
-                                        PROYECTOS<br />COMPLETADOS
-                                    </div>
-                                </div>
-                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
-                                    <div className="ceo-philosophy-stat-value">98%</div>
-                                    <div className="ceo-philosophy-stat-label">
-                                        SATISFACCIÓN<br />CLIENTE
-                                    </div>
-                                </div>
-                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
-                                    <div className="ceo-philosophy-stat-value">12+</div>
+                                    <div className="ceo-philosophy-stat-value">3+</div>
                                     <div className="ceo-philosophy-stat-label">
                                         AÑOS<br />EXPERIENCIA
+                                    </div>
+                                </div>
+                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
+                                    <div className="ceo-philosophy-stat-value">400+</div>
+                                    <div className="ceo-philosophy-stat-label">
+                                        SUSCRIPTORES<br />YOUTUBE
+                                    </div>
+                                </div>
+                                <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
+                                    <div className="ceo-philosophy-stat-value">100%</div>
+                                    <div className="ceo-philosophy-stat-label">
+                                        SATISFACCIÓN<br />CLIENTES
                                     </div>
                                 </div>
                             </div>

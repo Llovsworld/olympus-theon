@@ -62,6 +62,7 @@ export default function ScrollReveal({
                 transitionDelay: `${delay}ms`,
                 transitionDuration: `${duration}ms`
             }}
+            suppressHydrationWarning
         >
             {children}
         </div>

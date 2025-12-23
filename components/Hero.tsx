@@ -8,17 +8,50 @@ export default function Hero() {
     const [videoReady, setVideoReady] = useState(false);
 
     useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.playbackRate = 0.8; // Slow motion effect
-            videoRef.current.play().catch(error => {
-                console.error("Video autoplay failed:", error);
-            });
+        const video = videoRef.current;
+        if (!video) return;
+
+        // Set playback rate
+        video.playbackRate = 0.8;
+
+        // Function to mark video as ready
+        const handleVideoReady = () => {
+            setVideoReady(true);
+        };
+
+        // Listen for multiple events that indicate video is ready
+        video.addEventListener('canplay', handleVideoReady);
+        video.addEventListener('loadeddata', handleVideoReady);
+        video.addEventListener('playing', handleVideoReady);
+
+        // Check if video is already ready (for cached videos)
+        if (video.readyState >= 3) {
+            handleVideoReady();
         }
+
+        // Try to play the video
+        video.play().catch(error => {
+            console.error("Video autoplay failed:", error);
+            // Still show the video even if autoplay fails
+            setVideoReady(true);
+        });
+
+        // Fallback: show video after 2 seconds regardless
+        const fallbackTimeout = setTimeout(() => {
+            setVideoReady(true);
+        }, 2000);
+
+        return () => {
+            video.removeEventListener('canplay', handleVideoReady);
+            video.removeEventListener('loadeddata', handleVideoReady);
+            video.removeEventListener('playing', handleVideoReady);
+            clearTimeout(fallbackTimeout);
+        };
     }, []);
 
     return (
         <section className="hero" style={{ position: 'relative', overflow: 'hidden', isolation: 'isolate', minHeight: '100vh', backgroundColor: '#000' }}>
-            {/* Video Background - hidden until ready */}
+            {/* Video Background */}
             <video
                 ref={videoRef}
                 autoPlay
@@ -28,8 +61,6 @@ export default function Hero() {
                 preload="auto"
                 className="ken-burns"
                 poster="/hero-gym.png"
-                onCanPlay={() => setVideoReady(true)}
-                onLoadedData={() => setVideoReady(true)}
                 style={{
                     position: 'absolute',
                     top: 0,
@@ -39,7 +70,7 @@ export default function Hero() {
                     objectFit: 'cover',
                     zIndex: -1,
                     opacity: videoReady ? 1 : 0,
-                    transition: 'opacity 0.3s ease-in-out',
+                    transition: 'opacity 0.5s ease-in-out',
                 }}
             >
                 <source src="/hero-video.mp4" type="video/mp4" />
