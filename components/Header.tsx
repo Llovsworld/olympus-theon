@@ -6,9 +6,15 @@ import { useState, useEffect } from 'react';
 
 export default function Header() {
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
+
+    // Mark component as mounted to prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -36,13 +42,19 @@ export default function Header() {
         return pathname.includes(route);
     };
 
+    // Build class names only after mount to avoid hydration mismatch
+    const headerClasses = ['header'];
+    if (mounted && scrolled) {
+        headerClasses.push('scrolled', 'compact');
+    }
+
     return (
         <>
-            <header className={`header ${scrolled ? 'scrolled compact' : ''}`}>
+            <header className={headerClasses.join(' ')}>
                 {/* Reading Progress Bar */}
                 <div
                     className="reading-progress-bar"
-                    style={{ width: `${scrollProgress}%` }}
+                    style={{ width: mounted ? `${scrollProgress}%` : '0%' }}
                 />
 
                 <div className="container header-content-centered">
