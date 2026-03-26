@@ -25,7 +25,7 @@ function BlogCard({ post }: BlogCardProps) {
             href={`/blog/${post.slug}`}
             className="blog-card-link"
         >
-            <article className="blog-card">
+            <article className="blog-card glass-card">
                 {post.featuredImage && (
                     <div className="blog-card-image">
                         <img

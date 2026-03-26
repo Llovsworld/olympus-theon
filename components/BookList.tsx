@@ -229,7 +229,7 @@ export default function BookList({ books }: BookListProps) {
                     }
 
                     return (
-                        <ScrollReveal key={book.id} variant="slide" delay={index * 50}>
+                        <ScrollReveal key={book.id} variant="slideScale" delay={index * 100}>
                             <BookCard book={book} />
                         </ScrollReveal>
                     );

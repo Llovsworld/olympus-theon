@@ -214,7 +214,7 @@ export default function BlogList({ posts }: BlogListProps) {
                     }
 
                     return (
-                        <ScrollReveal key={post.id} variant="slide" delay={index * 50}>
+                        <ScrollReveal key={post.id} variant="slideScale" delay={index * 100}>
                             <BlogCard post={post} />
                         </ScrollReveal>
                     );

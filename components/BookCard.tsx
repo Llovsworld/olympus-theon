@@ -17,7 +17,7 @@ interface BookCardProps {
 function BookCard({ book }: BookCardProps) {
     return (
         <Link href={`/books/${book.slug}`} className="blog-card-link">
-            <article className="blog-card">
+            <article className="blog-card glass-card">
                 {book.coverImage ? (
                     <div className="blog-card-image" style={{ aspectRatio: '2/3' }}>
                         <img
