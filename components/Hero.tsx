@@ -30,11 +30,26 @@ export default function Hero() {
         }
 
         // Try to play the video
-        video.play().catch(error => {
-            console.error("Video autoplay failed:", error);
-            // Still show the video even if autoplay fails
-            setVideoReady(true);
-        });
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.warn("Video autoplay blocked by browser policy:", error);
+                setVideoReady(true);
+                
+                // Fallback for strict in-app browsers (Instagram, low power iOS)
+                // We listen for the very first interaction to forcefully play the video
+                const forcePlay = () => {
+                    video.play().catch(() => {});
+                    document.removeEventListener('touchstart', forcePlay);
+                    document.removeEventListener('scroll', forcePlay);
+                    document.removeEventListener('click', forcePlay);
+                };
+                
+                document.addEventListener('touchstart', forcePlay, { passive: true });
+                document.addEventListener('scroll', forcePlay, { passive: true });
+                document.addEventListener('click', forcePlay);
+            });
+        }
 
         // Fallback: show video after 2 seconds regardless
         const fallbackTimeout = setTimeout(() => {
@@ -61,6 +76,7 @@ export default function Hero() {
                 preload="auto"
                 className="ken-burns"
                 poster="/hero-gym.png"
+                src="/hero-video.mp4"
                 style={{
                     position: 'absolute',
                     top: 0,
@@ -72,10 +88,7 @@ export default function Hero() {
                     opacity: videoReady ? 1 : 0,
                     transition: 'opacity 0.5s ease-in-out',
                 }}
-            >
-                <source src="/hero-video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
+            />
 
             {/* Overlay for readability */}
             <div style={{
