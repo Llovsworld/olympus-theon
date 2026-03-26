@@ -60,6 +60,16 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+/* Hide iOS Safari video play button overlay when autoplay is blocked (e.g. Low Power Mode) */
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-play-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+video::-webkit-media-controls {
+  display: none !important;
+}
+
 body::before {
   content: "";
   position: fixed;
