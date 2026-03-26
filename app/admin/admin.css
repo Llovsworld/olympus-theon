@@ -5,10 +5,11 @@
 
 /* Theme Variables */
 :root {
-    --admin-bg: #050505;
-    --admin-bg-secondary: #0a0a0a;
-    --admin-bg-elevated: #111111;
-    --admin-bg-hover: #1a1a1a;
+    --admin-bg: #000000;
+    --admin-bg-secondary: #050505;
+    /* Glassmorphism settings for elevated components */
+    --admin-bg-elevated: rgba(20, 20, 20, 0.4);
+    --admin-bg-hover: rgba(255, 255, 255, 0.05);
 
     --admin-border: #1f1f1f;
     --admin-border-hover: #333333;
@@ -19,8 +20,8 @@
     --admin-text-muted: #555555;
 
     --admin-accent: #FFD700;
-    --admin-accent-hover: #FFA500;
-    --admin-accent-glow: rgba(255, 215, 0, 0.15);
+    --admin-accent-hover: #F0C800;
+    --admin-accent-glow: rgba(255, 215, 0, 0.1);
 
     --admin-success: #10b981;
     --admin-error: #ef4444;
@@ -58,12 +59,9 @@
 
 .admin-logo {
     font-size: 1.3rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 0.02em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.1em;
     padding: 0.5rem 0;
 }
 
@@ -147,15 +145,16 @@
 .admin-input:hover,
 .admin-textarea:hover,
 .admin-select:hover {
-    border-color: var(--admin-border-hover);
+    border-color: rgba(255, 215, 0, 0.3);
 }
 
 .admin-input:focus,
 .admin-textarea:focus,
 .admin-select:focus {
     outline: none;
-    border-color: var(--admin-border-focus);
-    box-shadow: 0 0 0 3px var(--admin-accent-glow);
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .admin-input::placeholder,
@@ -199,13 +198,15 @@
 }
 
 .admin-btn-primary {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: var(--admin-accent);
     color: #000;
+    font-weight: 700;
 }
 
 .admin-btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: var(--admin-shadow-glow);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
 .admin-btn-secondary {
@@ -231,15 +232,16 @@
 }
 
 .admin-btn-publish {
-    background: #ff6719;
-    color: #fff;
-    font-weight: 600;
+    background: var(--admin-accent);
+    color: #000;
+    font-weight: 700;
+    border: none;
 }
 
 .admin-btn-publish:hover:not(:disabled) {
-    background: #e85a10;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 103, 25, 0.3);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
 .admin-btn:disabled {
@@ -359,11 +361,14 @@
     border-radius: var(--admin-radius-md);
     padding: 1.5rem;
     transition: var(--admin-transition);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .admin-card:hover {
-    border-color: var(--admin-border-hover);
-    box-shadow: var(--admin-shadow-sm);
+    border-color: rgba(255, 215, 0, 0.2);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
 }
 
 /* ===========================================
@@ -379,9 +384,12 @@
     padding: 1rem;
     text-align: left;
     font-weight: 600;
-    color: var(--admin-text);
-    background: var(--admin-bg-hover);
-    border-bottom: 2px solid var(--admin-accent);
+    color: var(--admin-text-secondary);
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
 }
 
 .admin-table td {
@@ -418,14 +426,16 @@
 }
 
 .admin-modal {
-    background: var(--admin-bg-elevated);
-    border: 1px solid var(--admin-border);
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: var(--admin-radius-lg);
-    padding: 2rem;
+    padding: 2.5rem;
     max-width: 500px;
     width: 90%;
-    box-shadow: var(--admin-shadow-lg);
-    animation: admin-scaleIn 0.2s ease;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: admin-scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes admin-fadeIn {

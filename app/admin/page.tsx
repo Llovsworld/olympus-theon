@@ -116,12 +116,15 @@ export default async function AdminDashboard() {
                                             <th style={thStyle}>Title</th>
                                             <th style={thStyle}>Status</th>
                                             <th style={thStyle}>Date</th>
+                                            <th style={{ ...thStyle, textAlign: 'right' }}>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {recentPosts.map((post) => (
                                             <tr key={post.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                                                <td style={tdStyle}>{post.title}</td>
+                                                <td style={tdStyle}>
+                                                    <div style={{ fontWeight: '500', color: '#fff' }}>{post.title}</div>
+                                                </td>
                                                 <td style={tdStyle}>
                                                     <span style={{
                                                         padding: '0.25rem 0.5rem',
@@ -136,6 +139,38 @@ export default async function AdminDashboard() {
                                                 </td>
                                                 <td style={{ ...tdStyle, color: '#666' }}>
                                                     {new Date(post.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td style={{ ...tdStyle, textAlign: 'right' }}>
+                                                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                                        <Link
+                                                            href={`/admin/posts/edit/${post.id}`}
+                                                            style={{
+                                                                padding: '0.25rem 0.5rem',
+                                                                fontSize: '0.8rem',
+                                                                color: '#FFD700',
+                                                                background: 'rgba(255, 215, 0, 0.1)',
+                                                                borderRadius: '4px',
+                                                                textDecoration: 'none'
+                                                            }}
+                                                        >
+                                                            Editar
+                                                        </Link>
+                                                        <a
+                                                            href={`/blog/${post.slug}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            style={{
+                                                                padding: '0.25rem 0.5rem',
+                                                                fontSize: '0.8rem',
+                                                                color: '#888',
+                                                                background: 'rgba(255, 255, 255, 0.05)',
+                                                                borderRadius: '4px',
+                                                                textDecoration: 'none'
+                                                            }}
+                                                        >
+                                                            Ver
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}

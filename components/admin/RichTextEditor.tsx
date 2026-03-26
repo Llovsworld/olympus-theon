@@ -362,13 +362,18 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
             }}>
                 {/* Toolbar */}
                 <div style={{
-                    borderBottom: '1px solid #2a2a2a',
-                    padding: '0.5rem 0.75rem',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 10,
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    padding: '0.5rem 1rem',
                     display: 'flex',
-                    gap: '0.25rem',
+                    gap: '0.35rem',
                     flexWrap: 'wrap',
                     alignItems: 'center',
-                    background: 'rgba(255, 255, 255, 0.02)'
+                    background: 'rgba(5, 5, 5, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                 }}>
                     {/* Undo/Redo */}
                     <button
@@ -436,7 +441,7 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
                         <span style={{ background: '#ffb703', color: '#000', padding: '0 3px', borderRadius: '2px' }}>H</span>
                     </button>
 
-                    <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
+                    <div style={{ margin: '0 0.5rem', width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }}></div>
 
                     {/* Headings */}
                     <button
@@ -543,13 +548,18 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
 
                 {/* Secondary Toolbar - Media & Tables */}
                 <div style={{
-                    borderBottom: '1px solid #2a2a2a',
-                    padding: '0.5rem 0.75rem',
+                    position: 'sticky',
+                    top: '52px', // below the main toolbar
+                    zIndex: 9,
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    padding: '0.4rem 1rem',
                     display: 'flex',
                     gap: '0.5rem',
                     flexWrap: 'wrap',
                     alignItems: 'center',
-                    background: 'rgba(255, 255, 255, 0.01)'
+                    background: 'rgba(10, 10, 10, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                 }}>
                     {/* Media */}
                     <button
@@ -645,10 +655,11 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
                 {/* Editor Content */}
                 <div
                     style={{
-                        height: '500px', // Fixed height for stability in Safari
+                        height: '600px', // Increased height for better writing experience
                         overflowY: 'auto',
                         cursor: 'text',
-                        paddingBottom: '2rem'
+                        padding: '1rem',
+                        paddingBottom: '4rem'
                     }}
                     onClick={() => editor?.commands.focus()}
                 >
@@ -962,14 +973,15 @@ export default RichTextEditor;
 
 function buttonStyle(isActive: boolean) {
     return {
-        padding: '0.4rem 0.6rem',
-        background: isActive ? 'rgba(255, 183, 3, 0.15)' : 'transparent',
-        border: '1px solid ' + (isActive ? '#ffb703' : '#444'),
-        color: isActive ? '#ffb703' : '#aaa',
-        fontSize: '0.85rem',
-        borderRadius: '4px',
+        padding: '0.4rem 0.5rem',
+        background: isActive ? 'rgba(255, 215, 0, 0.1)' : 'transparent',
+        border: 'none',
+        color: isActive ? '#FFD700' : '#888',
+        fontWeight: isActive ? '600' : '400',
+        fontSize: '0.9rem',
+        borderRadius: '6px',
         cursor: 'pointer',
-        transition: 'all 0.15s ease',
+        transition: 'all 0.2s ease',
     };
 }
 

@@ -354,142 +354,65 @@ export default function NewPostPage() {
                     }}
                 />
 
-                {/* URL Slug */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '0.85rem',
-                        color: '#6b7280',
-                        marginBottom: '0.5rem',
-                        fontWeight: '500'
-                    }}>
-                        URL Slug
-                    </label>
-                    <input
-                        type="text"
-                        value={slug}
-                        onChange={(e) => setSlug(e.target.value)}
-                        placeholder="auto-generated-from-title"
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            border: '1px solid #333',
-                            borderRadius: '6px',
-                            fontSize: '0.95rem',
-                            fontFamily: 'monospace',
-                            color: '#ededed',
-                            background: 'rgba(255,255,255,0.05)'
-                        }}
-                    />
-                </div>
+                {/* URL Slug (MOVED DOWN) */}
+                {/* Excerpt (MOVED DOWN) */}
+                {/* Meta Description (MOVED DOWN) */}
 
-                {/* Category */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '0.85rem',
-                        color: '#6b7280',
-                        marginBottom: '0.5rem',
-                        fontWeight: '500'
-                    }}>
-                        Categoría
-                    </label>
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            border: '1px solid #333',
-                            borderRadius: '6px',
-                            fontSize: '0.95rem',
-                            color: '#ededed',
-                            background: 'rgba(255,255,255,0.05)',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <option value="">Seleccionar categoría...</option>
-                        {categories.map((cat) => (
-                            <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                    </select>
-                </div>
+                {/* Category & Featured Image Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 2fr', gap: '2rem', marginBottom: '2rem' }}>
+                    <div>
+                        <label style={{
+                            display: 'block',
+                            fontSize: '0.85rem',
+                            color: '#6b7280',
+                            marginBottom: '0.5rem',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
+                        }}>
+                            Categoría
+                        </label>
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '1rem',
+                                border: '1px solid #333',
+                                borderRadius: '8px',
+                                fontSize: '0.95rem',
+                                color: '#ededed',
+                                background: 'rgba(255,255,255,0.02)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                            className="hover:border-yellow-500/30 focus:border-yellow-500/50 outline-none"
+                        >
+                            <option value="">Seleccionar...</option>
+                            {categories.map((cat) => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                {/* Excerpt */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '0.85rem',
-                        color: '#6b7280',
-                        marginBottom: '0.5rem',
-                        fontWeight: '500'
-                    }}>
-                        Extracto / Resumen
-                        <span style={{ color: '#555', fontWeight: '400', marginLeft: '0.5rem' }}>(para listados)</span>
-                    </label>
-                    <textarea
-                        value={excerpt}
-                        onChange={(e) => setExcerpt(e.target.value)}
-                        placeholder="Un breve resumen del post que aparecerá en los listados..."
-                        rows={3}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            border: '1px solid #333',
-                            borderRadius: '6px',
-                            fontSize: '0.95rem',
-                            color: '#ededed',
-                            background: 'rgba(255,255,255,0.05)',
-                            resize: 'vertical',
-                            fontFamily: 'inherit'
-                        }}
-                    />
-                    <p style={{ fontSize: '0.8rem', color: '#555', marginTop: '0.25rem' }}>
-                        {excerpt.length}/200 caracteres recomendados
-                    </p>
-                </div>
-
-                {/* Meta Description (SEO) */}
-                <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #1f1f1f' }}>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '0.85rem',
-                        color: '#6b7280',
-                        marginBottom: '0.5rem',
-                        fontWeight: '500'
-                    }}>
-                        Meta Descripción SEO
-                        <span style={{ color: '#555', fontWeight: '400', marginLeft: '0.5rem' }}>(para buscadores)</span>
-                    </label>
-                    <textarea
-                        value={metaDescription}
-                        onChange={(e) => setMetaDescription(e.target.value)}
-                        placeholder="Descripción que aparecerá en los resultados de Google..."
-                        rows={2}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            border: '1px solid #333',
-                            borderRadius: '6px',
-                            fontSize: '0.95rem',
-                            color: '#ededed',
-                            background: 'rgba(255,255,255,0.05)',
-                            resize: 'vertical',
-                            fontFamily: 'inherit'
-                        }}
-                    />
-                    <p style={{ fontSize: '0.8rem', color: metaDescription.length > 160 ? '#ef4444' : '#555', marginTop: '0.25rem' }}>
-                        {metaDescription.length}/160 caracteres óptimos para SEO
-                    </p>
-                </div>
-
-                {/* Featured Image */}
-                <div style={{ marginBottom: '3rem' }}>
-                    <ImageUploader
-                        label="Featured Image"
-                        onUpload={setFeaturedImage}
-                        currentImage={featuredImage}
-                    />
+                    <div>
+                        <label style={{
+                            display: 'block',
+                            fontSize: '0.85rem',
+                            color: '#6b7280',
+                            marginBottom: '0.5rem',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
+                        }}>
+                            Imagen Destacada
+                        </label>
+                        <ImageUploader
+                            label="Subir portada"
+                            onUpload={setFeaturedImage}
+                            currentImage={featuredImage}
+                        />
+                    </div>
                 </div>
 
                 {/* Content Editor */}
@@ -504,9 +427,86 @@ export default function NewPostPage() {
                         key={editorKey} // Remounts editor when drafts load
                         content={content}
                         onChange={setContent}
-                        placeholder="Start writing your post..."
+                        placeholder="Comienza a escribir tu artículo..."
                     />
                 </div>
+
+                {/* Advanced SEO Options */}
+                <details style={{
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid #1f1f1f',
+                    borderRadius: '8px',
+                    padding: '1.5rem',
+                    cursor: 'pointer'
+                }}>
+                    <summary style={{
+                        fontWeight: '600',
+                        fontSize: '1rem',
+                        color: '#888',
+                        outline: 'none',
+                    }}>
+                        Opciones Avanzadas / SEO
+                    </summary>
+
+                    <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem', cursor: 'default' }}>
+                        {/* URL Slug */}
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem', fontWeight: '500' }}>
+                                URL Slug
+                            </label>
+                            <input
+                                type="text"
+                                value={slug}
+                                onChange={(e) => setSlug(e.target.value)}
+                                placeholder="auto-generated-from-title"
+                                style={{
+                                    width: '100%', padding: '0.75rem', border: '1px solid #333', borderRadius: '6px',
+                                    fontSize: '0.95rem', fontFamily: 'monospace', color: '#ededed', background: 'rgba(0,0,0,0.2)'
+                                }}
+                            />
+                        </div>
+
+                        {/* Excerpt */}
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem', fontWeight: '500' }}>
+                                Extracto / Resumen <span style={{ color: '#555', fontWeight: '400' }}>(para listados)</span>
+                            </label>
+                            <textarea
+                                value={excerpt}
+                                onChange={(e) => setExcerpt(e.target.value)}
+                                placeholder="Un breve resumen del post que aparecerá en la grilla del blog..."
+                                rows={3}
+                                style={{
+                                    width: '100%', padding: '0.75rem', border: '1px solid #333', borderRadius: '6px',
+                                    fontSize: '0.95rem', color: '#ededed', background: 'rgba(0,0,0,0.2)', resize: 'vertical'
+                                }}
+                            />
+                            <p style={{ fontSize: '0.8rem', color: '#555', marginTop: '0.25rem' }}>
+                                {excerpt.length}/200 caracteres recomendados
+                            </p>
+                        </div>
+
+                        {/* Meta Description */}
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem', fontWeight: '500' }}>
+                                Meta Descripción SEO <span style={{ color: '#555', fontWeight: '400' }}>(Google)</span>
+                            </label>
+                            <textarea
+                                value={metaDescription}
+                                onChange={(e) => setMetaDescription(e.target.value)}
+                                placeholder="Descripción que aparecerá en los resultados de búsqueda..."
+                                rows={2}
+                                style={{
+                                    width: '100%', padding: '0.75rem', border: '1px solid #333', borderRadius: '6px',
+                                    fontSize: '0.95rem', color: '#ededed', background: 'rgba(0,0,0,0.2)', resize: 'vertical'
+                                }}
+                            />
+                            <p style={{ fontSize: '0.8rem', color: metaDescription.length > 160 ? '#ef4444' : '#555', marginTop: '0.25rem' }}>
+                                {metaDescription.length}/160 caracteres óptimos para SEO
+                            </p>
+                        </div>
+                    </div>
+                </details>
             </div>
 
             {/* Preview Modal */}
