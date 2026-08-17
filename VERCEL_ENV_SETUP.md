@@ -27,6 +27,14 @@ ADMIN_PASSWORD=your_secure_password
 BLOB_READ_WRITE_TOKEN=your_blob_token_here
 ```
 
+### Email (contact form and newsletter)
+```
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=Olympus Theon <noreply@your_verified_domain.com>
+CONTACT_EMAIL_TO=your_contact_inbox@example.com
+NEXT_PUBLIC_APP_URL=https://your-vercel-domain.vercel.app
+```
+
 ## How to Set Up
 
 1. Go to [Vercel Dashboard](https://vercel.com)

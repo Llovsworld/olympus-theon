@@ -10,10 +10,12 @@ export default function ContactPage() {
         message: ''
     });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [feedback, setFeedback] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
+        setFeedback('');
 
         try {
             const res = await fetch('/api/contact', {
@@ -22,14 +24,19 @@ export default function ContactPage() {
                 body: JSON.stringify(formData)
             });
 
+            const data = await res.json().catch(() => ({}));
+
             if (res.ok) {
                 setStatus('success');
+                setFeedback('Mensaje recibido. Te responderemos lo antes posible.');
                 setFormData({ name: '', email: '', message: '' });
             } else {
                 setStatus('error');
+                setFeedback(data.error || 'No hemos podido enviar el mensaje. Escríbenos por WhatsApp o email.');
             }
-        } catch (error) {
+        } catch {
             setStatus('error');
+            setFeedback('No hemos podido conectar. Escríbenos por WhatsApp o email.');
         }
     };
 
@@ -217,7 +224,7 @@ export default function ContactPage() {
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.1em'
                             }}>
-                                Respondemos en 24 horas
+                            Cuéntanos tu punto de partida
                             </p>
 
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -395,8 +402,8 @@ export default function ContactPage() {
                                         color: '#fff',
                                         fontSize: '0.9rem',
                                         letterSpacing: '0.02em'
-                                    }}>
-                                        <strong>Mensaje recibido.</strong> Te contactaremos en las próximas 24 horas.
+                                    }} role="status" aria-live="polite">
+                                        {feedback}
                                     </div>
                                 )}
 
@@ -407,8 +414,8 @@ export default function ContactPage() {
                                         borderLeft: '2px solid #ff3333',
                                         color: '#ffaaaa',
                                         fontSize: '0.9rem'
-                                    }}>
-                                        Error al enviar. Por favor intenta de nuevo o contáctanos directamente.
+                                    }} role="alert">
+                                        {feedback}
                                     </div>
                                 )}
                             </form>
@@ -476,7 +483,7 @@ export default function ContactPage() {
 
                             {/* Email */}
                             <a
-                                href="mailto:contact@olympus.com"
+                                href="mailto:Olympustheon@gmail.com"
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -505,7 +512,7 @@ export default function ContactPage() {
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Correo</div>
-                                    <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: '500' }}>contact@olympus.com</div>
+                                    <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: '500' }}>Olympustheon@gmail.com</div>
                                 </div>
                             </a>
                         </div>

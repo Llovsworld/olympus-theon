@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
+import "./site.css";
 import { Providers } from "@/components/Providers";
 import PageTransition from "@/components/PageTransition";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
-
-const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
     title: {
@@ -17,9 +16,6 @@ export const metadata: Metadata = {
     authors: [{ name: "Alejandro Lloveras" }],
     creator: "Olympus Theon",
     metadataBase: new URL("https://olympustheon.com"),
-    alternates: {
-        canonical: "/",
-    },
     openGraph: {
         type: "website",
         locale: "es_ES",
@@ -60,13 +56,15 @@ export const metadata: Metadata = {
     manifest: "/manifest.json",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const locale = await getLocale();
+
     return (
-        <html lang="es" suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning>
             <head>
                 {/* PWA Meta Tags */}
                 <meta name="application-name" content="Olympus Theon" />
@@ -77,16 +75,8 @@ export default function RootLayout({
                 <meta name="theme-color" content="#050505" />
                 <link rel="apple-touch-icon" href="/olympus_logo.png" />
 
-                {/* DNS Prefetch and Preconnect */}
-                <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
                 {/* Preload critical resources */}
                 <link rel="preload" href="/hero-gym.png" as="image" />
-
-                {/* Google Fonts */}
-                <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
 
 
                 {/* JSON-LD Structured Data */}
@@ -129,7 +119,7 @@ export default function RootLayout({
                     }}
                 />
             </head>
-            <body className={inter.className} style={{ backgroundColor: '#050505', color: '#ededed' }} suppressHydrationWarning>
+            <body suppressHydrationWarning>
                 <ServiceWorkerRegistration />
                 <Providers>
                     <PageTransition>

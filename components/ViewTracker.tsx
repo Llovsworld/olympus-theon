@@ -9,12 +9,17 @@ interface ViewTrackerProps {
 
 export default function ViewTracker({ type, slug }: ViewTrackerProps) {
     useEffect(() => {
-        // Track view on mount
+        const storageKey = `olympus-view:${type}:${slug}`;
+        if (window.sessionStorage.getItem(storageKey)) return;
+
+        window.sessionStorage.setItem(storageKey, '1');
         fetch('/api/track-view', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type, slug })
-        }).catch(err => console.error('Failed to track view:', err));
+        }).then((response) => {
+            if (!response.ok) window.sessionStorage.removeItem(storageKey);
+        }).catch(() => window.sessionStorage.removeItem(storageKey));
     }, [type, slug]);
 
     return null; // This component doesn't render anything

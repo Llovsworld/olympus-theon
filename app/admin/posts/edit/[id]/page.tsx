@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import ContentPreview from '@/components/admin/ContentPreview';
+import AccessibleModal from '@/components/admin/AccessibleModal';
 
 export default function EditPostPage() {
     const router = useRouter();
@@ -311,23 +312,20 @@ export default function EditPostPage() {
 
             {/* Preview Modal */}
             {showPreview && (
-                <div
-                    className="admin-modal-overlay"
-                    onClick={() => setShowPreview(false)}
-                    style={{ alignItems: 'flex-start', paddingTop: '2rem', overflowY: 'auto' }}
+                <AccessibleModal
+                    label="Vista previa del artículo"
+                    onClose={() => setShowPreview(false)}
+                    overlayStyle={{ alignItems: 'flex-start', paddingTop: '2rem', overflowY: 'auto' }}
+                    contentStyle={{
+                        width: '90%',
+                        maxWidth: '900px',
+                        background: 'var(--admin-bg-elevated)',
+                        borderRadius: 'var(--admin-radius-lg)',
+                        border: '1px solid var(--admin-border)',
+                        maxHeight: '90vh',
+                        overflowY: 'auto'
+                    }}
                 >
-                    <div
-                        onClick={(e) => e.stopPropagation()}
-                        style={{
-                            width: '90%',
-                            maxWidth: '900px',
-                            background: 'var(--admin-bg-elevated)',
-                            borderRadius: 'var(--admin-radius-lg)',
-                            border: '1px solid var(--admin-border)',
-                            maxHeight: '90vh',
-                            overflowY: 'auto'
-                        }}
-                    >
                         <div style={{
                             padding: '1.5rem',
                             borderBottom: '1px solid var(--admin-border)',
@@ -346,10 +344,10 @@ export default function EditPostPage() {
                         <ContentPreview
                             content={content}
                             title={title}
+                            subtitle={subtitle}
                             featuredImage={featuredImage}
                         />
-                    </div>
-                </div>
+                </AccessibleModal>
             )}
         </div>
     );

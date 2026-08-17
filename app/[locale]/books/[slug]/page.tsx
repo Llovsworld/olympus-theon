@@ -1,9 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import { Metadata } from 'next';
+import { sanitizeRichHtml } from '@/lib/sanitize-html';
+import { getSafeHttpUrl } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,8 +20,8 @@ interface BookPageProps {
 export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const book = await prisma.book.findUnique({
-        where: { slug },
+    const book = await prisma.book.findFirst({
+        where: { slug, published: true },
         select: {
             title: true,
             author: true,
@@ -76,6 +79,8 @@ export default async function BookPage({ params }: BookPageProps) {
     // Calculate reading time (200 words per minute average)
     const wordCount = book.content ? book.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
     const readingTime = Math.max(Math.ceil(wordCount / 200), 1);
+    const safeContent = book.content ? sanitizeRichHtml(book.content) : null;
+    const safeBookLink = getSafeHttpUrl(book.link);
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
@@ -95,15 +100,13 @@ export default async function BookPage({ params }: BookPageProps) {
             }}>
                 {book.coverImage ? (
                     <>
-                        <img
+                        <Image
                             src={book.coverImage}
                             alt={book.title}
+                            fill
+                            priority
+                            sizes="100vw"
                             style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
                                 objectFit: 'cover',
                                 zIndex: 0,
                                 filter: 'blur(10px) brightness(0.5)'
@@ -192,11 +195,11 @@ export default async function BookPage({ params }: BookPageProps) {
                         </div>
                     </ScrollReveal>
 
-                    {book.link && (
+                    {safeBookLink && (
                         <ScrollReveal variant="fade" delay={600}>
                             <div style={{ marginTop: '3rem' }}>
                                 <a
-                                    href={book.link}
+                                    href={safeBookLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn"
@@ -238,7 +241,7 @@ export default async function BookPage({ params }: BookPageProps) {
                 </div>
 
                 {/* Main Content */}
-                {book.content && (
+                {safeContent && (
                     <div
                         className="prose prose-invert prose-lg"
                         style={{
@@ -246,7 +249,7 @@ export default async function BookPage({ params }: BookPageProps) {
                             color: '#ccc',
                             lineHeight: '1.8'
                         }}
-                        dangerouslySetInnerHTML={{ __html: book.content }}
+                        dangerouslySetInnerHTML={{ __html: safeContent }}
                     />
                 )}
             </article>

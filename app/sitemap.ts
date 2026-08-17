@@ -1,38 +1,41 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://olympustheon.com';
+    const lastModified = new Date('2026-08-17');
 
     // Static pages
     const staticPages: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
-            lastModified: new Date(),
+            lastModified,
             changeFrequency: 'weekly',
             priority: 1,
         },
         {
             url: `${baseUrl}/blog`,
-            lastModified: new Date(),
+            lastModified,
             changeFrequency: 'daily',
             priority: 0.9,
         },
         {
             url: `${baseUrl}/books`,
-            lastModified: new Date(),
+            lastModified,
             changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/programas`,
-            lastModified: new Date(),
+            lastModified,
             changeFrequency: 'monthly',
             priority: 0.9,
         },
         {
             url: `${baseUrl}/contact`,
-            lastModified: new Date(),
+            lastModified,
             changeFrequency: 'monthly',
             priority: 0.7,
         },

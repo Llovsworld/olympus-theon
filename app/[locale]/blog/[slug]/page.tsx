@@ -1,11 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import SocialShare from '@/components/SocialShare';
 import { Metadata } from 'next';
+import { sanitizeRichHtml } from '@/lib/sanitize-html';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +21,8 @@ interface BlogPostPageProps {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const post = await prisma.post.findUnique({
-        where: { slug },
+    const post = await prisma.post.findFirst({
+        where: { slug, published: true },
         select: {
             title: true,
             excerpt: true,
@@ -92,6 +94,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     // Calculate reading time (200 words per minute average)
     const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / 200);
+    const safeContent = sanitizeRichHtml(post.content);
 
     return (
         <div style={{ background: '#050505', minHeight: '100vh', color: '#ededed' }}>
@@ -110,15 +113,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             }}>
                 {post.featuredImage ? (
                     <>
-                        <img
+                        <Image
                             src={post.featuredImage}
                             alt={post.title}
+                            fill
+                            priority
+                            sizes="100vw"
                             style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
                                 objectFit: 'cover',
                                 zIndex: 0
                             }}
@@ -216,7 +217,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         lineHeight: '1.8',
                         color: '#d4d4d4'
                     }}
-                    dangerouslySetInnerHTML={{ __html: post.content }}
+                    dangerouslySetInnerHTML={{ __html: safeContent }}
                 />
 
                 {/* Social Share Section */}
@@ -267,8 +268,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                         className="hover:translate-y-[-5px]"
                                     >
                                         {p.featuredImage && (
-                                            <div style={{ height: '200px', overflow: 'hidden' }}>
-                                                <img src={p.featuredImage} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <div style={{ height: '200px', overflow: 'hidden', position: 'relative' }}>
+                                                <Image
+                                                    src={p.featuredImage}
+                                                    alt={p.title}
+                                                    fill
+                                                    sizes="(max-width: 700px) 100vw, 33vw"
+                                                    style={{ objectFit: 'cover' }}
+                                                />
                                             </div>
                                         )}
                                         <div style={{ padding: '1.5rem' }}>
@@ -287,4 +294,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
     );
 }
-

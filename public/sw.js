@@ -1,57 +1,39 @@
-const CACHE_NAME = 'olympus-theon-v1';
-const STATIC_ASSETS = [
-    '/',
-    '/olympus_logo.png',
-    '/hero-gym.png',
-];
+const CACHE_NAME = 'olympus-theon-static-v2';
+const STATIC_ASSETS = ['/olympus_logo.png', '/hero-gym.png'];
+const CACHEABLE_DESTINATIONS = new Set(['image', 'font']);
 
-// Install event - cache static assets
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(STATIC_ASSETS);
-        })
-    );
+    event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
     self.skipWaiting();
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames
-                    .filter((name) => name !== CACHE_NAME)
-                    .map((name) => caches.delete(name))
-            );
-        })
+        caches.keys().then((names) => Promise.all(
+            names
+                .filter((name) => name.startsWith('olympus-theon-') && name !== CACHE_NAME)
+                .map((name) => caches.delete(name))
+        ))
     );
     self.clients.claim();
 });
 
-// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+    const request = event.request;
+    if (request.method !== 'GET' || !CACHEABLE_DESTINATIONS.has(request.destination)) return;
 
-    // Skip API routes and admin
-    const url = new URL(event.request.url);
-    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin')) {
-        return;
-    }
+    const url = new URL(request.url);
+    if (url.origin !== self.location.origin) return;
 
     event.respondWith(
-        fetch(event.request)
+        fetch(request)
             .then((response) => {
-                // Clone response before caching
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseClone);
-                });
+                if (response.ok && response.type === 'basic') {
+                    const copy = response.clone();
+                    event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
+                }
                 return response;
             })
-            .catch(() => {
-                return caches.match(event.request);
-            })
+            .catch(async () => (await caches.match(request)) || Response.error())
     );
 });

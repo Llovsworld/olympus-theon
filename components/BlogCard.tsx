@@ -1,6 +1,7 @@
 "use client";
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
 import { memo } from 'react';
 
 interface BlogCardProps {
@@ -28,11 +29,11 @@ function BlogCard({ post }: BlogCardProps) {
             <article className="blog-card glass-card">
                 {post.featuredImage && (
                     <div className="blog-card-image">
-                        <img
+                        <Image
                             src={post.featuredImage}
                             alt={post.title}
-                            loading="lazy"
-                            decoding="async"
+                            fill
+                            sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                         />
                         <div className="blog-card-image-overlay" />
                     </div>

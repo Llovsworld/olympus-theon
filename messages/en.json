@@ -1,16 +1,21 @@
 {
     "Header": {
-        "home": "Home",
-        "story": "Story",
-        "ceo": "CEO",
+        "skip": "Skip to content",
         "blog": "Blog",
         "contact": "Contact",
-        "books": "Books"
+        "books": "Library",
+        "programs": "Programs",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "language": "Language"
     },
     "Hero": {
-        "title": "Masculinity. Vision. Power.",
-        "subtitle": "Redefining what it means to be a man in the modern world.",
-        "cta": "Start Your Journey"
+        "eyebrow": "High-performance mentoring",
+        "title": "Build a mind and body worthy of your ambition.",
+        "subtitle": "A demanding, practical system to develop discipline, clarity and sustainable performance.",
+        "primaryCta": "Discover the method",
+        "secondaryCta": "View programs",
+        "scroll": "Explore"
     },
     "Story": {
         "title": "Our Story",
@@ -22,7 +27,18 @@
         "description": "Leading the charge towards a new era of masculinity."
     },
     "Footer": {
-        "rights": "All rights reserved."
+        "rights": "All rights reserved.",
+        "description": "Discipline, clarity and performance. A method for men who have decided to take their growth seriously.",
+        "navigation": "Navigation",
+        "content": "Content",
+        "method": "Method",
+        "founder": "Founder",
+        "testimonials": "Principles",
+        "newsletterTitle": "The elite letter",
+        "newsletterDescription": "Practical ideas on mind, body and execution. No noise.",
+        "invalidEmail": "Enter a valid email address.",
+        "success": "Subscription confirmed.",
+        "error": "We could not subscribe you. Please try again."
     },
     "Newsletter": {
         "title": "📬 Join Our Newsletter",

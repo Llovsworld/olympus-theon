@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Plus, Trash2, ExternalLink, AlertTriangle, Pencil } from 'lucide-react';
+import AccessibleModal from '@/components/admin/AccessibleModal';
 
 interface Post {
     id: string;
@@ -17,9 +18,10 @@ interface Post {
 
 export default function PostsManagementPage() {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState('');
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
 
@@ -35,11 +37,17 @@ export default function PostsManagementPage() {
 
     const fetchPosts = async () => {
         try {
-            const res = await fetch('/api/posts');
+            setLoadError('');
+            const res = await fetch('/api/posts?all=true');
+            if (!res.ok) {
+                const error = await res.json().catch(() => null) as { error?: string } | null;
+                throw new Error(error?.error || 'No se pudieron cargar los posts');
+            }
             const data = await res.json();
             setPosts(data);
         } catch (error) {
             console.error('Error fetching posts:', error);
+            setLoadError(error instanceof Error ? error.message : 'No se pudieron cargar los posts');
         } finally {
             setLoading(false);
         }
@@ -82,6 +90,17 @@ export default function PostsManagementPage() {
 
     if (status === 'unauthenticated') {
         return null;
+    }
+
+    if (loadError) {
+        return (
+            <div className="admin-card" role="alert" style={{ padding: '2rem' }}>
+                <p style={{ color: 'var(--admin-danger)' }}>{loadError}</p>
+                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => void fetchPosts()} style={{ marginTop: '1rem' }}>
+                    Reintentar
+                </button>
+            </div>
+        );
     }
 
     return (
@@ -196,8 +215,13 @@ export default function PostsManagementPage() {
 
             {/* Delete Confirmation Modal */}
             {deleteId !== null && (
-                <div className="admin-modal-overlay" onClick={() => !deleting && setDeleteId(null)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                <AccessibleModal
+                    label="Confirmar eliminación del artículo"
+                    onClose={() => {
+                        if (!deleting) setDeleteId(null);
+                    }}
+                    contentClassName="admin-modal"
+                >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
                             <div style={{
                                 width: '48px',
@@ -241,8 +265,7 @@ export default function PostsManagementPage() {
                                 {deleting ? 'Eliminando...' : 'Eliminar'}
                             </button>
                         </div>
-                    </div>
-                </div>
+                </AccessibleModal>
             )}
         </div>
     );

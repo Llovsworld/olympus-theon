@@ -24,13 +24,13 @@ export default function LoginPage() {
             });
 
             if (result?.error) {
-                setError("Invalid credentials");
+                setError("Credenciales incorrectas o demasiados intentos. Espera unos minutos y vuelve a probar.");
             } else {
                 router.push("/admin");
                 router.refresh();
             }
-        } catch (err) {
-            setError("An error occurred");
+        } catch {
+            setError("No se pudo iniciar sesión. Inténtalo de nuevo.");
         } finally {
             setLoading(false);
         }
@@ -69,12 +69,12 @@ export default function LoginPage() {
                     textTransform: 'uppercase',
                     letterSpacing: '0.2em'
                 }}>
-                    Admin Access
+                    Acceso de administración
                 </p>
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
-                        <label style={{
+                        <label htmlFor="admin-username" style={{
                             display: 'block',
                             marginBottom: '0.5rem',
                             fontSize: '0.85rem',
@@ -82,10 +82,13 @@ export default function LoginPage() {
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em'
                         }}>
-                            Username
+                            Usuario
                         </label>
                         <input
+                            id="admin-username"
                             type="text"
+                            name="username"
+                            autoComplete="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -102,7 +105,7 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                        <label style={{
+                        <label htmlFor="admin-password" style={{
                             display: 'block',
                             marginBottom: '0.5rem',
                             fontSize: '0.85rem',
@@ -110,10 +113,13 @@ export default function LoginPage() {
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em'
                         }}>
-                            Password
+                            Contraseña
                         </label>
                         <input
+                            id="admin-password"
                             type="password"
+                            name="password"
+                            autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -130,7 +136,7 @@ export default function LoginPage() {
                     </div>
 
                     {error && (
-                        <div style={{
+                        <div role="alert" aria-live="polite" style={{
                             padding: '0.75rem',
                             background: 'rgba(255, 0, 0, 0.1)',
                             border: '1px solid rgba(255, 0, 0, 0.3)',
@@ -153,7 +159,7 @@ export default function LoginPage() {
                             opacity: loading ? 0.6 : 1
                         }}
                     >
-                        {loading ? 'Signing In...' : 'Sign In'}
+                        {loading ? 'Iniciando sesión…' : 'Iniciar sesión'}
                     </button>
                 </form>
             </div>

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Book } from '@prisma/client';
 import BookCard from './BookCard';
 import ScrollReveal from './ScrollReveal';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 interface BookListProps {
     books: Book[];
@@ -50,7 +51,9 @@ export default function BookList({ books }: BookListProps) {
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
+                <label htmlFor="book-search" className="visually-hidden">Buscar en la biblioteca</label>
                 <input
+                    id="book-search"
                     type="text"
                     placeholder="Buscar en biblioteca..."
                     value={searchQuery}
@@ -63,7 +66,6 @@ export default function BookList({ books }: BookListProps) {
                         borderRadius: '50px',
                         color: '#fff',
                         fontSize: '1rem',
-                        outline: 'none',
                         transition: 'all 0.3s ease',
                         backdropFilter: 'blur(10px)'
                     }}
@@ -72,7 +74,7 @@ export default function BookList({ books }: BookListProps) {
             </div>
 
             {/* Books Grid */}
-            <div className="responsive-grid" style={{ marginTop: '0' }}>
+            <div className="responsive-grid" style={{ marginTop: '0' }} aria-live="polite">
                 {filteredBooks.map((book, index) => {
                     // Only show featured style for the very first book AND if there is no search query
                     const isFeatured = index === 0 && !searchQuery;
@@ -130,12 +132,12 @@ export default function BookList({ books }: BookListProps) {
                                                     overflow: 'hidden',
                                                     position: 'relative'
                                                 }}>
-                                                    <img
+                                                    <Image
                                                         src={book.coverImage}
                                                         alt={book.title}
+                                                        fill
+                                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                         style={{
-                                                            width: '100%',
-                                                            height: '100%',
                                                             objectFit: 'cover'
                                                         }}
                                                     />

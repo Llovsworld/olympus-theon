@@ -1,18 +1,27 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
+import { useLocale } from 'next-intl';
+
+import { Link } from '@/i18n/navigation';
 
 export default function Footer() {
+    const locale = useLocale() === 'en' ? 'en' : 'es';
+    const isEnglish = locale === 'en';
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!email || !email.includes('@')) return;
+        if (!email || !email.includes('@')) {
+            setStatus('error');
+            setMessage(isEnglish ? 'Please enter a valid email address.' : 'Introduce un correo electrónico válido.');
+            return;
+        }
 
         setStatus('loading');
+        setMessage('');
         try {
             const response = await fetch('/api/subscribe', {
                 method: 'POST',
@@ -22,15 +31,15 @@ export default function Footer() {
             const data = await response.json();
             if (response.ok) {
                 setStatus('success');
-                setMessage('Bienvenido a la élite.');
+                setMessage(isEnglish ? 'Welcome to the elite.' : 'Bienvenido a la élite.');
                 setEmail('');
             } else {
                 setStatus('error');
-                setMessage(data.error || 'Error al suscribirse.');
+                setMessage(data.error || (isEnglish ? 'Subscription failed.' : 'Error al suscribirse.'));
             }
-        } catch (error) {
+        } catch {
             setStatus('error');
-            setMessage('Error de conexión.');
+            setMessage(isEnglish ? 'Connection error.' : 'Error de conexión.');
         }
     }
 
@@ -42,8 +51,9 @@ export default function Footer() {
                     <div className="footer-brand-col">
                         <div className="footer-logo">OLYMPUS THEON</div>
                         <p className="footer-tagline">
-                            Transformando visiones en realidades mediante estrategias precisas y ejecución impecable.
-                            Excelencia a través de metodología.
+                            {isEnglish
+                                ? 'Turning visions into reality through precise strategy and flawless execution. Excellence through methodology.'
+                                : 'Transformando visiones en realidades mediante estrategias precisas y ejecución impecable. Excelencia a través de metodología.'}
                         </p>
                         <div className="footer-social-icons">
                             <a href="https://www.instagram.com/llovsworld/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
@@ -84,60 +94,80 @@ export default function Footer() {
 
                     {/* Column 2: Navigation */}
                     <div className="footer-links-col">
-                        <h4 className="footer-col-title">NAVEGACIÓN</h4>
+                        <h4 className="footer-col-title">{isEnglish ? 'NAVIGATION' : 'NAVEGACIÓN'}</h4>
                         <nav className="footer-nav-list">
                             <Link href="/blog">Blog</Link>
-                            <Link href="/books">Libros</Link>
-                            <Link href="/programas">Programas</Link>
-                            <Link href="/contact">Contacto</Link>
+                            <Link href="/books">{isEnglish ? 'Books' : 'Libros'}</Link>
+                            <Link href="/programas">{isEnglish ? 'Programs' : 'Programas'}</Link>
+                            <Link href="/contact">{isEnglish ? 'Contact' : 'Contacto'}</Link>
                         </nav>
                     </div>
 
                     {/* Column 3: Contenido */}
                     <div className="footer-links-col">
-                        <h4 className="footer-col-title">CONTENIDO</h4>
+                        <h4 className="footer-col-title">{isEnglish ? 'CONTENT' : 'CONTENIDO'}</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/#method">Metodología</Link>
-                            <Link href="/#story">Sobre el CEO</Link>
-                            <Link href="/#testimonials">Testimonios</Link>
-                            <Link href="#newsletter">Newsletter</Link>
+                            <Link href="/#method">{isEnglish ? 'Method' : 'Metodología'}</Link>
+                            <a href="#newsletter">Newsletter</a>
                         </nav>
                     </div>
 
-                    {/* Column 4: Legal */}
                     <div className="footer-links-col">
-                        <h4 className="footer-col-title">LEGAL</h4>
-                        <nav className="footer-nav-list">
-                            <Link href="/privacy">Política de Privacidad</Link>
-                            <Link href="/terms">Términos de Servicio</Link>
-                            <Link href="/privacy">Accesibilidad</Link>
-                            <Link href="/privacy">Cookies</Link>
-                        </nav>
+                        <h4 className="footer-col-title">{isEnglish ? 'CONTACT' : 'CONTACTO'}</h4>
+                        <div className="footer-nav-list">
+                            <a href="mailto:Olympustheon@gmail.com">Email</a>
+                            <a href="tel:+34608961701">{isEnglish ? 'Phone' : 'Teléfono'}</a>
+                            <a href="https://wa.me/34608961701" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                        </div>
                     </div>
                 </div>
 
                 {/* Newsletter Section */}
-                <div className="footer-newsletter">
+                <div className="footer-newsletter" id="newsletter">
                     <div className="footer-newsletter-content">
                         <div className="footer-newsletter-text">
-                            <h4 className="footer-newsletter-title">Únete a la Élite</h4>
-                            <p className="footer-newsletter-subtitle">Protocolos mentales y físicos. Sin spam.</p>
+                            <h4 className="footer-newsletter-title">{isEnglish ? 'Join the Elite' : 'Únete a la Élite'}</h4>
+                            <p className="footer-newsletter-subtitle">
+                                {isEnglish ? 'Mental and physical protocols. No spam.' : 'Protocolos mentales y físicos. Sin spam.'}
+                            </p>
                         </div>
                         <form onSubmit={handleSubmit} className="footer-newsletter-form">
+                            <label
+                                htmlFor="footer-newsletter-email"
+                                style={{
+                                    position: 'absolute',
+                                    width: '1px',
+                                    height: '1px',
+                                    padding: 0,
+                                    margin: '-1px',
+                                    overflow: 'hidden',
+                                    clip: 'rect(0, 0, 0, 0)',
+                                    whiteSpace: 'nowrap',
+                                    border: 0,
+                                }}
+                            >
+                                {isEnglish ? 'Email address' : 'Correo electrónico'}
+                            </label>
                             <div className="footer-newsletter-input-group">
                                 <input
+                                    id="footer-newsletter-email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="tu@email.com"
+                                    placeholder={isEnglish ? 'you@email.com' : 'tu@email.com'}
                                     className="footer-newsletter-input"
                                     disabled={status === 'loading'}
+                                    required
+                                    autoComplete="email"
+                                    aria-label={isEnglish ? 'Email address' : 'Correo electrónico'}
+                                    aria-invalid={status === 'error'}
+                                    aria-describedby={message ? 'footer-newsletter-status' : undefined}
                                 />
                                 <button
                                     type="submit"
                                     className="footer-newsletter-btn"
                                     disabled={status === 'loading'}
-                                    aria-label="Suscribirse"
+                                    aria-label={isEnglish ? 'Subscribe' : 'Suscribirse'}
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -145,14 +175,24 @@ export default function Footer() {
                                     </svg>
                                 </button>
                             </div>
-                            {message && <p className={`footer-newsletter-message ${status}`}>{message}</p>}
+                            <p
+                                id="footer-newsletter-status"
+                                className={`footer-newsletter-message ${status}`}
+                                role={status === 'error' ? 'alert' : 'status'}
+                                aria-live="polite"
+                                style={{ display: message ? 'block' : 'none' }}
+                            >
+                                {message}
+                            </p>
                         </form>
                     </div>
                 </div>
 
                 {/* Bottom Section */}
                 <div className="footer-bottom-compact">
-                    <p className="footer-copyright">© {new Date().getFullYear()} Olympus Theon. Todos los derechos reservados.</p>
+                    <p className="footer-copyright">
+                        © {new Date().getFullYear()} Olympus Theon. {isEnglish ? 'All rights reserved.' : 'Todos los derechos reservados.'}
+                    </p>
                     <div className="footer-contact-info">
                         <a href="mailto:Olympustheon@gmail.com" className="footer-contact-link">Olympustheon@gmail.com</a>
                         <a href="tel:+34608961701" className="footer-contact-link">+34 608 961 701</a>

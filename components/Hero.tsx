@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 export default function Hero() {
+    const t = useTranslations('Hero');
     const videoRef = useRef<HTMLVideoElement>(null);
     const [videoReady, setVideoReady] = useState(false);
 
@@ -29,6 +31,8 @@ export default function Hero() {
             handleVideoReady();
         }
 
+        let interactionCleanup: (() => void) | undefined;
+
         // Try to play the video
         const playPromise = video.play();
         if (playPromise !== undefined) {
@@ -40,11 +44,15 @@ export default function Hero() {
                 // We listen for the very first interaction to forcefully play the video
                 const forcePlay = () => {
                     video.play().catch(() => {});
+                    interactionCleanup?.();
+                };
+
+                interactionCleanup = () => {
                     document.removeEventListener('touchstart', forcePlay);
                     document.removeEventListener('scroll', forcePlay);
                     document.removeEventListener('click', forcePlay);
                 };
-                
+
                 document.addEventListener('touchstart', forcePlay, { passive: true });
                 document.addEventListener('scroll', forcePlay, { passive: true });
                 document.addEventListener('click', forcePlay);
@@ -60,12 +68,13 @@ export default function Hero() {
             video.removeEventListener('canplay', handleVideoReady);
             video.removeEventListener('loadeddata', handleVideoReady);
             video.removeEventListener('playing', handleVideoReady);
+            interactionCleanup?.();
             clearTimeout(fallbackTimeout);
         };
     }, []);
 
     return (
-        <section className="hero" style={{ position: 'relative', overflow: 'hidden', isolation: 'isolate', minHeight: '100vh', backgroundColor: '#000' }}>
+        <section className="hero hero-premium">
             {/* Video Background */}
             <video
                 ref={videoRef}
@@ -73,55 +82,38 @@ export default function Hero() {
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 className="ken-burns"
                 poster="/hero-gym.png"
                 src="/hero-video.mp4"
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    zIndex: -1,
-                    opacity: videoReady ? 1 : 0,
-                    transition: 'opacity 0.5s ease-in-out',
-                }}
+                style={{ opacity: videoReady ? 1 : 0 }}
             />
 
             {/* Overlay for readability */}
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 70%, #000000 100%)',
-                zIndex: 0
-            }}></div>
+            <div className="hero-overlay" aria-hidden="true" />
 
-            <div className="container hero-content" style={{ position: 'relative', zIndex: 1 }}>
-                <h1 className="hero-title">FORJANDO HOMBRES DE ÉLITE</h1>
-                <p className="hero-subtitle">Potenciando la masculinidad y la filosofía del esfuerzo absoluto.</p>
+            <div className="container hero-content">
+                <p className="hero-eyebrow">{t('eyebrow')}</p>
+                <h1 className="hero-title">{t('title')}</h1>
+                <p className="hero-subtitle">{t('subtitle')}</p>
 
                 <div className="hero-actions">
                     <a href="#method" className="btn btn-primary" onClick={(e) => {
                         e.preventDefault();
                         document.getElementById('method')?.scrollIntoView({ behavior: 'smooth' });
                     }}>
-                        DESCUBRIR EL MÉTODO
+                        {t('primaryCta')}
                     </a>
                     <Link href="/programas" className="btn btn-secondary">
-                        VER PROGRAMAS
+                        {t('secondaryCta')}
                     </Link>
                 </div>
             </div>
 
             {/* Scroll Indicator */}
-            <div className="scroll-indicator" onClick={() => {
+            <button type="button" className="scroll-indicator" onClick={() => {
                 document.getElementById('method')?.scrollIntoView({ behavior: 'smooth' });
-            }}>
+            }} aria-label={t('scroll')}>
                 <div className="scroll-indicator-line"></div>
                 <div className="scroll-indicator-arrows">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -129,8 +121,8 @@ export default function Hero() {
                         <polyline points="7 6 12 11 17 6"></polyline>
                     </svg>
                 </div>
-                <span className="scroll-indicator-text">SCROLL</span>
-            </div>
+                <span className="scroll-indicator-text">{t('scroll')}</span>
+            </button>
         </section>
     );
 }

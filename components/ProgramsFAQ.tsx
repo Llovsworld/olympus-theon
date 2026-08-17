@@ -19,11 +19,11 @@ const faqData: FAQItem[] = [
     },
     {
         question: "¿Qué incluye el programa?",
-        answer: "Acceso completo a protocolos de entrenamiento, planes de nutrición personalizados, sesiones de coaching en vivo, biblioteca de recursos sobre estoicismo y desarrollo masculino, comunidad privada de élite, y seguimiento semanal de progreso."
+        answer: "El alcance exacto depende del formato elegido. Puede incluir protocolos de entrenamiento, guía nutricional, sesiones en vivo, materiales de trabajo, comunidad y revisión periódica del progreso. Antes de empezar dejamos por escrito qué incluye tu programa."
     },
     {
-        question: "¿Hay garantía de resultados?",
-        answer: "Garantizamos resultados solo para aquellos que se comprometen completamente. Si sigues el protocolo al 100% durante 12 semanas y no ves transformación medible (física, mental, espiritual), trabajamos contigo hasta que la alcances. La mediocridad no es una opción."
+        question: "¿Qué resultados puedo esperar?",
+        answer: "Los resultados dependen de tu punto de partida, salud, contexto y nivel de cumplimiento. El programa aporta estructura, seguimiento y herramientas; no promete resultados idénticos para todos. Definiremos indicadores realistas antes de comenzar."
     },
     {
         question: "¿Cómo es el proceso de aplicación?",
@@ -52,11 +52,18 @@ export default function ProgramsFAQ() {
                                 <button
                                     className={`faq-question ${openIndex === index ? 'active' : ''}`}
                                     onClick={() => toggleFAQ(index)}
+                                    aria-expanded={openIndex === index}
+                                    aria-controls={`faq-answer-${index}`}
                                 >
                                     <span>{item.question}</span>
                                     <span className="faq-icon">{openIndex === index ? '−' : '+'}</span>
                                 </button>
-                                <div className={`faq-answer ${openIndex === index ? 'open' : ''}`}>
+                                <div
+                                    id={`faq-answer-${index}`}
+                                    className={`faq-answer ${openIndex === index ? 'open' : ''}`}
+                                    role="region"
+                                    aria-hidden={openIndex !== index}
+                                >
                                     <p>{item.answer}</p>
                                 </div>
                             </div>

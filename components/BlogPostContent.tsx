@@ -1,6 +1,9 @@
 "use client";
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
+import { useMemo } from 'react';
+import { sanitizeRichHtml } from '@/lib/sanitize-html';
 
 interface Post {
     slug: string;
@@ -11,6 +14,8 @@ interface Post {
 }
 
 export default function BlogPostContent({ post }: { post: Post }) {
+    const safeContent = useMemo(() => sanitizeRichHtml(post.content), [post.content]);
+
     return (
         <article className="container" style={{ padding: '6rem 0', maxWidth: '900px', margin: '0 auto' }}>
             <Link
@@ -37,14 +42,15 @@ export default function BlogPostContent({ post }: { post: Post }) {
                     borderRadius: '12px',
                     overflow: 'hidden',
                     marginBottom: '3rem',
+                    position: 'relative',
                     background: 'linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,165,0,0.1) 100%)'
                 }}>
-                    <img
+                    <Image
                         src={post.featuredImage}
                         alt={post.title}
+                        fill
+                        sizes="(max-width: 900px) 100vw, 900px"
                         style={{
-                            width: '100%',
-                            height: '100%',
                             objectFit: 'cover'
                         }}
                     />
@@ -84,7 +90,7 @@ export default function BlogPostContent({ post }: { post: Post }) {
                     fontSize: '1.1rem',
                     color: '#ccc'
                 }}
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: safeContent }}
             />
 
             <style jsx global>{`

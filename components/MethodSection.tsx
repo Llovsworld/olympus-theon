@@ -1,5 +1,5 @@
 import ScrollReveal from './ScrollReveal';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 
 export default function MethodSection() {
@@ -7,7 +7,8 @@ export default function MethodSection() {
         <section className="method-section-alt">
             <div className="container">
                 <ScrollReveal variant="fade" delay={0}>
-                    <h2 className="method-title-main">NUESTRO MÉTODO: LA TRÍADA DEL PODER</h2>
+                    <p className="section-kicker">UN SISTEMA, TRES FRENTES</p>
+                    <h2 className="method-title-main">LA TRÍADA DEL RENDIMIENTO</h2>
                 </ScrollReveal>
 
                 <div className="method-rows">
@@ -18,37 +19,36 @@ export default function MethodSection() {
                                 <div className="method-tag">ESTRATEGIA MENTAL</div>
                                 <Image
                                     src="/hero-car.png"
-                                    alt="Reprogramación Mental"
+                                    alt="Entorno de trabajo enfocado en estrategia y precisión"
                                     fill
-                                    priority
+                                    sizes="(max-width: 1024px) 100vw, 55vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
                             </div>
                         </ScrollReveal>
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
-                            <h3 className="method-title-large">REPROGRAMACIÓN<br />MENTAL</h3>
+                            <h3 className="method-title-large">CLARIDAD<br />MENTAL</h3>
                             <p className="method-description">
-                                Eliminamos creencias limitantes e instalamos modelos mentales de alto rendimiento.
-                                Adopta la estoicidad operativa para la toma de decisiones bajo presión y
-                                rediseña tu arquitectura cognitiva para el éxito.
+                                Identifica el ruido, define prioridades y convierte tus objetivos en decisiones
+                                ejecutables. Menos impulso del momento; más criterio bajo presión.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">+300%</span>
-                                    <span className="method-stat-label">FOCO</span>
+                                    <span className="method-stat-value">01</span>
+                                    <span className="method-stat-label">DIAGNÓSTICO</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">24/7</span>
-                                    <span className="method-stat-label">CLARIDAD</span>
+                                    <span className="method-stat-value">02</span>
+                                    <span className="method-stat-label">ESTRATEGIA</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">100%</span>
-                                    <span className="method-stat-label">CONTROL</span>
+                                    <span className="method-stat-value">03</span>
+                                    <span className="method-stat-label">EJECUCIÓN</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                EXPLORAR PROGRAMAS <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>
@@ -63,6 +63,7 @@ export default function MethodSection() {
                                     alt="Optimización Física"
                                     fill
                                     loading="lazy"
+                                    sizes="(max-width: 1024px) 100vw, 55vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -71,26 +72,25 @@ export default function MethodSection() {
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
                             <h3 className="method-title-large">OPTIMIZACIÓN<br />FÍSICA</h3>
                             <p className="method-description">
-                                No es solo fitness, es ingeniería corporal. Protocolos de entrenamiento y
-                                nutrición diseñados científicamente para construir una presencia imponente,
-                                una estética superior y una energía inagotable.
+                                Entrenamiento, recuperación y nutrición convertidos en un plan que puedas
+                                sostener. El objetivo es un cuerpo fuerte, capaz y coherente con tu estilo de vida.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">+5kg</span>
-                                    <span className="method-stat-label">MÚSCULO</span>
+                                    <span className="method-stat-value">FUERZA</span>
+                                    <span className="method-stat-label">PROGRESIVA</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">-10%</span>
-                                    <span className="method-stat-label">GRASA</span>
+                                    <span className="method-stat-value">ENERGÍA</span>
+                                    <span className="method-stat-label">ESTABLE</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">MAX</span>
-                                    <span className="method-stat-label">ENERGÍA</span>
+                                    <span className="method-stat-value">SALUD</span>
+                                    <span className="method-stat-label">SOSTENIBLE</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                EXPLORAR PROGRAMAS <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>
@@ -99,40 +99,40 @@ export default function MethodSection() {
                     <div className="method-row">
                         <ScrollReveal variant="fade" delay={200} className="method-image-col">
                             <div className="method-image-container">
-                                <div className="method-tag">COMUNIDAD & PROPÓSITO</div>
+                                <div className="method-tag">DIRECCIÓN PERSONAL</div>
                                 <Image
                                     src="/story_background.png"
-                                    alt="Dominio Espiritual"
+                                    alt="Escultura clásica como símbolo de propósito y carácter"
                                     fill
                                     loading="lazy"
+                                    sizes="(max-width: 1024px) 100vw, 55vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
                             </div>
                         </ScrollReveal>
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
-                            <h3 className="method-title-large">DOMINIO ESPIRITUAL<br />Y PROPÓSITO</h3>
+                            <h3 className="method-title-large">PROPÓSITO<br />Y CARÁCTER</h3>
                             <p className="method-description">
-                                Alinea tus acciones con tu propósito vital. Desarrolla una brújula interna
-                                inquebrantable que te guíe más allá del éxito material y conecta con una
-                                hermandad global de hombres de alto valor.
+                                Alinea agenda, relaciones y trabajo con principios que puedas defender.
+                                Construye una dirección propia y un entorno que eleve tu estándar.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">150+</span>
-                                    <span className="method-stat-label">MIEMBROS</span>
+                                    <span className="method-stat-value">NORTE</span>
+                                    <span className="method-stat-label">DEFINIDO</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">∞</span>
-                                    <span className="method-stat-label">NETWORKING</span>
+                                    <span className="method-stat-value">HÁBITOS</span>
+                                    <span className="method-stat-label">COHERENTES</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">1</span>
-                                    <span className="method-stat-label">LEGADO</span>
+                                    <span className="method-stat-value">ENTORNO</span>
+                                    <span className="method-stat-label">EXIGENTE</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                EXPLORAR PROGRAMAS <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>

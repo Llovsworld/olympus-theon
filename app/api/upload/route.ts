@@ -11,9 +11,9 @@ export async function POST(request: Request) {
 
     try {
         const formData = await request.formData();
-        const file = formData.get('file') as File;
+        const file = formData.get('file');
 
-        if (!file) {
+        if (!(file instanceof File)) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
@@ -28,7 +28,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'File too large. Max 5MB allowed.' }, { status: 400 });
         }
 
-        const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const safeBaseName = file.name
+            .replace(/[^a-zA-Z0-9._-]/g, '_')
+            .replace(/^\.+/, '')
+            .slice(-120) || 'image';
+        const filename = `${crypto.randomUUID()}-${safeBaseName}`;
 
         // Pass token explicitly to ensure it's used
         const blob = await put(filename, file, {
@@ -39,12 +43,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ url: blob.url });
     } catch (error) {
         console.error('Upload error:', error);
-        return NextResponse.json(
-            {
-                error: 'Upload failed',
-                details: error instanceof Error ? error.message : String(error)
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
     }
 }

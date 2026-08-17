@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
 interface ImageUploaderProps {
@@ -14,6 +14,8 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
     const [preview, setPreview] = useState(currentImage || '');
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const inputId = useId();
+    const labelId = `${inputId}-label`;
 
     // Sync preview with prop when loading drafts
     useEffect(() => {
@@ -22,10 +24,7 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
         }
     }, [currentImage]);
 
-    async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
+    async function uploadFile(file: File) {
         // Show preview immediately with local data URL
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -63,6 +62,13 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
         }
     }
 
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (file) {
+            void uploadFile(file);
+        }
+    }
+
     function handleRemove(e: React.MouseEvent) {
         e.stopPropagation();
         setPreview('');
@@ -74,78 +80,104 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
 
     return (
         <div>
-            <label className="admin-label">
+            <label id={labelId} htmlFor={inputId} className="admin-label">
                 {label}
             </label>
 
-            <div
-                className={`admin-uploader ${isDragging ? 'dragging' : ''}`}
-                onClick={() => !uploading && fileInputRef.current?.click()}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragging(false);
-                    const file = e.dataTransfer.files[0];
-                    if (file && !uploading) {
-                        const input = fileInputRef.current;
-                        if (input) {
-                            const dataTransfer = new DataTransfer();
-                            dataTransfer.items.add(file);
-                            input.files = dataTransfer.files;
-                            handleFileChange({ target: input } as any);
+            <div style={{ position: 'relative' }}>
+                <label
+                    htmlFor={inputId}
+                    className={`admin-uploader ${isDragging ? 'dragging' : ''}`}
+                    role="button"
+                    tabIndex={uploading ? -1 : 0}
+                    aria-labelledby={labelId}
+                    aria-disabled={uploading}
+                    style={{ display: 'block' }}
+                    onKeyDown={(event) => {
+                        if (!uploading && (event.key === 'Enter' || event.key === ' ')) {
+                            event.preventDefault();
+                            fileInputRef.current?.click();
                         }
-                    }
-                }}
-            >
-                {uploading ? (
-                    <div className="admin-uploader-loading">
-                        <div className="admin-spinner"></div>
-                        <p className="admin-uploader-text">Subiendo imagen...</p>
-                    </div>
-                ) : preview ? (
-                    <div style={{ position: 'relative' }}>
-                        <img
-                            src={preview}
-                            alt="Preview"
-                            className="admin-uploader-preview"
-                        />
-                        <p className="admin-uploader-text" style={{ marginTop: '0.5rem' }}>
-                            Haz click para cambiar
-                        </p>
-                        <button
-                            type="button"
-                            className="admin-uploader-remove"
-                            onClick={handleRemove}
-                            title="Eliminar imagen"
-                        >
-                            <X size={16} />
-                        </button>
-                    </div>
-                ) : (
-                    <div>
-                        <div className="admin-uploader-icon">
-                            {isDragging ? <Upload size={48} /> : <ImageIcon size={48} />}
+                    }}
+                    onDragOver={(event) => {
+                        event.preventDefault();
+                        setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={(event) => {
+                        event.preventDefault();
+                        setIsDragging(false);
+                        const file = event.dataTransfer.files[0];
+                        if (file && !uploading) {
+                            void uploadFile(file);
+                        }
+                    }}
+                >
+                    {uploading ? (
+                        <div className="admin-uploader-loading">
+                            <div className="admin-spinner"></div>
+                            <p className="admin-uploader-text">Subiendo imagen...</p>
                         </div>
-                        <p className="admin-uploader-text">
-                            {isDragging ? 'Suelta la imagen aquí' : 'Click o arrastra una imagen'}
-                        </p>
-                        <p className="admin-uploader-hint">
-                            Max 5MB · JPG, PNG, GIF, WEBP
-                        </p>
-                    </div>
-                )}
+                    ) : preview ? (
+                        <div>
+                            {/* eslint-disable-next-line @next/next/no-img-element -- The preview may be a local data URL before upload. */}
+                            <img
+                                src={preview}
+                                alt="Vista previa de la imagen seleccionada"
+                                className="admin-uploader-preview"
+                            />
+                            <p className="admin-uploader-text" style={{ marginTop: '0.5rem' }}>
+                                Haz clic para cambiar
+                            </p>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="admin-uploader-icon">
+                                {isDragging ? <Upload size={48} /> : <ImageIcon size={48} />}
+                            </div>
+                            <p className="admin-uploader-text">
+                                {isDragging ? 'Suelta la imagen aquí' : 'Haz clic o arrastra una imagen'}
+                            </p>
+                            <p className="admin-uploader-hint">
+                                Máx. 5 MB · JPG, PNG, GIF, WEBP
+                            </p>
+                        </div>
+                    )}
+                </label>
+
+                {preview && !uploading ? (
+                    <button
+                        type="button"
+                        className="admin-uploader-remove"
+                        onClick={handleRemove}
+                        aria-label="Eliminar imagen"
+                        title="Eliminar imagen"
+                        style={{ opacity: 1 }}
+                    >
+                        <X size={16} aria-hidden="true" />
+                    </button>
+                ) : null}
             </div>
 
             <input
+                id={inputId}
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                style={{ display: 'none' }}
+                disabled={uploading}
+                aria-labelledby={labelId}
+                style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    padding: 0,
+                    margin: '-1px',
+                    overflow: 'hidden',
+                    clip: 'rect(0, 0, 0, 0)',
+                    whiteSpace: 'nowrap',
+                    border: 0,
+                }}
             />
         </div>
     );

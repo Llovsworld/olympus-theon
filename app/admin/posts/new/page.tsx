@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useEffectEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
+import AccessibleModal from '@/components/admin/AccessibleModal';
+import ContentPreview from '@/components/admin/ContentPreview';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export default function NewPostPage() {
@@ -75,23 +77,6 @@ export default function NewPostPage() {
 
         return () => clearTimeout(timeoutId);
     }, [title, subtitle, slug, content, excerpt, metaDescription, category, featuredImage]);
-
-    // Keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-                e.preventDefault();
-                handleSaveDraft();
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handlePublish();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [title, slug, content, featuredImage]);
 
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
@@ -194,6 +179,25 @@ export default function NewPostPage() {
             setLoading(false);
         }
     }
+
+    const handleSaveShortcut = useEffectEvent(handleSaveDraft);
+    const handlePublishShortcut = useEffectEvent(handlePublish);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                void handleSaveShortcut();
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                void handlePublishShortcut();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
@@ -511,20 +515,16 @@ export default function NewPostPage() {
 
             {/* Preview Modal */}
             {showPreview && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.9)',
-                    zIndex: 1000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '2rem'
-                }} onClick={() => setShowPreview(false)}>
-                    <div style={{
+                <AccessibleModal
+                    label="Vista previa del artículo"
+                    onClose={() => setShowPreview(false)}
+                    overlayStyle={{
+                        background: 'rgba(0, 0, 0, 0.9)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '2rem'
+                    }}
+                    contentStyle={{
                         background: '#050505',
                         maxWidth: '800px',
                         width: '100%',
@@ -533,30 +533,23 @@ export default function NewPostPage() {
                         borderRadius: '12px',
                         padding: '3rem',
                         border: '1px solid #1f1f1f'
-                    }} onClick={(e) => e.stopPropagation()}>
-                        {featuredImage && (
-                            <img src={featuredImage} alt={title} style={{
-                                width: '100%',
-                                height: 'auto',
-                                borderRadius: '8px',
-                                marginBottom: '2rem'
-                            }} />
-                        )}
-                        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem', color: '#ededed' }}>
-                            {title || 'Untitled Post'}
-                        </h1>
-                        {subtitle && (
-                            <h2 style={{ fontSize: '1.5rem', color: '#888', marginBottom: '2rem', fontWeight: '400' }}>
-                                {subtitle}
-                            </h2>
-                        )}
-                        <div
-                            className="prose prose-invert prose-lg"
-                            style={{ color: '#ededed' }}
-                            dangerouslySetInnerHTML={{ __html: content || '<p>No content yet...</p>' }}
+                    }}
+                >
+                        <button
+                            type="button"
+                            className="admin-btn admin-btn-secondary"
+                            onClick={() => setShowPreview(false)}
+                            style={{ marginLeft: 'auto', marginBottom: '1.5rem', display: 'block' }}
+                        >
+                            Cerrar
+                        </button>
+                        <ContentPreview
+                            content={content || '<p>Todavía no hay contenido.</p>'}
+                            title={title || 'Artículo sin título'}
+                            subtitle={subtitle}
+                            featuredImage={featuredImage}
                         />
-                    </div>
-                </div>
+                </AccessibleModal>
             )}
         </div>
     );

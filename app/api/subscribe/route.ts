@@ -1,45 +1,28 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { normalizeEmail, readJsonObject, RequestValidationError } from '@/lib/validation';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
+    const limited = rateLimit(request, 'subscribe', { limit: 10, windowMs: 15 * 60 * 1000 });
+    if (limited) return limited;
+
     try {
-        const { email } = await request.json();
+        const body = await readJsonObject(request);
+        const email = normalizeEmail(body.email);
 
-        if (!email || !email.includes('@')) {
-            return NextResponse.json(
-                { error: 'Invalid email address' },
-                { status: 400 }
-            );
-        }
-
-        // Check if already subscribed
-        const existing = await prisma.subscriber.findUnique({
+        await prisma.subscriber.upsert({
             where: { email },
-        });
-
-        if (existing) {
-            if (!existing.active) {
-                // Reactivate if previously unsubscribed
-                await prisma.subscriber.update({
-                    where: { email },
-                    data: { active: true },
-                });
-                return NextResponse.json({ message: 'Welcome back! Subscription reactivated.' });
-            }
-            return NextResponse.json(
-                { message: 'You are already subscribed.' },
-                { status: 200 }
-            );
-        }
-
-        // Create new subscriber
-        await prisma.subscriber.create({
-            data: { email },
+            update: { active: true },
+            create: { email, active: true },
         });
 
         return NextResponse.json({ message: 'Successfully subscribed!' });
     } catch (error) {
         console.error('Subscription error:', error);
+        if (error instanceof RequestValidationError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
         return NextResponse.json(
             { error: 'Failed to subscribe' },
             { status: 500 }

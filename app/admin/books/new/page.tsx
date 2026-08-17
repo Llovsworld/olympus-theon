@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useEffectEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
+import AccessibleModal from '@/components/admin/AccessibleModal';
+import ContentPreview from '@/components/admin/ContentPreview';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export default function NewBookPage() {
@@ -61,23 +63,6 @@ export default function NewBookPage() {
 
         return () => clearTimeout(timeoutId);
     }, [title, slug, author, description, content, coverImage, link]);
-
-    // Keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-                e.preventDefault();
-                handleSaveDraft();
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handlePublish();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [title, slug, content, coverImage, link]);
 
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
@@ -176,6 +161,25 @@ export default function NewBookPage() {
             setLoading(false);
         }
     }
+
+    const handleSaveShortcut = useEffectEvent(handleSaveDraft);
+    const handlePublishShortcut = useEffectEvent(handlePublish);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                void handleSaveShortcut();
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                void handlePublishShortcut();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
@@ -480,20 +484,16 @@ export default function NewBookPage() {
 
             {/* Preview Modal */}
             {showPreview && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.9)',
-                    zIndex: 1000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '2rem'
-                }} onClick={() => setShowPreview(false)}>
-                    <div style={{
+                <AccessibleModal
+                    label="Vista previa del libro"
+                    onClose={() => setShowPreview(false)}
+                    overlayStyle={{
+                        background: 'rgba(0, 0, 0, 0.9)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '2rem'
+                    }}
+                    contentStyle={{
                         background: '#050505',
                         maxWidth: '800px',
                         width: '100%',
@@ -502,40 +502,24 @@ export default function NewBookPage() {
                         borderRadius: '12px',
                         padding: '3rem',
                         border: '1px solid #1f1f1f'
-                    }} onClick={(e) => e.stopPropagation()}>
-                        {coverImage && (
-                            <img src={coverImage} alt={title} style={{
-                                maxWidth: '200px',
-                                height: 'auto',
-                                borderRadius: '4px',
-                                marginBottom: '2rem',
-                                display: 'block',
-                                margin: '0 auto 2rem auto',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-                            }} />
-                        )}
-                        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '1rem', color: '#ededed', textAlign: 'center' }}>
-                            {title || 'Untitled Book'}
-                        </h1>
-                        {description && (
-                            <div style={{ fontSize: '1.25rem', color: '#666', marginBottom: '2rem', fontStyle: 'italic', textAlign: 'center' }}>
-                                {description}
-                            </div>
-                        )}
-                        {link && (
-                            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                                <a href={link} target="_blank" className="btn" style={{ background: '#ededed', color: '#000', padding: '0.75rem 1.5rem', borderRadius: '50px', textDecoration: 'none' }}>
-                                    Get This Book
-                                </a>
-                            </div>
-                        )}
-                        <div
-                            className="prose prose-invert prose-lg"
-                            style={{ color: '#ededed', margin: '0 auto' }}
-                            dangerouslySetInnerHTML={{ __html: content || '<p>No content yet...</p>' }}
+                    }}
+                >
+                        <button
+                            type="button"
+                            className="admin-btn admin-btn-secondary"
+                            onClick={() => setShowPreview(false)}
+                            style={{ marginLeft: 'auto', marginBottom: '1.5rem', display: 'block' }}
+                        >
+                            Cerrar
+                        </button>
+                        <ContentPreview
+                            content={content || '<p>Todavía no hay contenido.</p>'}
+                            title={title || 'Libro sin título'}
+                            description={description}
+                            featuredImage={coverImage}
+                            link={link}
                         />
-                    </div>
-                </div>
+                </AccessibleModal>
             )}
         </div>
     );

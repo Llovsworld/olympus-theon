@@ -1,16 +1,21 @@
 {
     "Header": {
-        "home": "Inicio",
-        "story": "Historia",
-        "ceo": "CEO",
+        "skip": "Saltar al contenido",
         "blog": "Blog",
         "contact": "Contacto",
-        "books": "Libros"
+        "books": "Biblioteca",
+        "programs": "Programas",
+        "openMenu": "Abrir menú",
+        "closeMenu": "Cerrar menú",
+        "language": "Idioma"
     },
     "Hero": {
-        "title": "Masculinidad. Visión. Poder.",
-        "subtitle": "Redefiniendo lo que significa ser un hombre en el mundo moderno.",
-        "cta": "Comienza tu Viaje"
+        "eyebrow": "Mentoría de alto rendimiento",
+        "title": "Forja una mente y un cuerpo a la altura de tu ambición.",
+        "subtitle": "Un sistema exigente y práctico para construir disciplina, claridad y rendimiento sostenible.",
+        "primaryCta": "Descubrir el método",
+        "secondaryCta": "Ver programas",
+        "scroll": "Explorar"
     },
     "Story": {
         "title": "Nuestra Historia",
@@ -22,7 +27,18 @@
         "description": "Liderando la carga hacia una nueva era de masculinidad."
     },
     "Footer": {
-        "rights": "Todos los derechos reservados."
+        "rights": "Todos los derechos reservados.",
+        "description": "Disciplina, claridad y rendimiento. Un método para hombres que han decidido tomarse en serio su evolución.",
+        "navigation": "Navegación",
+        "content": "Contenido",
+        "method": "Método",
+        "founder": "Fundador",
+        "testimonials": "Principios",
+        "newsletterTitle": "Carta de la élite",
+        "newsletterDescription": "Ideas aplicables sobre mente, cuerpo y ejecución. Sin ruido.",
+        "invalidEmail": "Introduce un correo válido.",
+        "success": "Suscripción confirmada.",
+        "error": "No hemos podido suscribirte. Inténtalo de nuevo."
     },
     "Newsletter": {
         "title": "ÚNETE A LA ÉLITE",

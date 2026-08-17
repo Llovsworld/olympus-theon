@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { parsePostInput } from '@/lib/content-input';
+import { readJsonObject, RequestValidationError } from '@/lib/validation';
+import { sendNewsletter } from '@/lib/email';
+import { after } from 'next/server';
 
 // GET single post
 export async function GET(
@@ -43,30 +47,42 @@ export async function PUT(
         }
 
         const { id } = await params;
-        const body = await request.json();
+        const body = await readJsonObject(request);
 
         const post = await prisma.post.findUnique({ where: { id } });
         if (!post) {
             return NextResponse.json({ error: 'Post not found' }, { status: 404 });
         }
 
+        const input = parsePostInput(body, post.published);
         const updatedPost = await prisma.post.update({
             where: { id },
-            data: {
-                title: body.title,
-                slug: body.slug,
-                content: body.content,
-                excerpt: body.excerpt || null,
-                metaDescription: body.metaDescription || null,
-                category: body.category || null,
-                featuredImage: body.featuredImage || null,
-                published: body.published ?? post.published,
-            },
+            data: input,
         });
+
+        if (!post.published && updatedPost.published) {
+            after(async () => {
+                try {
+                    await sendNewsletter('post', {
+                        title: updatedPost.title,
+                        slug: updatedPost.slug,
+                        content: updatedPost.content.substring(0, 200) + '...',
+                    });
+                } catch (error) {
+                    console.error('Background email error:', error);
+                }
+            });
+        }
 
         return NextResponse.json(updatedPost);
     } catch (error) {
         console.error('Error updating post:', error);
+        if (error instanceof RequestValidationError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+            return NextResponse.json({ error: 'Duplicate slug' }, { status: 409 });
+        }
         return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
     }
 }

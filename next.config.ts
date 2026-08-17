@@ -31,38 +31,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@tiptap/react', '@tiptap/starter-kit'],
   },
 
-  // Cache headers for static assets
-  async headers() {
-    return [
-      {
-        source: '/:all*(svg|jpg|jpeg|png|gif|ico|webp|avif|mp4|webm)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/fonts/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default withNextIntl(nextConfig);

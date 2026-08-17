@@ -1,6 +1,7 @@
 "use client";
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
 import { memo } from 'react';
 
 interface BookCardProps {
@@ -20,11 +21,11 @@ function BookCard({ book }: BookCardProps) {
             <article className="blog-card glass-card">
                 {book.coverImage ? (
                     <div className="blog-card-image" style={{ aspectRatio: '2/3' }}>
-                        <img
+                        <Image
                             src={book.coverImage}
                             alt={book.title}
-                            loading="lazy"
-                            decoding="async"
+                            fill
+                            sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                         />
                         <div className="blog-card-image-overlay" />
                     </div>
@@ -63,5 +64,3 @@ function BookCard({ book }: BookCardProps) {
 }
 
 export default memo(BookCard);
-
-

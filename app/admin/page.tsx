@@ -13,6 +13,41 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+async function getDashboardData() {
+    const [postCount, bookCount, recentPosts, postViews, bookViews] = await Promise.all([
+        prisma.post.count(),
+        prisma.book.count(),
+        prisma.post.findMany({
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                title: true,
+                published: true,
+                createdAt: true,
+                slug: true
+            }
+        }),
+        prisma.post.aggregate({
+            _sum: {
+                views: true
+            }
+        }),
+        prisma.book.aggregate({
+            _sum: {
+                views: true
+            }
+        })
+    ]);
+
+    return {
+        postCount,
+        bookCount,
+        recentPosts,
+        totalViews: (postViews._sum.views || 0) + (bookViews._sum.views || 0)
+    };
+}
+
 export default async function AdminDashboard() {
     const session = await getServerSession(authOptions);
 
@@ -20,37 +55,21 @@ export default async function AdminDashboard() {
         redirect('/admin/login');
     }
 
+    let dashboardData: Awaited<ReturnType<typeof getDashboardData>> | null = null;
+
     try {
-        // Fetch real data
-        const [postCount, bookCount, recentPosts, postViews, bookViews] = await Promise.all([
-            prisma.post.count(),
-            prisma.book.count(),
-            prisma.post.findMany({
-                take: 5,
-                orderBy: { createdAt: 'desc' },
-                select: {
-                    id: true,
-                    title: true,
-                    published: true,
-                    createdAt: true,
-                    slug: true
-                }
-            }),
-            prisma.post.aggregate({
-                _sum: {
-                    views: true
-                }
-            }),
-            prisma.book.aggregate({
-                _sum: {
-                    views: true
-                }
-            })
-        ]);
+        dashboardData = await getDashboardData();
+    } catch (error) {
+        console.error('Admin Dashboard Error:', error);
+    }
 
-        const totalViews = (postViews._sum.views || 0) + (bookViews._sum.views || 0);
+    if (!dashboardData) {
+        return <ConfigurationRequired />;
+    }
 
-        return (
+    const { postCount, bookCount, recentPosts, totalViews } = dashboardData;
+
+    return (
             <div className="animate-fade-in">
                 <header style={{ marginBottom: '3rem' }}>
                     <h1 style={{
@@ -63,7 +82,7 @@ export default async function AdminDashboard() {
                     }}>
                         Dashboard
                     </h1>
-                    <p style={{ color: '#666' }}>Welcome back, Admin. Here's what's happening today.</p>
+                    <p style={{ color: '#666' }}>Welcome back, Admin. Here&apos;s what&apos;s happening today.</p>
                 </header>
 
                 {/* Stats Grid */}
@@ -98,7 +117,7 @@ export default async function AdminDashboard() {
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                             <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>Recent Posts</h2>
-                            <Link href="/admin/posts/manage" style={{ color: '#888', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <Link href="/admin/posts" style={{ color: '#888', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                 View All <ArrowRight size={14} />
                             </Link>
                         </div>
@@ -196,68 +215,68 @@ export default async function AdminDashboard() {
                     </div>
                 </div>
             </div>
-        );
-    } catch (error) {
-        console.error("Admin Dashboard Error:", error);
-        return (
+    );
+}
+
+function ConfigurationRequired() {
+    return (
+        <div style={{
+            padding: '4rem',
+            textAlign: 'center',
+            maxWidth: '600px',
+            margin: '0 auto',
+            animation: 'fadeIn 0.5s ease-out'
+        }}>
             <div style={{
-                padding: '4rem',
-                textAlign: 'center',
-                maxWidth: '600px',
-                margin: '0 auto',
-                animation: 'fadeIn 0.5s ease-out'
+                fontSize: '4rem',
+                marginBottom: '1rem',
+                opacity: 0.5
             }}>
-                <div style={{
-                    fontSize: '4rem',
-                    marginBottom: '1rem',
-                    opacity: 0.5
-                }}>
-                    🔧
-                </div>
-                <h1 style={{
-                    fontSize: '2rem',
-                    fontWeight: '800',
-                    marginBottom: '1rem',
-                    color: 'var(--foreground)'
-                }}>
-                    Configuration Required
-                </h1>
-                <p style={{
-                    color: '#888',
-                    marginBottom: '2rem',
-                    lineHeight: 1.6
-                }}>
-                    The admin panel cannot connect to the database. This usually means the <code>DATABASE_URL</code> environment variable is missing or incorrect.
-                </p>
-                <div style={{
-                    background: 'rgba(255, 100, 100, 0.1)',
-                    border: '1px solid rgba(255, 100, 100, 0.2)',
-                    padding: '1.5rem',
-                    borderRadius: '8px',
-                    textAlign: 'left',
-                    marginBottom: '2rem'
-                }}>
-                    <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#ff6b6b' }}>Action Required on Vercel:</p>
-                    <ol style={{ paddingLeft: '1.5rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <li>Go to <strong>Settings</strong> &gt; <strong>Environment Variables</strong></li>
-                        <li>Add <code>DATABASE_URL</code> (Postgres connection string)</li>
-                        <li>Add <code>NEXTAUTH_SECRET</code> (Random string for security)</li>
-                        <li>Add <code>ADMIN_USERNAME</code> & <code>ADMIN_PASSWORD</code></li>
-                    </ol>
-                </div>
-                <Link
-                    href="/"
-                    className="btn"
-                    style={{
-                        display: 'inline-block',
-                        padding: '1rem 2rem'
-                    }}
-                >
-                    Return to Home
-                </Link>
+                🔧
             </div>
-        );
-    }
+            <h1 style={{
+                fontSize: '2rem',
+                fontWeight: '800',
+                marginBottom: '1rem',
+                color: 'var(--foreground)'
+            }}>
+                Configuration Required
+            </h1>
+            <p style={{
+                color: '#888',
+                marginBottom: '2rem',
+                lineHeight: 1.6
+            }}>
+                The admin panel cannot connect to the database. This usually means the <code>DATABASE_URL</code> environment variable is missing or incorrect.
+            </p>
+            <div style={{
+                background: 'rgba(255, 100, 100, 0.1)',
+                border: '1px solid rgba(255, 100, 100, 0.2)',
+                padding: '1.5rem',
+                borderRadius: '8px',
+                textAlign: 'left',
+                marginBottom: '2rem'
+            }}>
+                <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#ff6b6b' }}>Action Required on Vercel:</p>
+                <ol style={{ paddingLeft: '1.5rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <li>Go to <strong>Settings</strong> &gt; <strong>Environment Variables</strong></li>
+                    <li>Add <code>DATABASE_URL</code> (Postgres connection string)</li>
+                    <li>Add <code>NEXTAUTH_SECRET</code> (Random string for security)</li>
+                    <li>Add <code>ADMIN_USERNAME</code> &amp; <code>ADMIN_PASSWORD</code></li>
+                </ol>
+            </div>
+            <Link
+                href="/"
+                className="btn"
+                style={{
+                    display: 'inline-block',
+                    padding: '1rem 2rem'
+                }}
+            >
+                Return to Home
+            </Link>
+        </div>
+    );
 }
 
 function StatCard({ title, value, icon, trend }: { title: string, value: string | number, icon: React.ReactNode, trend: string }) {

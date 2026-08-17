@@ -29,9 +29,13 @@ export default function ReadingProgress({ totalReadingTime = 5 }: ReadingProgres
     }, [totalReadingTime]);
 
     useEffect(() => {
-        window.addEventListener('scroll', updateProgress);
-        updateProgress(); // Initial call
-        return () => window.removeEventListener('scroll', updateProgress);
+        const initialFrame = window.requestAnimationFrame(updateProgress);
+        window.addEventListener('scroll', updateProgress, { passive: true });
+
+        return () => {
+            window.cancelAnimationFrame(initialFrame);
+            window.removeEventListener('scroll', updateProgress);
+        };
     }, [updateProgress]);
 
     return (

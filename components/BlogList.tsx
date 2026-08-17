@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Post } from '@prisma/client';
 import BlogCard from './BlogCard';
 import ScrollReveal from './ScrollReveal';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 interface BlogListProps {
     posts: Post[];
@@ -49,7 +50,9 @@ export default function BlogList({ posts }: BlogListProps) {
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
+                <label htmlFor="blog-search" className="visually-hidden">Buscar artículos</label>
                 <input
+                    id="blog-search"
                     type="text"
                     placeholder="Buscar artículos..."
                     value={searchQuery}
@@ -62,7 +65,6 @@ export default function BlogList({ posts }: BlogListProps) {
                         borderRadius: '50px',
                         color: '#fff',
                         fontSize: '1rem',
-                        outline: 'none',
                         transition: 'all 0.3s ease',
                         backdropFilter: 'blur(10px)'
                     }}
@@ -71,7 +73,7 @@ export default function BlogList({ posts }: BlogListProps) {
             </div>
 
             {/* Posts Grid */}
-            <div className="responsive-grid" style={{ marginTop: '0' }}>
+            <div className="responsive-grid" style={{ marginTop: '0' }} aria-live="polite">
                 {filteredPosts.map((post, index) => {
                     // Only show featured style for the very first post AND if there is no search query
                     const isFeatured = index === 0 && !searchQuery;
@@ -120,12 +122,12 @@ export default function BlogList({ posts }: BlogListProps) {
                                                 overflow: 'hidden',
                                                 position: 'relative'
                                             }}>
-                                                <img
+                                                <Image
                                                     src={post.featuredImage}
                                                     alt={post.title}
+                                                    fill
+                                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                     style={{
-                                                        width: '100%',
-                                                        height: '100%',
                                                         objectFit: 'cover'
                                                     }}
                                                 />

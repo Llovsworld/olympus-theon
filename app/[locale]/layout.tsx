@@ -15,7 +15,7 @@ export default async function LocaleLayout({
     const { locale } = await params;
 
     // Ensure that the incoming `locale` is valid
-    if (!['en', 'es'].includes(locale)) {
+    if (locale !== 'es') {
         notFound();
     }
 
@@ -25,24 +25,9 @@ export default async function LocaleLayout({
 
     return (
         <NextIntlClientProvider messages={messages}>
-            {/* Fixed Background Layer - The Infinite Tunnel */}
-            <div
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100vh',
-                    zIndex: -1,
-                    backgroundImage: 'url(\'/snake_bg_user.jpg\')',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed',
-                    opacity: 0.5,
-                }}
-            />
+            <div className="site-backdrop" aria-hidden="true" />
             <Header />
-            <main style={{ minHeight: '80vh', position: 'relative', zIndex: 1 }}>
+            <main id="main-content" tabIndex={-1} className="site-main">
                 {children}
             </main>
             <Footer />

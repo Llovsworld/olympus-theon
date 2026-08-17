@@ -1,0 +1,607 @@
+/* Olympus Theon 2026 — focused visual system layered over the legacy stylesheet. */
+:root {
+  --ot-bg: #070707;
+  --ot-surface: #0f0f0f;
+  --ot-surface-2: #151515;
+  --ot-text: #f4f1ea;
+  --ot-muted: #aaa79f;
+  --ot-line: rgba(255, 255, 255, 0.12);
+  --ot-accent: #c8a86b;
+}
+
+html {
+  font-size: 16px;
+  background: var(--ot-bg);
+  scroll-padding-top: 7rem;
+}
+
+html,
+body {
+  scroll-snap-type: none;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--ot-bg);
+  color: var(--ot-text);
+}
+
+.site-main {
+  min-height: 80vh;
+  position: relative;
+  z-index: 1;
+  outline: none;
+}
+
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(180deg, rgba(7, 7, 7, 0.82), rgba(7, 7, 7, 0.96)),
+    url('/snake_bg_user.jpg') center / cover;
+}
+
+.section-anchor {
+  scroll-margin-top: 7rem;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.section-kicker,
+.hero-eyebrow {
+  margin: 0 0 1.25rem;
+  color: var(--ot-accent);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.header {
+  padding: 1.15rem 0;
+}
+
+.header.scrolled {
+  padding: 0.8rem 0;
+  background: rgba(7, 7, 7, 0.92);
+}
+
+.header-content-centered {
+  max-width: 1280px;
+  gap: 3rem;
+}
+
+.logo-centered {
+  font-size: 1.45rem;
+  letter-spacing: 0.14em;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  filter: none;
+}
+
+.logo-centered:hover {
+  transform: none;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  color: var(--ot-accent);
+}
+
+.header-tagline {
+  margin-top: 0.35rem;
+  color: var(--ot-muted);
+  font-size: 0.6rem;
+  font-style: normal;
+  letter-spacing: 0.26em;
+  text-shadow: none;
+}
+
+.nav-left,
+.nav-right {
+  gap: 1.75rem;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-shadow: none;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #fff;
+  transform: none;
+  text-shadow: none;
+}
+
+.nav-link::after {
+  background: var(--ot-accent);
+  box-shadow: none;
+}
+
+.reading-progress-bar {
+  height: 2px;
+  background: var(--ot-accent);
+  box-shadow: none;
+}
+
+.hero-premium {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  align-items: flex-start;
+  text-align: left;
+  background: #050505 url('/hero-gym.png') center / cover;
+}
+
+.hero-premium video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: -1;
+  transition: opacity 0.5s ease;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.62) 48%, rgba(0, 0, 0, 0.2) 78%),
+    linear-gradient(0deg, #070707 0%, transparent 32%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  padding-top: clamp(8rem, 18vh, 13rem);
+}
+
+.hero-title {
+  max-width: 900px;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  font-size: clamp(3rem, 7.6vw, 7rem);
+  font-weight: 760;
+  letter-spacing: -0.055em;
+  line-height: 0.94;
+  text-transform: none;
+  text-wrap: balance;
+}
+
+.hero-subtitle {
+  max-width: 650px;
+  margin: 0 0 2.5rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.65;
+  text-shadow: none;
+}
+
+.hero-actions {
+  justify-content: flex-start;
+  gap: 0.8rem;
+}
+
+.btn,
+.btn-primary,
+.btn-secondary {
+  min-height: 50px;
+  padding: 0.95rem 1.5rem;
+  border-radius: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+}
+
+.btn-primary {
+  background: var(--ot-text);
+  color: #080808;
+}
+
+.btn-secondary {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.scroll-indicator {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.authority-bar {
+  border-block: 1px solid var(--ot-line);
+  background: rgba(8, 8, 8, 0.95);
+}
+
+.authority-text {
+  padding: 1.35rem 0;
+  color: var(--ot-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+}
+
+.ceo-philosophy-section,
+.method-section-alt,
+.principles-section,
+.cta-section {
+  background: var(--ot-bg);
+}
+
+.ceo-philosophy-grid {
+  min-height: auto;
+}
+
+.ceo-philosophy-content {
+  padding-block: clamp(5rem, 9vw, 9rem);
+}
+
+.ceo-top-ticker {
+  color: var(--ot-accent);
+}
+
+.ceo-philosophy-title {
+  font-size: clamp(3rem, 6vw, 6rem);
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.ceo-philosophy-description {
+  color: var(--ot-muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.ceo-philosophy-image-wrapper {
+  width: min(42vw, 560px);
+  height: min(70vw, 680px);
+  border: 1px solid var(--ot-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.ceo-philosophy-image-wrapper:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.ceo-philosophy-photo {
+  object-position: center 28%;
+}
+
+.ceo-philosophy-stat-value {
+  color: var(--ot-accent);
+}
+
+.method-section-alt {
+  padding: clamp(5rem, 9vw, 9rem) 0;
+  border-top: 1px solid var(--ot-line);
+}
+
+.method-title-main {
+  margin-bottom: clamp(4rem, 7vw, 7rem);
+  background: none;
+  color: #fff;
+  -webkit-text-fill-color: currentColor;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.method-rows {
+  gap: clamp(6rem, 11vw, 11rem);
+}
+
+.method-row,
+.method-row.reverse {
+  gap: clamp(2.5rem, 6vw, 6rem);
+}
+
+.method-image-container {
+  height: min(55vw, 570px);
+  border: 1px solid var(--ot-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.method-image-container:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.method-tag {
+  top: 1.25rem;
+  left: 1.25rem;
+  border-radius: 0;
+  background: rgba(7, 7, 7, 0.86);
+  color: var(--ot-accent);
+  box-shadow: none;
+}
+
+.method-title-large {
+  font-size: clamp(2.7rem, 5vw, 5.2rem);
+  letter-spacing: -0.055em;
+}
+
+.method-description {
+  max-width: 560px;
+  color: var(--ot-muted);
+  font-size: 1.05rem;
+}
+
+.method-stats-grid {
+  gap: 1rem;
+}
+
+.method-stat-value {
+  color: var(--ot-text);
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+}
+
+.method-stat-label {
+  color: var(--ot-muted);
+  font-size: 0.65rem;
+}
+
+.method-link {
+  color: var(--ot-accent);
+}
+
+.btn-method-cta {
+  border-color: var(--ot-text);
+  border-radius: 0;
+  background: var(--ot-text);
+}
+
+.principles-section {
+  padding: clamp(5rem, 9vw, 9rem) 0;
+  border-top: 1px solid var(--ot-line);
+}
+
+.principles-heading {
+  max-width: 920px;
+  margin-bottom: 4rem;
+}
+
+.principles-heading h2 {
+  margin-bottom: 1.5rem;
+  color: #fff;
+  font-size: clamp(2.7rem, 6vw, 5.8rem);
+  letter-spacing: -0.055em;
+  line-height: 0.96;
+}
+
+.principles-heading > p:last-child {
+  max-width: 680px;
+  color: var(--ot-muted);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid var(--ot-line);
+}
+
+.principles-grid > div:not(:last-child) {
+  border-right: 1px solid var(--ot-line);
+}
+
+.principle-card {
+  min-height: 320px;
+  padding: clamp(2rem, 4vw, 3.5rem);
+}
+
+.principle-number {
+  display: block;
+  margin-bottom: 5rem;
+  color: var(--ot-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.principle-card h3 {
+  margin-bottom: 1rem;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.principle-card p {
+  color: var(--ot-muted);
+  line-height: 1.7;
+}
+
+.cta-section {
+  padding: clamp(5rem, 10vw, 10rem) 0;
+  border-top: 1px solid var(--ot-line);
+  background:
+    linear-gradient(rgba(4, 4, 4, 0.76), rgba(4, 4, 4, 0.94)),
+    url('/contact-hero.png') center 58% / cover;
+}
+
+.cta-main-title {
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  letter-spacing: -0.055em;
+}
+
+.cta-main-description {
+  color: var(--ot-muted);
+}
+
+.btn-cta-consultation,
+.btn-cta-email {
+  min-height: 52px;
+  border-radius: 0;
+}
+
+.cta-benefits {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--ot-line);
+  background: none;
+}
+
+.footer-compact {
+  background: #050505;
+}
+
+.footer-social-link {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.page-hero {
+  padding: 12rem 0 5rem;
+  background-attachment: scroll;
+}
+
+.page-hero-title {
+  max-width: 1000px;
+  margin-inline: auto;
+  background: none;
+  color: #fff;
+  -webkit-text-fill-color: currentColor;
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  letter-spacing: -0.05em;
+  line-height: 0.98;
+  text-transform: none;
+}
+
+.programs-grid {
+  max-width: 1280px;
+}
+
+.program-card {
+  border-radius: 0;
+  background: rgba(10, 10, 10, 0.86);
+}
+
+.program-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--ot-accent);
+  box-shadow: none;
+}
+
+.program-badge.premium,
+.program-btn.premium-btn {
+  background: var(--ot-accent);
+}
+
+.faq-question {
+  min-height: 58px;
+}
+
+@media (max-width: 968px) {
+  .hero-overlay {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.48)),
+      linear-gradient(0deg, #070707, transparent 45%);
+  }
+
+  .ceo-philosophy-image-wrapper {
+    width: min(88vw, 540px);
+    height: min(110vw, 660px);
+  }
+
+  .method-image-container {
+    height: min(70vw, 500px);
+  }
+
+  .principles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .principles-grid > div:not(:last-child) {
+    border-right: 0;
+    border-bottom: 1px solid var(--ot-line);
+  }
+
+  .principle-card {
+    min-height: 0;
+  }
+
+  .principle-number {
+    margin-bottom: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-premium {
+    min-height: 100svh;
+    padding: 0 0 2rem;
+    background-position: 62% center;
+  }
+
+  .hero-premium video {
+    object-position: 62% center;
+  }
+
+  .hero-content {
+    padding-top: 9.5rem;
+  }
+
+  .hero-title {
+    max-width: 95%;
+    font-size: clamp(2.75rem, 13vw, 4.5rem);
+  }
+
+  .hero-subtitle {
+    max-width: 92%;
+    padding: 0;
+  }
+
+  .hero-actions {
+    max-width: 380px;
+    padding: 0;
+  }
+
+  .scroll-indicator {
+    display: none;
+  }
+
+  .method-section-alt,
+  .principles-section,
+  .cta-section {
+    padding-block: 5rem;
+  }
+
+  .method-image-container {
+    height: 75vw;
+    min-height: 280px;
+  }
+
+  .method-stats-grid {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .cta-benefits {
+    margin-top: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-premium video {
+    display: none;
+  }
+}

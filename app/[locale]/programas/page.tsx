@@ -1,6 +1,5 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import ProgramsFAQ from '@/components/ProgramsFAQ';
-import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,16 +13,17 @@ export const metadata: Metadata = {
 
 export default function ProgramasPage() {
     return (
-        <main>
+        <div>
             {/* Hero Section */}
             {/* Hero Section */}
             <section className="page-hero programs-hero-bg">
                 <div className="container">
                     <ScrollReveal variant="fade">
-                        <h1 className="page-hero-title">ARSENAL DE DESARROLLO</h1>
+                        <p className="section-kicker">PROGRAMAS OLYMPUS THEON</p>
+                        <h1 className="page-hero-title">ELIGE EL NIVEL DE APOYO QUE NECESITAS</h1>
                     </ScrollReveal>
                     <ScrollReveal variant="fade" delay={200}>
-                        <p className="page-hero-subtitle">Elige tu camino hacia la excelencia</p>
+                        <p className="page-hero-subtitle">Tres formatos. Un mismo estándar de compromiso, claridad y ejecución.</p>
                     </ScrollReveal>
                 </div>
             </section>
@@ -44,13 +44,13 @@ export default function ProgramasPage() {
                                 </div>
                                 <h3 className="program-title">THE SPARTAN PROTOCOL</h3>
                                 <p className="program-description">
-                                    Transformación completa de 12 semanas. Reprogramación mental, optimización física y dominio espiritual en un solo sistema integrado.
+                                    Un recorrido intensivo de 12 semanas para ordenar mente, entrenamiento y hábitos dentro de un sistema integrado.
                                 </p>
                                 <ul className="program-benefits">
                                     <li>✓ Protocolos de entrenamiento personalizados</li>
-                                    <li>✓ Plan de nutrición de alto rendimiento</li>
+                                    <li>✓ Guía de nutrición adaptada a tus objetivos</li>
                                     <li>✓ Sesiones de coaching semanal en vivo</li>
-                                    <li>✓ Acceso a comunidad privada de élite</li>
+                                    <li>✓ Seguimiento y entorno de responsabilidad</li>
                                     <li>✓ Biblioteca completa de recursos estoicos</li>
                                 </ul>
                                 <div className="program-price">12 semanas  •  Inversión bajo consulta</div>
@@ -73,13 +73,13 @@ export default function ProgramasPage() {
                                 </div>
                                 <h3 className="program-title">CONSULTORÍA 1-A-1</h3>
                                 <p className="program-description">
-                                    Mentoría personal con Alejandro. Estrategia individualizada, accountability total y acceso directo al método más exclusivo.
+                                    Mentoría personal con Alejandro. Diagnóstico, estrategia individual y revisión continua para quien necesita máxima precisión.
                                 </p>
                                 <ul className="program-benefits">
                                     <li>✓ Sesiones privadas semanales con Alejandro</li>
                                     <li>✓ Protocolo completamente personalizado</li>
                                     <li>✓ Análisis profundo de mindset y bloqueos</li>
-                                    <li>✓ Soporte 24/7 vía WhatsApp</li>
+                                    <li>✓ Canal directo de seguimiento acordado</li>
                                     <li>✓ Revisión y ajuste continuo del plan</li>
                                 </ul>
                                 <div className="program-price premium-price">
@@ -104,13 +104,13 @@ export default function ProgramasPage() {
                                 </div>
                                 <h3 className="program-title">ELITE BROTHERHOOD</h3>
                                 <p className="program-description">
-                                    Membresía mensual a la hermandad de hombres de alto rendimiento. Networking, recursos premium y eventos exclusivos.
+                                    Una comunidad de práctica para mantener el estándar, compartir aprendizaje y avanzar junto a hombres comprometidos.
                                 </p>
                                 <ul className="program-benefits">
                                     <li>✓ Acceso a comunidad privada de élite</li>
                                     <li>✓ Masterclasses mensuales exclusivas</li>
                                     <li>✓ Biblioteca de recursos en expansión</li>
-                                    <li>✓ Networking con hombres de alto nivel</li>
+                                    <li>✓ Conversaciones con miembros comprometidos</li>
                                     <li>✓ Descuentos en otros programas</li>
                                 </ul>
                                 <div className="program-price">Mensual  •  Consultar inversión</div>
@@ -133,7 +133,7 @@ export default function ProgramasPage() {
                         <div className="cta-content-wrapper">
                             <h2 className="cta-main-title">¿LISTO PARA LA TRANSFORMACIÓN?</h2>
                             <p className="cta-main-description">
-                                No aceptamos a todos. Si estás preparado para comprometerte completamente con tu transformación, da el primer paso.
+                                Si estás preparado para comprometerte con un proceso exigente, cuéntanos tu situación y decidiremos juntos el siguiente paso.
                             </p>
                             <div className="cta-whatsapp-container" style={{ marginBottom: 0 }}>
                                 <a href="https://wa.me/34608961701?text=Quiero%20comenzar%20mi%20transformación%20con%20Olympus%20Theon" target="_blank" rel="noopener noreferrer" className="btn-cta-whatsapp">
@@ -147,6 +147,6 @@ export default function ProgramasPage() {
                     </ScrollReveal>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }

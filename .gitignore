@@ -42,3 +42,7 @@ next-env.d.ts
 
 /generated/prisma
 .env
+
+# local database artifacts
+*.db
+*.db-journal

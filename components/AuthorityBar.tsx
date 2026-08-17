@@ -6,7 +6,7 @@ export default function AuthorityBar() {
             <div className="container">
                 <ScrollReveal variant="fade" delay={500}>
                     <p className="authority-text">
-                        ABRAZA LA OSCURIDAD. ELLA TE MOSTRARÁ LA LUZ.
+                        MENTE CLARA&nbsp;&nbsp;•&nbsp;&nbsp;CUERPO CAPAZ&nbsp;&nbsp;•&nbsp;&nbsp;ACCIÓN CON PROPÓSITO
                     </p>
                 </ScrollReveal>
             </div>

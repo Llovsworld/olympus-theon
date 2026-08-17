@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Plus, Trash2, ExternalLink, AlertTriangle, Pencil } from 'lucide-react';
+import AccessibleModal from '@/components/admin/AccessibleModal';
 
 interface Book {
     id: string;
@@ -17,9 +18,10 @@ interface Book {
 
 export default function BooksManagementPage() {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState('');
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
 
@@ -35,11 +37,17 @@ export default function BooksManagementPage() {
 
     const fetchBooks = async () => {
         try {
-            const res = await fetch('/api/books');
+            setLoadError('');
+            const res = await fetch('/api/books?all=true');
+            if (!res.ok) {
+                const error = await res.json().catch(() => null) as { error?: string } | null;
+                throw new Error(error?.error || 'No se pudieron cargar los libros');
+            }
             const data = await res.json();
             setBooks(data);
         } catch (error) {
             console.error('Error fetching books:', error);
+            setLoadError(error instanceof Error ? error.message : 'No se pudieron cargar los libros');
         } finally {
             setLoading(false);
         }
@@ -82,6 +90,17 @@ export default function BooksManagementPage() {
 
     if (status === 'unauthenticated') {
         return null;
+    }
+
+    if (loadError) {
+        return (
+            <div className="admin-card" role="alert" style={{ padding: '2rem' }}>
+                <p style={{ color: 'var(--admin-danger)' }}>{loadError}</p>
+                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => void fetchBooks()} style={{ marginTop: '1rem' }}>
+                    Reintentar
+                </button>
+            </div>
+        );
     }
 
     return (
@@ -196,8 +215,13 @@ export default function BooksManagementPage() {
 
             {/* Delete Confirmation Modal */}
             {deleteId !== null && (
-                <div className="admin-modal-overlay" onClick={() => !deleting && setDeleteId(null)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                <AccessibleModal
+                    label="Confirmar eliminación del libro"
+                    onClose={() => {
+                        if (!deleting) setDeleteId(null);
+                    }}
+                    contentClassName="admin-modal"
+                >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
                             <div style={{
                                 width: '48px',
@@ -241,8 +265,7 @@ export default function BooksManagementPage() {
                                 {deleting ? 'Eliminando...' : 'Eliminar'}
                             </button>
                         </div>
-                    </div>
-                </div>
+                </AccessibleModal>
             )}
         </div>
     );

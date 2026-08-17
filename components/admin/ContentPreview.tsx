@@ -1,15 +1,35 @@
 "use client";
 
+import { useMemo } from "react";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
+
 interface ContentPreviewProps {
     content: string;
     title?: string;
+    subtitle?: string;
+    description?: string;
     featuredImage?: string;
+    link?: string;
 }
 
-export default function ContentPreview({ content, title, featuredImage }: ContentPreviewProps) {
+export default function ContentPreview({ content, title, subtitle, description, featuredImage, link }: ContentPreviewProps) {
+    // The preview updates in the browser as the editor changes. sanitizeRichHtml is
+    // DOM-independent, so the same allowlist can safely be reused client-side.
+    const sanitizedContent = useMemo(() => sanitizeRichHtml(content), [content]);
+    const safeLink = useMemo(() => {
+        if (!link) return null;
+        try {
+            const parsed = new URL(link);
+            return ['http:', 'https:'].includes(parsed.protocol) ? parsed.toString() : null;
+        } catch {
+            return null;
+        }
+    }, [link]);
+
     return (
         <div className="admin-preview">
             {featuredImage && (
+                // eslint-disable-next-line @next/next/no-img-element -- Admin previews may use temporary data URLs.
                 <img
                     src={featuredImage}
                     alt={title || 'Featured image'}
@@ -34,9 +54,29 @@ export default function ContentPreview({ content, title, featuredImage }: Conten
                 </h1>
             )}
 
+            {subtitle && (
+                <h2 style={{ color: 'var(--admin-text-secondary)', marginBottom: '1.5rem', fontWeight: 500 }}>
+                    {subtitle}
+                </h2>
+            )}
+
+            {description && (
+                <p style={{ color: 'var(--admin-text-secondary)', marginBottom: '1.5rem', lineHeight: 1.7 }}>
+                    {description}
+                </p>
+            )}
+
+            {safeLink && (
+                <p style={{ marginBottom: '1.5rem' }}>
+                    <a href={safeLink} target="_blank" rel="noopener noreferrer" className="admin-btn admin-btn-secondary">
+                        Abrir enlace del libro
+                    </a>
+                </p>
+            )}
+
             <div
                 className="preview-content"
-                dangerouslySetInnerHTML={{ __html: content }}
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                 style={{
                     lineHeight: '1.8',
                     fontSize: '1.1rem',

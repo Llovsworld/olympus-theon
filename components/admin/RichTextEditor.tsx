@@ -2,7 +2,7 @@
 
 import { useEditor, EditorContent, ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
+import Image, { type SetImageOptions } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Youtube from '@tiptap/extension-youtube';
@@ -180,16 +180,9 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
     // Content updates (like draft loading) are now handled by parent key-remounting.
 
     // Word and character count
-    const wordCount = useMemo(() => {
-        if (!editor) return 0;
-        const text = editor.state.doc.textContent;
-        return text.trim() ? text.trim().split(/\s+/).length : 0;
-    }, [editor?.state.doc.textContent]);
-
-    const charCount = useMemo(() => {
-        if (!editor) return 0;
-        return editor.state.doc.textContent.length;
-    }, [editor?.state.doc.textContent]);
+    const editorText = editor?.state.doc.textContent ?? '';
+    const wordCount = editorText.trim() ? editorText.trim().split(/\s+/).length : 0;
+    const charCount = editorText.length;
 
     const openPrompt = useCallback((config: PromptConfig) => {
         setPromptConfig(config);
@@ -255,18 +248,7 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
             const numericWidth = imageWidth ? parseInt(imageWidth, 10) : undefined;
             const numericHeight = imageHeight ? parseInt(imageHeight, 10) : undefined;
 
-            const stylePieces = ['max-width:100%;height:auto;'];
-            if (numericWidth) {
-                stylePieces.push(`width:${numericWidth}px;`);
-            }
-            if (numericHeight) {
-                stylePieces.push(`height:${numericHeight}px;`);
-            }
-
-            const imageAttrs: Record<string, unknown> = {
-                src,
-                style: stylePieces.join(''),
-            };
+            const imageAttrs: SetImageOptions = { src };
 
             if (numericWidth) {
                 imageAttrs.width = numericWidth;
@@ -275,7 +257,7 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
                 imageAttrs.height = numericHeight;
             }
 
-            editor.chain().focus().setImage(imageAttrs as any).run();
+            editor.chain().focus().setImage(imageAttrs).run();
 
             closeImageModal();
         } catch (error) {
@@ -969,6 +951,8 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
     );
 });
 
+RichTextEditor.displayName = 'RichTextEditor';
+
 export default RichTextEditor;
 
 function buttonStyle(isActive: boolean) {
@@ -1126,6 +1110,7 @@ function ResizableImage({ node, updateAttributes, selected }: NodeViewProps) {
             }}
         >
             <div style={{ position: 'relative', display: 'inline-block' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- Tiptap requires a native image node for direct resize handling. */}
                 <img
                     ref={imgRef}
                     src={node.attrs.src}

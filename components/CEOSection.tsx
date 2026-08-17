@@ -31,7 +31,7 @@ export default function CEOSection() {
                         </ScrollReveal>
                         <ScrollReveal direction="right" variant="slideScale" delay={600}>
                             <blockquote className="ceo-quote">
-                                "No solo construimos cuerpos; construimos carácter. El mundo moderno necesita hombres fuertes: capaces, responsables y virtuosos. Ese es el estándar que establecemos aquí."
+                                “No solo construimos cuerpos; construimos carácter. El mundo moderno necesita hombres fuertes: capaces, responsables y virtuosos. Ese es el estándar que establecemos aquí.”
                             </blockquote>
                         </ScrollReveal>
                     </div>
