@@ -9,12 +9,13 @@ export default function CEOSection() {
                     <ScrollReveal direction="left" variant="slideScale" duration={1000}>
                         <div className="ceo-image-wrapper">
                             <Image
-                                src="/ceo_portrait.jpg"
+                                src="/founder-portrait.webp"
                                 alt="Alejandro Lloveras Sauras"
                                 fill
                                 loading="lazy"
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 className="ceo-image"
+                                style={{ objectFit: 'cover', objectPosition: 'center 28%' }}
                             />
                         </div>
                     </ScrollReveal>

@@ -17,12 +17,12 @@ export default function MethodSection() {
                             <div className="method-image-container">
                                 <div className="method-tag">ESTRATEGIA MENTAL</div>
                                 <Image
-                                    src="/hero-car.png"
+                                    src="/method-mental.webp"
                                     alt="Reprogramación Mental"
                                     fill
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
-                                    style={{ objectFit: 'cover' }}
+                                    style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
                                 />
                             </div>
                         </ScrollReveal>
@@ -59,13 +59,13 @@ export default function MethodSection() {
                             <div className="method-image-container">
                                 <div className="method-tag">ALTO RENDIMIENTO</div>
                                 <Image
-                                    src="/hero-gym.png"
+                                    src="/method-physical.webp"
                                     alt="Optimización Física"
                                     fill
                                     loading="lazy"
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
-                                    style={{ objectFit: 'cover' }}
+                                    style={{ objectFit: 'cover', objectPosition: 'center 40%' }}
                                 />
                             </div>
                         </ScrollReveal>
@@ -102,13 +102,13 @@ export default function MethodSection() {
                             <div className="method-image-container">
                                 <div className="method-tag">COMUNIDAD & PROPÓSITO</div>
                                 <Image
-                                    src="/story_background.png"
+                                    src="/method-spiritual.webp"
                                     alt="Dominio Espiritual"
                                     fill
                                     loading="lazy"
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
-                                    style={{ objectFit: 'cover' }}
+                                    style={{ objectFit: 'cover', objectPosition: 'center 45%' }}
                                 />
                             </div>
                         </ScrollReveal>

@@ -74,13 +74,13 @@ export default function StorySection() {
                         <ScrollReveal variant="scale" delay={0}>
                             <div className="ceo-philosophy-image-wrapper">
                                 <Image
-                                    src="/ceo_portrait.jpg"
+                                    src="/founder-portrait.webp"
                                     alt="Alejandro Lloveras Sauras - CEO"
                                     fill
                                     loading="lazy"
                                     sizes="(max-width: 900px) 100vw, 50vw"
                                     className="ceo-philosophy-photo"
-                                    style={{ objectFit: 'cover' }}
+                                    style={{ objectFit: 'cover', objectPosition: 'center 28%' }}
                                 />
                                 {/* CEO Info Overlay - Inside Image */}
                                 <div className="ceo-philosophy-quote-overlay">
