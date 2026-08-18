@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, MouseEvent } from 'react';
+import { useRef, MouseEvent } from 'react';
 
 interface TiltCardProps {
     children: React.ReactNode;
@@ -18,12 +18,12 @@ export default function TiltCard({
     scale = 1.02
 }: TiltCardProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const [style, setStyle] = useState<React.CSSProperties>({});
 
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-        if (!ref.current) return;
+        const element = ref.current;
+        if (!element) return;
 
-        const rect = ref.current.getBoundingClientRect();
+        const rect = element.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         const centerX = rect.width / 2;
@@ -32,17 +32,16 @@ export default function TiltCard({
         const rotateX = ((y - centerY) / centerY) * -maxRotation;
         const rotateY = ((x - centerX) / centerX) * maxRotation;
 
-        setStyle({
-            transform: `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`,
-            transition: 'transform 0.1s ease-out'
-        });
+        element.style.transform = `perspective(${perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+        element.style.transition = 'transform 0.1s ease-out';
     };
 
     const handleMouseLeave = () => {
-        setStyle({
-            transform: `perspective(${perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`,
-            transition: 'transform 0.5s ease-out'
-        });
+        const element = ref.current;
+        if (!element) return;
+
+        element.style.transform = `perspective(${perspective}px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        element.style.transition = 'transform 0.5s ease-out';
     };
 
     return (
@@ -52,7 +51,6 @@ export default function TiltCard({
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{
-                ...style,
                 transformStyle: 'preserve-3d',
                 willChange: 'transform'
             }}

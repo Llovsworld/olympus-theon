@@ -1,57 +1,90 @@
-const CACHE_NAME = 'olympus-theon-v1';
+const CACHE_NAME = 'olympus-theon-v4';
+const PAGE_CACHE_NAME = 'olympus-theon-pages-v4';
+const MAX_CACHED_PAGES = 10;
 const STATIC_ASSETS = [
-    '/',
-    '/olympus_logo.png',
-    '/hero-gym.png',
+    '/icon-192.png',
+    '/hero-gym-poster.webp',
 ];
+const STATIC_PATHS = new Set(STATIC_ASSETS);
 
-// Install event - cache static assets
+function isPublicPage(pathname) {
+    return !pathname.startsWith('/admin') && !pathname.startsWith('/api');
+}
+
+function isCacheablePageResponse(response) {
+    const cacheControl = response.headers.get('cache-control')?.toLowerCase() || '';
+    const contentType = response.headers.get('content-type')?.toLowerCase() || '';
+
+    return response.ok
+        && contentType.includes('text/html')
+        && !cacheControl.includes('private')
+        && !cacheControl.includes('no-store');
+}
+
+async function trimPageCache() {
+    const cache = await caches.open(PAGE_CACHE_NAME);
+    const keys = await cache.keys();
+    await Promise.all(keys.slice(0, Math.max(0, keys.length - MAX_CACHED_PAGES)).map((key) => cache.delete(key)));
+}
+
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(STATIC_ASSETS);
-        })
+        caches.open(CACHE_NAME)
+            .then((cache) => cache.addAll(STATIC_ASSETS))
+            .then(() => self.skipWaiting())
     );
-    self.skipWaiting();
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
+        Promise.all([
+            caches.keys().then((cacheNames) => Promise.all(
                 cacheNames
-                    .filter((name) => name !== CACHE_NAME)
+                    .filter((name) => name !== CACHE_NAME && name !== PAGE_CACHE_NAME)
                     .map((name) => caches.delete(name))
-            );
-        })
+            )),
+            self.clients.claim(),
+        ])
     );
-    self.clients.claim();
 });
 
-// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
-    // Skip API routes and admin
     const url = new URL(event.request.url);
-    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin')) {
+    if (url.origin !== self.location.origin) return;
+
+    if (event.request.mode === 'navigate' && isPublicPage(url.pathname)) {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    if (isCacheablePageResponse(response)) {
+                        const responseClone = response.clone();
+                        event.waitUntil(
+                            caches.open(PAGE_CACHE_NAME)
+                                .then((cache) => cache.put(event.request, responseClone))
+                                .then(trimPageCache)
+                        );
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(event.request))
+        );
         return;
     }
 
+    if (!STATIC_PATHS.has(url.pathname)) return;
+
+    const networkResponse = fetch(event.request).then(async (response) => {
+        if (response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            await cache.put(event.request, response.clone());
+        }
+        return response;
+    });
+
+    event.waitUntil(networkResponse.then(() => undefined).catch(() => undefined));
     event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                // Clone response before caching
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseClone);
-                });
-                return response;
-            })
-            .catch(() => {
-                return caches.match(event.request);
-            })
+        caches.match(event.request).then((cachedResponse) => cachedResponse || networkResponse)
     );
 });

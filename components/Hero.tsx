@@ -10,13 +10,29 @@ export default function Hero() {
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
+        let listeningForInteraction = false;
+        let cancelled = false;
 
         // Set playback rate
         video.playbackRate = 0.8;
 
         // Function to mark video as ready
         const handleVideoReady = () => {
-            setVideoReady(true);
+            if (!cancelled) setVideoReady(true);
+        };
+
+        const stopListeningForInteraction = () => {
+            if (!listeningForInteraction) return;
+            listeningForInteraction = false;
+            document.removeEventListener('touchstart', forcePlay);
+            document.removeEventListener('scroll', forcePlay);
+            document.removeEventListener('click', forcePlay);
+        };
+
+        const forcePlay = () => {
+            if (cancelled) return;
+            video.play().catch(() => {});
+            stopListeningForInteraction();
         };
 
         // Listen for multiple events that indicate video is ready
@@ -33,18 +49,13 @@ export default function Hero() {
         const playPromise = video.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => {
+                if (cancelled) return;
                 console.warn("Video autoplay blocked by browser policy:", error);
                 setVideoReady(true);
-                
+
                 // Fallback for strict in-app browsers (Instagram, low power iOS)
                 // We listen for the very first interaction to forcefully play the video
-                const forcePlay = () => {
-                    video.play().catch(() => {});
-                    document.removeEventListener('touchstart', forcePlay);
-                    document.removeEventListener('scroll', forcePlay);
-                    document.removeEventListener('click', forcePlay);
-                };
-                
+                listeningForInteraction = true;
                 document.addEventListener('touchstart', forcePlay, { passive: true });
                 document.addEventListener('scroll', forcePlay, { passive: true });
                 document.addEventListener('click', forcePlay);
@@ -57,9 +68,11 @@ export default function Hero() {
         }, 2000);
 
         return () => {
+            cancelled = true;
             video.removeEventListener('canplay', handleVideoReady);
             video.removeEventListener('loadeddata', handleVideoReady);
             video.removeEventListener('playing', handleVideoReady);
+            stopListeningForInteraction();
             clearTimeout(fallbackTimeout);
         };
     }, []);
@@ -73,10 +86,10 @@ export default function Hero() {
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 className="ken-burns"
-                poster="/hero-gym.png"
-                src="/hero-video.mp4"
+                poster="/hero-gym-poster.webp"
+                src="/hero-video-v2.mp4"
                 style={{
                     position: 'absolute',
                     top: 0,

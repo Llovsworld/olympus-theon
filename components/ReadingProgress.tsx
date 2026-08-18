@@ -1,38 +1,50 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ReadingProgressProps {
     totalReadingTime?: number; // Total reading time in minutes
 }
 
 export default function ReadingProgress({ totalReadingTime = 5 }: ReadingProgressProps) {
-    const [progress, setProgress] = useState(0);
-    const [remainingTime, setRemainingTime] = useState(totalReadingTime);
-    const [isVisible, setIsVisible] = useState(false);
-
-    const updateProgress = useCallback(() => {
-        const currentProgress = window.scrollY;
-        const scrollHeight = document.body.scrollHeight - window.innerHeight;
-
-        if (scrollHeight > 0) {
-            const percentage = Math.min((currentProgress / scrollHeight) * 100, 100);
-            setProgress(percentage);
-
-            // Calculate remaining time based on progress
-            const remaining = Math.ceil(totalReadingTime * (1 - percentage / 100));
-            setRemainingTime(remaining);
-
-            // Show indicator only when scrolled past hero section
-            setIsVisible(currentProgress > 200);
-        }
-    }, [totalReadingTime]);
+    const [{ progress, remainingTime, isVisible }, setReadingState] = useState({
+        progress: 0,
+        remainingTime: totalReadingTime,
+        isVisible: false,
+    });
 
     useEffect(() => {
-        window.addEventListener('scroll', updateProgress);
-        updateProgress(); // Initial call
-        return () => window.removeEventListener('scroll', updateProgress);
-    }, [updateProgress]);
+        let animationFrame = 0;
+
+        const updateProgress = () => {
+            animationFrame = 0;
+            const currentProgress = window.scrollY;
+            const scrollHeight = document.body.scrollHeight - window.innerHeight;
+            const percentage = scrollHeight > 0
+                ? Math.min((currentProgress / scrollHeight) * 100, 100)
+                : 0;
+
+            setReadingState({
+                progress: percentage,
+                remainingTime: Math.ceil(totalReadingTime * (1 - percentage / 100)),
+                isVisible: currentProgress > 200,
+            });
+        };
+
+        const handleScroll = () => {
+            if (!animationFrame) {
+                animationFrame = window.requestAnimationFrame(updateProgress);
+            }
+        };
+
+        updateProgress();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+        };
+    }, [totalReadingTime]);
 
     return (
         <>

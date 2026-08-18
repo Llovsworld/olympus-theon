@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { revalidateBookContent } from '@/lib/revalidate-content';
+
+function isMissingRecord(error: unknown) {
+    return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
+}
 
 // GET single book
 export async function GET(
@@ -45,11 +50,6 @@ export async function PUT(
         const { id } = await params;
         const body = await request.json();
 
-        const book = await prisma.book.findUnique({ where: { id } });
-        if (!book) {
-            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
-        }
-
         const updatedBook = await prisma.book.update({
             where: { id },
             data: {
@@ -60,12 +60,17 @@ export async function PUT(
                 content: body.content || null,
                 coverImage: body.coverImage || null,
                 link: body.link || null,
-                published: body.published ?? book.published,
+                published: body.published,
             },
         });
 
+        revalidateBookContent();
+
         return NextResponse.json(updatedBook);
     } catch (error) {
+        if (isMissingRecord(error)) {
+            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+        }
         console.error('Error updating book:', error);
         return NextResponse.json({ error: 'Failed to update book' }, { status: 500 });
     }
@@ -84,15 +89,14 @@ export async function DELETE(
 
         const { id } = await params;
 
-        const book = await prisma.book.findUnique({ where: { id } });
-        if (!book) {
-            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
-        }
-
         await prisma.book.delete({ where: { id } });
+        revalidateBookContent();
 
         return NextResponse.json({ message: 'Book deleted successfully' }, { status: 200 });
     } catch (error) {
+        if (isMissingRecord(error)) {
+            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+        }
         console.error('Error deleting book:', error);
         return NextResponse.json({ error: 'Failed to delete book' }, { status: 500 });
     }

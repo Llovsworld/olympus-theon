@@ -1,18 +1,22 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Book } from '@prisma/client';
 import BookCard from './BookCard';
 import ScrollReveal from './ScrollReveal';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface BookListProps {
-    books: Book[];
-}
-
-function getPlainTextExcerpt(html: string, maxLength: number = 150): string {
-    const text = html.replace(/<[^>]*>/g, '');
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    books: Array<{
+        id: string;
+        title: string;
+        slug: string;
+        description: string;
+        coverImage: string | null;
+        createdAt: Date;
+        contentSearchText: string | null;
+        readingTime: number | null;
+    }>;
 }
 
 export default function BookList({ books }: BookListProps) {
@@ -25,7 +29,7 @@ export default function BookList({ books }: BookListProps) {
         return books.filter(book =>
             book.title.toLowerCase().includes(query) ||
             book.description.toLowerCase().includes(query) ||
-            (book.content && getPlainTextExcerpt(book.content, 1000).toLowerCase().includes(query))
+            Boolean(book.contentSearchText?.includes(query))
         );
     }, [books, searchQuery]);
 
@@ -130,12 +134,13 @@ export default function BookList({ books }: BookListProps) {
                                                     overflow: 'hidden',
                                                     position: 'relative'
                                                 }}>
-                                                    <img
+                                                    <Image
                                                         src={book.coverImage}
                                                         alt={book.title}
+                                                        fill
+                                                        sizes="(max-width: 700px) calc(100vw - 3rem), (max-width: 1200px) 50vw, 33vw"
+                                                        loading="eager"
                                                         style={{
-                                                            width: '100%',
-                                                            height: '100%',
                                                             objectFit: 'cover'
                                                         }}
                                                     />
@@ -205,7 +210,7 @@ export default function BookList({ books }: BookListProps) {
                                                             day: 'numeric'
                                                         })}
                                                     </time>
-                                                    {book.content && (
+                                                    {book.readingTime !== null && (
                                                         <>
                                                             <span style={{ color: '#444' }}>•</span>
                                                             <span style={{
@@ -215,7 +220,7 @@ export default function BookList({ books }: BookListProps) {
                                                                 letterSpacing: '0.1em',
                                                                 fontWeight: 600
                                                             }}>
-                                                                {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
+                                                                {book.readingTime} min de lectura
                                                             </span>
                                                         </>
                                                     )}

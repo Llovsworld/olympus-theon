@@ -263,7 +263,12 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
                 stylePieces.push(`height:${numericHeight}px;`);
             }
 
-            const imageAttrs: Record<string, unknown> = {
+            const imageAttrs: {
+                src: string;
+                style: string;
+                width?: number;
+                height?: number;
+            } = {
                 src,
                 style: stylePieces.join(''),
             };
@@ -275,7 +280,7 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
                 imageAttrs.height = numericHeight;
             }
 
-            editor.chain().focus().setImage(imageAttrs as any).run();
+            editor.chain().focus().setImage(imageAttrs).run();
 
             closeImageModal();
         } catch (error) {
@@ -968,6 +973,8 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
         </>
     );
 });
+
+RichTextEditor.displayName = 'RichTextEditor';
 
 export default RichTextEditor;
 

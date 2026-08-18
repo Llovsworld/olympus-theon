@@ -1,39 +1,7 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
+import FooterNewsletterForm from './FooterNewsletterForm';
 
 export default function Footer() {
-    const [email, setEmail] = useState('');
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [message, setMessage] = useState('');
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        if (!email || !email.includes('@')) return;
-
-        setStatus('loading');
-        try {
-            const response = await fetch('/api/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setStatus('success');
-                setMessage('Bienvenido a la élite.');
-                setEmail('');
-            } else {
-                setStatus('error');
-                setMessage(data.error || 'Error al suscribirse.');
-            }
-        } catch (error) {
-            setStatus('error');
-            setMessage('Error de conexión.');
-        }
-    }
-
     return (
         <footer className="footer-compact">
             <div className="container">
@@ -123,30 +91,7 @@ export default function Footer() {
                             <h4 className="footer-newsletter-title">Únete a la Élite</h4>
                             <p className="footer-newsletter-subtitle">Protocolos mentales y físicos. Sin spam.</p>
                         </div>
-                        <form onSubmit={handleSubmit} className="footer-newsletter-form">
-                            <div className="footer-newsletter-input-group">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="tu@email.com"
-                                    className="footer-newsletter-input"
-                                    disabled={status === 'loading'}
-                                />
-                                <button
-                                    type="submit"
-                                    className="footer-newsletter-btn"
-                                    disabled={status === 'loading'}
-                                    aria-label="Suscribirse"
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        <polyline points="12 5 19 12 12 19"></polyline>
-                                    </svg>
-                                </button>
-                            </div>
-                            {message && <p className={`footer-newsletter-message ${status}`}>{message}</p>}
-                        </form>
+                        <FooterNewsletterForm />
                     </div>
                 </div>
 

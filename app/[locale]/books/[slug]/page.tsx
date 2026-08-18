@@ -1,11 +1,18 @@
-import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import { Metadata } from 'next';
+import Image from 'next/image';
+import { getPublishedBookBySlug } from '@/lib/content';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
+
+// An empty list enables on-demand ISR for slugs without querying the database
+// during every deployment build.
+export function generateStaticParams() {
+    return [];
+}
 
 interface BookPageProps {
     params: Promise<{
@@ -17,16 +24,7 @@ interface BookPageProps {
 export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const book = await prisma.book.findUnique({
-        where: { slug },
-        select: {
-            title: true,
-            author: true,
-            description: true,
-            coverImage: true,
-            createdAt: true,
-        }
-    });
+    const book = await getPublishedBookBySlug(slug);
 
     if (!book) {
         return {
@@ -65,11 +63,9 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
 export default async function BookPage({ params }: BookPageProps) {
     const { slug } = await params;
 
-    const book = await prisma.book.findUnique({
-        where: { slug },
-    });
+    const book = await getPublishedBookBySlug(slug);
 
-    if (!book || !book.published) {
+    if (!book) {
         notFound();
     }
 
@@ -95,15 +91,13 @@ export default async function BookPage({ params }: BookPageProps) {
             }}>
                 {book.coverImage ? (
                     <>
-                        <img
+                        <Image
                             src={book.coverImage}
                             alt={book.title}
+                            fill
+                            sizes="100vw"
+                            preload
                             style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
                                 objectFit: 'cover',
                                 zIndex: 0,
                                 filter: 'blur(10px) brightness(0.5)'

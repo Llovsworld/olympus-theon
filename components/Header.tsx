@@ -2,39 +2,54 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Header() {
     const pathname = usePathname();
-    const [mounted, setMounted] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [scrollProgress, setScrollProgress] = useState(0);
-
-    // Mark component as mounted to prevent hydration mismatch
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const progressBarRef = useRef<HTMLDivElement>(null);
+    const scrolledRef = useRef(false);
 
     useEffect(() => {
-        const handleScroll = () => {
+        let animationFrame = 0;
+
+        const updateHeader = () => {
+            animationFrame = 0;
             const currentScrollY = window.scrollY;
-            // Scrolled styling - header always visible
-            setScrolled(currentScrollY > 50);
+            const nextScrolled = currentScrollY > 50;
 
-            // Calculate scroll progress
+            if (nextScrolled !== scrolledRef.current) {
+                scrolledRef.current = nextScrolled;
+                setScrolled(nextScrolled);
+            }
+
             const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
             const progress = windowHeight > 0 ? (currentScrollY / windowHeight) * 100 : 0;
-            setScrollProgress(Math.min(100, Math.max(0, progress)));
+            if (progressBarRef.current) {
+                progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+            }
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        const handleScroll = () => {
+            if (!animationFrame) {
+                animationFrame = window.requestAnimationFrame(updateHeader);
+            }
+        };
+
+        updateHeader();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+        };
+    }, [pathname]);
 
     // Close mobile menu when route changes
     useEffect(() => {
-        setMenuOpen(false);
+        const animationFrame = window.requestAnimationFrame(() => setMenuOpen(false));
+        return () => window.cancelAnimationFrame(animationFrame);
     }, [pathname]);
 
     // Helper to check if a route is active (accounting for locale)
@@ -42,9 +57,8 @@ export default function Header() {
         return pathname.includes(route);
     };
 
-    // Build class names only after mount to avoid hydration mismatch
     const headerClasses = ['header'];
-    if (mounted && scrolled) {
+    if (scrolled) {
         headerClasses.push('scrolled', 'compact');
     }
 
@@ -53,8 +67,9 @@ export default function Header() {
             <header className={headerClasses.join(' ')}>
                 {/* Reading Progress Bar */}
                 <div
+                    ref={progressBarRef}
                     className="reading-progress-bar"
-                    style={{ width: mounted ? `${scrollProgress}%` : '0%' }}
+                    style={{ width: '0%' }}
                 />
 
                 <div className="container header-content-centered">

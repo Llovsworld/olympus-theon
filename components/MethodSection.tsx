@@ -20,7 +20,7 @@ export default function MethodSection() {
                                     src="/hero-car.png"
                                     alt="Reprogramación Mental"
                                     fill
-                                    priority
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -63,6 +63,7 @@ export default function MethodSection() {
                                     alt="Optimización Física"
                                     fill
                                     loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -105,6 +106,7 @@ export default function MethodSection() {
                                     alt="Dominio Espiritual"
                                     fill
                                     loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                     className="method-image"
                                     style={{ objectFit: 'cover' }}
                                 />

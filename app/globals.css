@@ -7,8 +7,8 @@
   --foreground: #ededed;
   --accent: #333333;
   --border: #1f1f1f;
-  --font-heading: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: var(--font-inter), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
 
   /* Spacing tokens - fluid scale */
   --space-1: clamp(0.25rem, 0.5vw, 0.5rem);
@@ -989,7 +989,7 @@ h6 {
 
 /* Large Signature */
 .split-signature-large {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-dancing-script), cursive;
   font-size: 4rem;
   /* 20% bigger */
   color: rgba(255, 255, 255, 0.6);
@@ -3522,7 +3522,7 @@ h6 {
 /* CEO Philosophy Section - 2 Column Layout */
 .ceo-philosophy-section {
   padding: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/snake_bg_user.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/snake-bg.webp');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -4690,17 +4690,16 @@ h6 {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0;
-  height: 0;
+  width: 200vmax;
+  height: 200vmax;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-transition-overlay.active .page-transition-circle {
-  width: 200vmax;
-  height: 200vmax;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .page-transition-content {
@@ -4830,7 +4829,7 @@ h6 {
 .page-content {
   opacity: 1;
   filter: none;
-  transition: all 0.4s ease-out;
+  transition: opacity 0.4s ease-out, filter 0.4s ease-out, transform 0.4s ease-out;
 }
 
 .page-content.exiting {

@@ -1,18 +1,22 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Post } from '@prisma/client';
 import BlogCard from './BlogCard';
 import ScrollReveal from './ScrollReveal';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface BlogListProps {
-    posts: Post[];
-}
-
-function getPlainTextExcerpt(html: string, maxLength: number = 150): string {
-    const text = html.replace(/<[^>]*>/g, '');
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    posts: Array<{
+        id: string;
+        title: string;
+        slug: string;
+        featuredImage: string | null;
+        createdAt: Date;
+        excerpt: string;
+        searchText: string;
+        readingTime: number;
+    }>;
 }
 
 export default function BlogList({ posts }: BlogListProps) {
@@ -24,7 +28,7 @@ export default function BlogList({ posts }: BlogListProps) {
         const query = searchQuery.toLowerCase();
         return posts.filter(post =>
             post.title.toLowerCase().includes(query) ||
-            getPlainTextExcerpt(post.content, 1000).toLowerCase().includes(query)
+            post.searchText.includes(query)
         );
     }, [posts, searchQuery]);
 
@@ -120,12 +124,13 @@ export default function BlogList({ posts }: BlogListProps) {
                                                 overflow: 'hidden',
                                                 position: 'relative'
                                             }}>
-                                                <img
+                                                <Image
                                                     src={post.featuredImage}
                                                     alt={post.title}
+                                                    fill
+                                                    sizes="(max-width: 700px) calc(100vw - 3rem), (max-width: 1200px) 50vw, 33vw"
+                                                    loading="eager"
                                                     style={{
-                                                        width: '100%',
-                                                        height: '100%',
                                                         objectFit: 'cover'
                                                     }}
                                                 />
@@ -169,7 +174,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                                 fontSize: '0.9rem',
                                                 maxWidth: '90%'
                                             }}>
-                                                {getPlainTextExcerpt(post.content, 100)}
+                                                {post.excerpt}
                                             </p>
 
                                             <div style={{
@@ -203,7 +208,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                                     letterSpacing: '0.1em',
                                                     fontWeight: 600
                                                 }}>
-                                                    {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
+                                                    {post.readingTime} min de lectura
                                                 </span>
                                             </div>
                                         </div>

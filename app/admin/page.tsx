@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/error-boundaries -- The try/catch renders a dedicated database configuration fallback. */
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
@@ -63,7 +64,7 @@ export default async function AdminDashboard() {
                     }}>
                         Dashboard
                     </h1>
-                    <p style={{ color: '#666' }}>Welcome back, Admin. Here's what's happening today.</p>
+                    <p style={{ color: '#666' }}>Welcome back, Admin. Here&apos;s what&apos;s happening today.</p>
                 </header>
 
                 {/* Stats Grid */}

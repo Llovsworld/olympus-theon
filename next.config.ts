@@ -31,7 +31,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@tiptap/react', '@tiptap/starter-kit'],
   },
 
-  // Cache headers for static assets
+  // Public asset names are mutable, so let browsers revalidate them instead of
+  // keeping an outdated version for a full year. Next.js owns /_next/static.
   async headers() {
     return [
       {
@@ -39,25 +40,25 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },
       {
-        source: '/_next/static/:path*',
+        source: '/sw.js',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=0, must-revalidate',
           },
         ],
       },
       {
-        source: '/fonts/:path*',
+        source: '/manifest.json',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },

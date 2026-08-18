@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import BookList from '@/components/BookList';
 import { Metadata } from 'next';
+import { getPublishedBookList } from '@/lib/content';
 
 export const metadata: Metadata = {
     title: "Biblioteca",
@@ -11,20 +11,17 @@ export const metadata: Metadata = {
     },
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function BooksPage() {
-    const books = await prisma.book.findMany({
-        where: { published: true },
-        orderBy: { createdAt: 'desc' },
-    });
+    const books = await getPublishedBookList();
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505' }}>
             {/* Header Section with Background */}
             {/* Header Section with Background */}
             <div className="page-hero" style={{
-                backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url("/snake_bg_user.jpg")'
+                backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url("/snake-bg.webp")'
             }}>
                 <div className="container">
                     <h1 className="page-hero-title">

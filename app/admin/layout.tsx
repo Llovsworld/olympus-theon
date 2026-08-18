@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { LayoutDashboard, PenSquare, BookOpen, FileText, Library, ExternalLink, LogOut } from 'lucide-react';
+import { Providers } from '@/components/Providers';
 import './admin.css';
 
 export default function AdminLayout({
@@ -12,6 +13,14 @@ export default function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
+    return (
+        <Providers>
+            <AdminShell>{children}</AdminShell>
+        </Providers>
+    );
+}
+
+function AdminShell({ children }: { children: React.ReactNode }) {
     const { data: session, status } = useSession();
     const router = useRouter();
     const pathname = usePathname();

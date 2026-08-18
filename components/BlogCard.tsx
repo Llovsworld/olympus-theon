@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { memo } from 'react';
 
 interface BlogCardProps {
@@ -8,15 +9,11 @@ interface BlogCardProps {
         id: string;
         title: string;
         slug: string;
-        content: string;
         featuredImage: string | null;
         createdAt: Date;
+        excerpt: string;
+        readingTime: number;
     };
-}
-
-function getPlainTextExcerpt(html: string, maxLength: number = 150): string {
-    const text = html.replace(/<[^>]*>/g, '');
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
 function BlogCard({ post }: BlogCardProps) {
@@ -28,11 +25,13 @@ function BlogCard({ post }: BlogCardProps) {
             <article className="blog-card glass-card">
                 {post.featuredImage && (
                     <div className="blog-card-image">
-                        <img
+                        <Image
                             src={post.featuredImage}
                             alt={post.title}
+                            fill
+                            sizes="(max-width: 700px) calc(100vw - 3rem), (max-width: 1200px) 50vw, 33vw"
                             loading="lazy"
-                            decoding="async"
+                            style={{ objectFit: 'cover' }}
                         />
                         <div className="blog-card-image-overlay" />
                     </div>
@@ -44,7 +43,7 @@ function BlogCard({ post }: BlogCardProps) {
                     </h2>
 
                     <p className="blog-card-excerpt">
-                        {getPlainTextExcerpt(post.content, 100)}
+                        {post.excerpt}
                     </p>
 
                     <div className="blog-card-meta">
@@ -57,7 +56,7 @@ function BlogCard({ post }: BlogCardProps) {
                         </time>
                         <span className="blog-card-separator">•</span>
                         <span className="blog-card-reading-time">
-                            {Math.ceil(post.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min
+                            {post.readingTime} min
                         </span>
                     </div>
                 </div>

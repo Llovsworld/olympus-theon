@@ -47,6 +47,8 @@ const testimonials = [
         image: "/images/testimonials/avatar6.jpg"
     }
 ];
+const displayTestimonials = [...testimonials, ...testimonials];
+const testimonialCardWidth = 900 + 32;
 
 // Helper to get initials
 const getInitials = (name: string) => {
@@ -61,12 +63,13 @@ export default function TestimonialsSection() {
     useEffect(() => {
         const container = scrollContainerRef.current;
         if (!container) return;
+        let animationFrame = 0;
 
-        const handleScroll = () => {
+        const updateActiveTestimonial = () => {
+            animationFrame = 0;
             const scrollLeft = container.scrollLeft;
-            const cardWidth = 900 + 32; // card width + gap
-            const index = Math.round(scrollLeft / cardWidth);
-            setActiveIndex(index % testimonials.length);
+            const index = Math.round(scrollLeft / testimonialCardWidth) % testimonials.length;
+            setActiveIndex((currentIndex) => currentIndex === index ? currentIndex : index);
 
             // Implement circular scroll
             const maxScroll = container.scrollWidth - container.clientWidth;
@@ -77,23 +80,28 @@ export default function TestimonialsSection() {
             }
         };
 
-        container.addEventListener('scroll', handleScroll);
-        return () => container.removeEventListener('scroll', handleScroll);
+        const handleScroll = () => {
+            if (!animationFrame) {
+                animationFrame = window.requestAnimationFrame(updateActiveTestimonial);
+            }
+        };
+
+        container.addEventListener('scroll', handleScroll, { passive: true });
+        return () => {
+            container.removeEventListener('scroll', handleScroll);
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+        };
     }, []);
 
     const scrollToIndex = (index: number) => {
         const container = scrollContainerRef.current;
         if (!container) return;
 
-        const cardWidth = 900 + 32;
         container.scrollTo({
-            left: index * cardWidth,
+            left: index * testimonialCardWidth,
             behavior: 'smooth'
         });
     };
-
-    // Duplicate testimonials for seamless circular scroll
-    const displayTestimonials = [...testimonials, ...testimonials];
 
     return (
         <section className="testimonials-section-scroll">
@@ -142,7 +150,7 @@ export default function TestimonialsSection() {
 
                                     {/* Quote */}
                                     <blockquote className="testimonial-quote-scroll">
-                                        "{testimonial.featuredQuote} {testimonial.quote}"
+                                        &quot;{testimonial.featuredQuote} {testimonial.quote}&quot;
                                     </blockquote>
 
                                     {/* Navigation Arrows in card */}

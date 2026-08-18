@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { revalidateBlogContent } from '@/lib/revalidate-content';
+
+function isMissingRecord(error: unknown) {
+    return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
+}
 
 // GET single post
 export async function GET(
@@ -45,11 +50,6 @@ export async function PUT(
         const { id } = await params;
         const body = await request.json();
 
-        const post = await prisma.post.findUnique({ where: { id } });
-        if (!post) {
-            return NextResponse.json({ error: 'Post not found' }, { status: 404 });
-        }
-
         const updatedPost = await prisma.post.update({
             where: { id },
             data: {
@@ -60,12 +60,17 @@ export async function PUT(
                 metaDescription: body.metaDescription || null,
                 category: body.category || null,
                 featuredImage: body.featuredImage || null,
-                published: body.published ?? post.published,
+                published: body.published,
             },
         });
 
+        revalidateBlogContent();
+
         return NextResponse.json(updatedPost);
     } catch (error) {
+        if (isMissingRecord(error)) {
+            return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        }
         console.error('Error updating post:', error);
         return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
     }
@@ -84,15 +89,14 @@ export async function DELETE(
 
         const { id } = await params;
 
-        const post = await prisma.post.findUnique({ where: { id } });
-        if (!post) {
-            return NextResponse.json({ error: 'Post not found' }, { status: 404 });
-        }
-
         await prisma.post.delete({ where: { id } });
+        revalidateBlogContent();
 
         return NextResponse.json({ message: 'Post deleted successfully' }, { status: 200 });
     } catch (error) {
+        if (isMissingRecord(error)) {
+            return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        }
         console.error('Error deleting post:', error);
         return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
     }

@@ -6,8 +6,16 @@ import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import SocialShare from '@/components/SocialShare';
 import { Metadata } from 'next';
+import Image from 'next/image';
+import { getPublishedPostBySlug } from '@/lib/content';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
+
+// An empty list enables on-demand ISR for slugs without querying the database
+// during every deployment build.
+export function generateStaticParams() {
+    return [];
+}
 
 interface BlogPostPageProps {
     params: Promise<{
@@ -19,17 +27,7 @@ interface BlogPostPageProps {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const post = await prisma.post.findUnique({
-        where: { slug },
-        select: {
-            title: true,
-            excerpt: true,
-            metaDescription: true,
-            content: true,
-            featuredImage: true,
-            createdAt: true,
-        }
-    });
+    const post = await getPublishedPostBySlug(slug);
 
     if (!post) {
         return {
@@ -71,23 +69,30 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
 
-    const post = await prisma.post.findUnique({
-        where: { slug },
-    });
+    // The recommendations only depend on the slug, so both reads can start at
+    // once instead of forming a database waterfall.
+    const [post, otherPosts] = await Promise.all([
+        getPublishedPostBySlug(slug),
+        prisma.post.findMany({
+            where: {
+                published: true,
+                NOT: { slug },
+            },
+            take: 3,
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                featuredImage: true,
+                createdAt: true,
+            },
+        }),
+    ]);
 
-    if (!post || !post.published) {
+    if (!post) {
         notFound();
     }
-
-    // Fetch other posts for "Read Next"
-    const otherPosts = await prisma.post.findMany({
-        where: {
-            published: true,
-            NOT: { id: post.id }
-        },
-        take: 3,
-        orderBy: { createdAt: 'desc' }
-    });
 
     // Calculate reading time (200 words per minute average)
     const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
@@ -110,15 +115,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             }}>
                 {post.featuredImage ? (
                     <>
-                        <img
+                        <Image
                             src={post.featuredImage}
                             alt={post.title}
+                            fill
+                            sizes="100vw"
+                            preload
                             style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
                                 objectFit: 'cover',
                                 zIndex: 0
                             }}
@@ -267,8 +270,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                         className="hover:translate-y-[-5px]"
                                     >
                                         {p.featuredImage && (
-                                            <div style={{ height: '200px', overflow: 'hidden' }}>
-                                                <img src={p.featuredImage} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <div style={{ height: '200px', overflow: 'hidden', position: 'relative' }}>
+                                                <Image
+                                                    src={p.featuredImage}
+                                                    alt={p.title}
+                                                    fill
+                                                    sizes="(max-width: 700px) calc(100vw - 4rem), 33vw"
+                                                    style={{ objectFit: 'cover' }}
+                                                />
                                             </div>
                                         )}
                                         <div style={{ padding: '1.5rem' }}>
@@ -287,4 +296,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
     );
 }
-

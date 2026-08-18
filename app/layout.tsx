@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import { Providers } from "@/components/Providers";
-import PageTransition from "@/components/PageTransition";
-import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const inter = localFont({
+    src: "./fonts/inter-latin-variable.woff2",
+    display: "swap",
+    variable: "--font-inter",
+    weight: "100 900",
+});
+
+const dancingScript = localFont({
+    src: "./fonts/dancing-script-latin-variable.woff2",
+    display: "swap",
+    variable: "--font-dancing-script",
+    weight: "400 700",
+    preload: false,
+});
 
 export const metadata: Metadata = {
     title: {
@@ -54,8 +64,8 @@ export const metadata: Metadata = {
         },
     },
     icons: {
-        icon: "/olympus_logo.png",
-        apple: "/olympus_logo.png",
+        icon: "/icon-192.png",
+        apple: "/apple-touch-icon.png",
     },
     manifest: "/manifest.json",
 };
@@ -66,7 +76,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="es" suppressHydrationWarning>
+        <html
+            lang="es"
+            className={`${inter.variable} ${dancingScript.variable}`}
+            data-scroll-behavior="smooth"
+            suppressHydrationWarning
+        >
             <head>
                 {/* PWA Meta Tags */}
                 <meta name="application-name" content="Olympus Theon" />
@@ -75,19 +90,7 @@ export default function RootLayout({
                 <meta name="apple-mobile-web-app-title" content="Olympus Theon" />
                 <meta name="mobile-web-app-capable" content="yes" />
                 <meta name="theme-color" content="#050505" />
-                <link rel="apple-touch-icon" href="/olympus_logo.png" />
-
-                {/* DNS Prefetch and Preconnect */}
-                <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-                {/* Preload critical resources */}
-                <link rel="preload" href="/hero-gym.png" as="image" />
-
-                {/* Google Fonts */}
-                <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" />
-
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
                 {/* JSON-LD Structured Data */}
                 <script
@@ -103,7 +106,7 @@ export default function RootLayout({
                                     "url": "https://olympustheon.com",
                                     "logo": {
                                         "@type": "ImageObject",
-                                        "url": "https://olympustheon.com/olympus_logo.png"
+                                        "url": "https://olympustheon.com/icon-512.png"
                                     },
                                     "founder": {
                                         "@type": "Person",
@@ -130,12 +133,7 @@ export default function RootLayout({
                 />
             </head>
             <body className={inter.className} style={{ backgroundColor: '#050505', color: '#ededed' }} suppressHydrationWarning>
-                <ServiceWorkerRegistration />
-                <Providers>
-                    <PageTransition>
-                        {children}
-                    </PageTransition>
-                </Providers>
+                {children}
             </body>
         </html>
     );

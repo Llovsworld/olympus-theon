@@ -20,7 +20,8 @@ export async function POST(request: Request) {
                     views: {
                         increment: 1
                     }
-                }
+                },
+                select: { id: true },
             });
         } else if (type === 'book') {
             await prisma.book.update({
@@ -29,7 +30,8 @@ export async function POST(request: Request) {
                     views: {
                         increment: 1
                     }
-                }
+                },
+                select: { id: true },
             });
         } else {
             return NextResponse.json(

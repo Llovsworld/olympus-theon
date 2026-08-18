@@ -13,6 +13,7 @@ export default function CEOSection() {
                                 alt="Alejandro Lloveras Sauras"
                                 fill
                                 loading="lazy"
+                                sizes="(max-width: 768px) 100vw, 50vw"
                                 className="ceo-image"
                             />
                         </div>
@@ -31,7 +32,7 @@ export default function CEOSection() {
                         </ScrollReveal>
                         <ScrollReveal direction="right" variant="slideScale" delay={600}>
                             <blockquote className="ceo-quote">
-                                "No solo construimos cuerpos; construimos carácter. El mundo moderno necesita hombres fuertes: capaces, responsables y virtuosos. Ese es el estándar que establecemos aquí."
+                                &quot;No solo construimos cuerpos; construimos carácter. El mundo moderno necesita hombres fuertes: capaces, responsables y virtuosos. Ese es el estándar que establecemos aquí.&quot;
                             </blockquote>
                         </ScrollReveal>
                     </div>

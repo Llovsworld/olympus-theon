@@ -1,8 +1,14 @@
 import { notFound } from 'next/navigation';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
+import Script from 'next/script';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageTransition from '@/components/PageTransition';
+import { routing } from '@/i18n/routing';
+
+export function generateStaticParams() {
+    return routing.locales.map((locale) => ({ locale }));
+}
 
 export default async function LocaleLayout({
     children,
@@ -15,37 +21,42 @@ export default async function LocaleLayout({
     const { locale } = await params;
 
     // Ensure that the incoming `locale` is valid
-    if (!['en', 'es'].includes(locale)) {
+    if (!routing.locales.includes(locale as typeof routing.locales[number])) {
         notFound();
     }
 
-    // Providing all messages to the client
-    // side is the easiest way to get started
-    const messages = await getMessages();
+    // Let next-intl use the route param rather than request headers. This keeps
+    // localized public pages eligible for static generation and revalidation.
+    setRequestLocale(locale);
 
     return (
-        <NextIntlClientProvider messages={messages}>
-            {/* Fixed Background Layer - The Infinite Tunnel */}
-            <div
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100vh',
-                    zIndex: -1,
-                    backgroundImage: 'url(\'/snake_bg_user.jpg\')',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed',
-                    opacity: 0.5,
-                }}
-            />
-            <Header />
-            <main style={{ minHeight: '80vh', position: 'relative', zIndex: 1 }}>
-                {children}
-            </main>
-            <Footer />
-        </NextIntlClientProvider>
+        <>
+            <PageTransition>
+                {/* Fixed Background Layer - The Infinite Tunnel */}
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100vh',
+                        zIndex: -1,
+                        backgroundImage: 'url(\'/snake-bg.webp\')',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
+                        opacity: 0.5,
+                    }}
+                />
+                <Header />
+                <main style={{ minHeight: '80vh', position: 'relative', zIndex: 1 }}>
+                    {children}
+                </main>
+                <Footer />
+            </PageTransition>
+            <Script id="register-service-worker" strategy="lazyOnload">
+                {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(() => {}); }`}
+            </Script>
+        </>
     );
 }

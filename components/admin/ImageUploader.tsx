@@ -96,7 +96,7 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
                             const dataTransfer = new DataTransfer();
                             dataTransfer.items.add(file);
                             input.files = dataTransfer.files;
-                            handleFileChange({ target: input } as any);
+                            handleFileChange({ target: input } as unknown as React.ChangeEvent<HTMLInputElement>);
                         }
                     }
                 }}

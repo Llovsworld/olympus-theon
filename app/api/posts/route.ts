@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendNewsletter } from '@/lib/email';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { revalidateBlogContent } from '@/lib/revalidate-content';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const includeAll = searchParams.get('all') === 'true';
 
-    // If requesting all posts (drafts included), verify admin
+    // If requesting all posts (drafts included), verify admin.
     if (includeAll) {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -20,7 +21,9 @@ export async function GET(request: Request) {
         where: includeAll ? {} : { published: true },
         orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(posts);
+    return NextResponse.json(posts, includeAll ? {
+        headers: { 'Cache-Control': 'private, no-store' },
+    } : undefined);
 }
 
 export async function POST(request: Request) {
@@ -29,21 +32,12 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let requestedSlug = 'provided';
+
     try {
         const body = await request.json();
         const { title, slug, content, excerpt, metaDescription, category, featuredImage, published = false } = body;
-
-        // Check if slug already exists
-        const existingPost = await prisma.post.findUnique({
-            where: { slug },
-        });
-
-        if (existingPost) {
-            return NextResponse.json(
-                { error: 'Duplicate slug', details: `The slug "${slug}" is already in use. Please choose a different URL slug.` },
-                { status: 400 }
-            );
-        }
+        requestedSlug = slug;
 
         const post = await prisma.post.create({
             data: {
@@ -58,14 +52,22 @@ export async function POST(request: Request) {
             },
         });
 
-        // Trigger Newsletter if published
+        revalidateBlogContent();
+
+        // Keep email work out of the response path while allowing the runtime
+        // to finish it after the response has been sent.
         if (post.published) {
-            // Run in background (don't await to avoid blocking response)
-            sendNewsletter('post', {
-                title: post.title,
-                slug: post.slug,
-                content: post.content.substring(0, 200) + '...', // Brief snippet
-            }).catch((err: unknown) => console.error('Background email error:', err));
+            after(async () => {
+                try {
+                    await sendNewsletter('post', {
+                        title: post.title,
+                        slug: post.slug,
+                        content: post.content.substring(0, 200) + '...',
+                    });
+                } catch (error) {
+                    console.error('Background newsletter error:', error);
+                }
+            });
         }
 
         return NextResponse.json(post);
@@ -75,7 +77,7 @@ export async function POST(request: Request) {
         // Handle Prisma unique constraint errors
         if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
             return NextResponse.json(
-                { error: 'Duplicate slug', details: `The slug "${(error as any).meta?.target?.[0] || 'provided'}" is already in use. Please choose a different URL slug.` },
+                { error: 'Duplicate slug', details: `The slug "${requestedSlug}" is already in use. Please choose a different URL slug.` },
                 { status: 400 }
             );
         }
@@ -88,6 +90,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
@@ -102,6 +109,8 @@ export async function DELETE(request: Request) {
         await prisma.post.delete({
             where: { id },
         });
+
+        revalidateBlogContent();
 
         return NextResponse.json({ success: true, message: 'Post deleted successfully' });
     } catch (error) {

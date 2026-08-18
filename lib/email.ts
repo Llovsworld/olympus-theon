@@ -14,6 +14,7 @@ export async function sendNewsletter(type: 'post' | 'book', item: { title: strin
         // Fetch all active subscribers
         const subscribers = await prisma.subscriber.findMany({
             where: { active: true },
+            select: { email: true },
         });
 
         if (subscribers.length === 0) {

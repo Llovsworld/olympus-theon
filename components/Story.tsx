@@ -78,6 +78,7 @@ export default function StorySection() {
                                     alt="Alejandro Lloveras Sauras - CEO"
                                     fill
                                     loading="lazy"
+                                    sizes="(max-width: 900px) 100vw, 50vw"
                                     className="ceo-philosophy-photo"
                                     style={{ objectFit: 'cover' }}
                                 />

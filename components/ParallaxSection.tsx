@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ParallaxSectionProps {
     children: React.ReactNode;
@@ -14,24 +14,34 @@ export default function ParallaxSection({
     className = ""
 }: ParallaxSectionProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const [offset, setOffset] = useState(0);
 
     useEffect(() => {
-        const handleScroll = () => {
-            if (!ref.current) return;
+        let animationFrame = 0;
 
-            const rect = ref.current.getBoundingClientRect();
+        const updatePosition = () => {
+            animationFrame = 0;
+            const element = ref.current;
+            if (!element) return;
+
+            const rect = element.getBoundingClientRect();
             const scrollPercent = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
             const parallaxOffset = (scrollPercent - 0.5) * 100 * speed;
 
-            setOffset(parallaxOffset);
+            element.style.transform = `translateY(${parallaxOffset}px)`;
+        };
+
+        const handleScroll = () => {
+            if (!animationFrame) {
+                animationFrame = window.requestAnimationFrame(updatePosition);
+            }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Initial calculation
+        updatePosition();
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
         };
     }, [speed]);
 
@@ -40,7 +50,7 @@ export default function ParallaxSection({
             ref={ref}
             className={className}
             style={{
-                transform: `translateY(${offset}px)`,
+                transform: 'translateY(0px)',
                 transition: 'transform 0.1s ease-out'
             }}
         >
