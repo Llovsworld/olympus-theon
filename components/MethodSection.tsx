@@ -14,7 +14,7 @@ export default function MethodSection() {
                     {/* Row 1: Mental Reprogramming */}
                     <div className="method-row">
                         <ScrollReveal variant="fade" delay={200} className="method-image-col">
-                            <div className="method-image-container">
+                            <div className="method-image-container method-image-container--bright">
                                 <div className="method-tag">ESTRATEGIA MENTAL</div>
                                 <Image
                                     src="/method-mental.webp"
@@ -56,7 +56,7 @@ export default function MethodSection() {
                     {/* Row 2: Physical Optimization (Reversed) */}
                     <div className="method-row reverse">
                         <ScrollReveal variant="fade" delay={200} className="method-image-col">
-                            <div className="method-image-container">
+                            <div className="method-image-container method-image-container--bright">
                                 <div className="method-tag">ALTO RENDIMIENTO</div>
                                 <Image
                                     src="/method-physical.webp"

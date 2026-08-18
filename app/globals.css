@@ -4900,6 +4900,14 @@ h6 {
   filter: brightness(1.1) contrast(1.05);
 }
 
+.method-image-container--bright img {
+  filter: brightness(1.12);
+}
+
+.method-image-container--bright:hover img {
+  filter: brightness(1.2) contrast(1.05);
+}
+
 .ceo-philosophy-image-wrapper:hover .ceo-philosophy-photo {
   transform: scale(1.05);
   filter: brightness(1.15) contrast(1.05);
