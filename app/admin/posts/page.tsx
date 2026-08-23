@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Plus, Trash2, ExternalLink, AlertTriangle, Pencil } from 'lucide-react';
+import { Plus, Trash2, Eye, AlertTriangle, Pencil } from 'lucide-react';
 
 interface Post {
     id: string;
@@ -141,8 +141,7 @@ export default function PostsManagementPage() {
                                 <tr key={post.id}>
                                     <td>
                                         <Link
-                                            href={`/blog/${post.slug}`}
-                                            target="_blank"
+                                            href={`/admin/posts/preview/${post.id}`}
                                             style={{
                                                 color: 'var(--admin-text)',
                                                 textDecoration: 'none',
@@ -153,7 +152,7 @@ export default function PostsManagementPage() {
                                             }}
                                         >
                                             {post.title}
-                                            <ExternalLink size={14} style={{ opacity: 0.5 }} />
+                                            <Eye size={14} style={{ opacity: 0.5 }} />
                                         </Link>
                                     </td>
                                     <td style={{ color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
@@ -169,6 +168,14 @@ export default function PostsManagementPage() {
                                     </td>
                                     <td style={{ textAlign: 'center' }}>
                                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                            <Link
+                                                href={`/admin/posts/preview/${post.id}`}
+                                                className="admin-btn admin-btn-secondary"
+                                                style={{ padding: '0.5rem 1rem' }}
+                                            >
+                                                <Eye size={16} />
+                                                Ver
+                                            </Link>
                                             <Link
                                                 href={`/admin/posts/edit/${post.id}`}
                                                 className="admin-btn admin-btn-secondary"

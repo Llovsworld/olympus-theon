@@ -34,7 +34,6 @@ export default async function AdminDashboard() {
                     title: true,
                     published: true,
                     createdAt: true,
-                    slug: true
                 }
             }),
             prisma.post.aggregate({
@@ -156,10 +155,8 @@ export default async function AdminDashboard() {
                                                         >
                                                             Editar
                                                         </Link>
-                                                        <a
-                                                            href={`/blog/${post.slug}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                        <Link
+                                                            href={`/admin/posts/preview/${post.id}`}
                                                             style={{
                                                                 padding: '0.25rem 0.5rem',
                                                                 fontSize: '0.8rem',
@@ -170,7 +167,7 @@ export default async function AdminDashboard() {
                                                             }}
                                                         >
                                                             Ver
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </td>
                                             </tr>

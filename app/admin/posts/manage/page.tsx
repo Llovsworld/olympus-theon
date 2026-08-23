@@ -156,17 +156,27 @@ export default function ManagePostsPage() {
                                     </td>
                                     <td style={{ ...tdStyle, textAlign: 'right' }}>
                                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                            <Link href={`/blog/${post.slug}`} target="_blank" title="View Live" style={actionBtnStyle}>
+                                            <Link
+                                                href={`/admin/posts/preview/${post.id}`}
+                                                title="Vista previa privada"
+                                                aria-label={`Ver vista previa de ${post.title}`}
+                                                style={actionBtnStyle}
+                                            >
                                                 <Eye size={16} />
                                             </Link>
-                                            {/* Edit link placeholder - would link to /admin/posts/edit/[id] */}
-                                            <button disabled title="Edit (Coming Soon)" style={{ ...actionBtnStyle, opacity: 0.5, cursor: 'not-allowed' }}>
+                                            <Link
+                                                href={`/admin/posts/edit/${post.id}`}
+                                                title="Editar"
+                                                aria-label={`Editar ${post.title}`}
+                                                style={actionBtnStyle}
+                                            >
                                                 <Edit size={16} />
-                                            </button>
+                                            </Link>
                                             <button
                                                 onClick={() => handleDelete(post.id)}
                                                 disabled={deletingId === post.id}
                                                 title="Delete"
+                                                aria-label={`Eliminar ${post.title}`}
                                                 style={{ ...actionBtnStyle, color: '#ff6b6b', borderColor: 'rgba(255, 107, 107, 0.3)' }}
                                             >
                                                 {deletingId === post.id ? '...' : <Trash2 size={16} />}
