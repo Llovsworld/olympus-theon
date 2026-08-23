@@ -10,8 +10,8 @@ export default function Footer() {
                     <div className="footer-brand-col">
                         <div className="footer-logo">OLYMPUS THEON</div>
                         <p className="footer-tagline">
-                            Transformando visiones en realidades mediante estrategias precisas y ejecución impecable.
-                            Excelencia a través de metodología.
+                            Metodología para convertir visión en disciplina, claridad y acción.
+                            Desarrollo integral mediante un sistema estructurado.
                         </p>
                         <div className="footer-social-icons">
                             <a href="https://www.instagram.com/llovsworld/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
@@ -67,7 +67,7 @@ export default function Footer() {
                         <nav className="footer-nav-list">
                             <Link href="/#method">Metodología</Link>
                             <Link href="/#story">Sobre el CEO</Link>
-                            <Link href="/#testimonials">Testimonios</Link>
+                            <Link href="/#testimonials">Principios</Link>
                             <Link href="#newsletter">Newsletter</Link>
                         </nav>
                     </div>

@@ -22,9 +22,9 @@ export default function StorySection() {
 
                         <ScrollReveal variant="fade" delay={100}>
                             <p className="ceo-philosophy-description">
-                                Transformamos visiones en realidades mediante estrategias precisas y
-                                ejecución impecable. Cada proyecto es una oportunidad para demostrar
-                                que la excelencia no es un accidente, sino el resultado de un método probado.
+                                Convertimos la visión personal en un plan de acción mediante estrategia,
+                                seguimiento y ejecución consciente. Cada proceso parte de una realidad distinta;
+                                por eso el método se adapta a la persona, sus objetivos y su punto de partida.
                             </p>
                         </ScrollReveal>
 
@@ -50,7 +50,7 @@ export default function StorySection() {
                                 <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
                                     <div className="ceo-philosophy-stat-value">3+</div>
                                     <div className="ceo-philosophy-stat-label">
-                                        AÑOS<br />EXPERIENCIA
+                                        AÑOS DE ESTUDIO<br />Y PRÁCTICA
                                     </div>
                                 </div>
                                 <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
@@ -60,9 +60,9 @@ export default function StorySection() {
                                     </div>
                                 </div>
                                 <div className="ceo-philosophy-stat" style={{ flex: '1', textAlign: 'center', minWidth: '0' }}>
-                                    <div className="ceo-philosophy-stat-value">100%</div>
+                                    <div className="ceo-philosophy-stat-value">3</div>
                                     <div className="ceo-philosophy-stat-label">
-                                        SATISFACCIÓN<br />CLIENTES
+                                        PILARES<br />DEL MÉTODO
                                     </div>
                                 </div>
                             </div>

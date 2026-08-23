@@ -5,45 +5,45 @@ import ScrollReveal from './ScrollReveal';
 
 const testimonials = [
     {
-        featuredQuote: "Olympus Theon cambió mi vida.",
-        quote: "Pasé de estar estancado en mi negocio y con sobrepeso a liderar mi sector con una claridad mental absoluta. La disciplina que enseñan es otro nivel.",
-        name: "Carlos R.",
-        role: "CEO y Emprendedor",
+        featuredQuote: "La disciplina precede a la motivación.",
+        quote: "Construimos sistemas que siguen funcionando incluso cuando las ganas desaparecen.",
+        name: "Principio I",
+        role: "DISCIPLINA",
         image: "/images/testimonials/avatar1.jpg"
     },
     {
-        featuredQuote: "Más que un programa de coaching, es una hermandad.",
-        quote: "Te exige tu máximo estándar. Alejandro no te deja caer en la mediocridad. Resultados físicos y mentales desde el primer mes.",
-        name: "Javier M.",
-        role: "Arquitecto",
+        featuredQuote: "Primero claridad. Después, acción.",
+        quote: "Definimos qué importa, eliminamos el ruido y convertimos objetivos en decisiones concretas.",
+        name: "Principio II",
+        role: "CLARIDAD",
         image: "/images/testimonials/avatar2.jpg"
     },
     {
-        featuredQuote: "Entré buscando mejorar mi físico y salí con una transformación completa.",
-        quote: "He ganado músculo, perdí grasa y sobre todo, encontré un propósito claro. Esto es lo que todo hombre necesita.",
-        name: "Miguel Á.",
-        role: "Ingeniero de Software",
+        featuredQuote: "El cuerpo es la base del rendimiento.",
+        quote: "Entrenamiento, nutrición y recuperación sostienen la energía necesaria para liderar tu vida.",
+        name: "Principio III",
+        role: "CUERPO",
         image: "/images/testimonials/avatar3.jpg"
     },
     {
-        featuredQuote: "La mentoría de Alejandro es implacable pero efectiva.",
-        quote: "En 3 meses conseguí más que en los últimos 5 años. El enfoque en disciplina, nutrición y mentalidad es brutal.",
-        name: "David L.",
-        role: "Consultor Financiero",
+        featuredQuote: "El carácter vale más que la apariencia.",
+        quote: "La verdadera transformación se demuestra en la responsabilidad, la palabra y la conducta diaria.",
+        name: "Principio IV",
+        role: "CARÁCTER",
         image: "/images/testimonials/avatar4.jpg"
     },
     {
-        featuredQuote: "Si buscas motivación barata, esto no es para ti.",
-        quote: "Si quieres resultados reales y una comunidad de hombres comprometidos, este es tu lugar. Mejores decisiones, mejor cuerpo, mejor vida.",
-        name: "Roberto F.",
-        role: "Abogado",
+        featuredQuote: "La consistencia supera a la intensidad.",
+        quote: "No buscamos impulsos breves, sino hábitos sostenibles que acumulen progreso real.",
+        name: "Principio V",
+        role: "CONSTANCIA",
         image: "/images/testimonials/avatar5.jpg"
     },
     {
-        featuredQuote: "Olympus Theon no solo transformó mi físico, sino mi manera de pensar.",
-        quote: "Ahora tomo decisiones con confianza y ejecuto sin dudar. La inversión más rentable que he hecho.",
-        name: "Antonio S.",
-        role: "Director de Marketing",
+        featuredQuote: "El esfuerzo necesita una dirección.",
+        quote: "Alineamos cuerpo, mente y valores para avanzar con intención y construir una vida coherente.",
+        name: "Principio VI",
+        role: "PROPÓSITO",
         image: "/images/testimonials/avatar6.jpg"
     }
 ];
@@ -108,11 +108,11 @@ export default function TestimonialsSection() {
             <div className="container">
                 <ScrollReveal variant="fade" delay={0}>
                     <div className="testimonials-header">
-                        <p className="testimonials-label">TESTIMONIOS</p>
-                        <h2 className="testimonials-main-title">LO QUE DICEN LOS INICIADOS</h2>
+                        <p className="testimonials-label">PRINCIPIOS</p>
+                        <h2 className="testimonials-main-title">EL CÓDIGO OLYMPUS</h2>
                         <p className="testimonials-subtitle">
-                            Las palabras de nuestros clientes hablan más fuerte que cualquier promesa.<br />
-                            Resultados reales, transformaciones medibles.
+                            Los estándares que sostienen cada proceso. <br />
+                            Disciplina, claridad y propósito aplicados al día a día.
                         </p>
                     </div>
                 </ScrollReveal>
@@ -128,7 +128,7 @@ export default function TestimonialsSection() {
                                     key={index}
                                     className="testimonial-card-scroll"
                                 >
-                                    {/* Header with avatar, name, and stars */}
+                                    {/* Header with principle number, name, and marks */}
                                     <div className="testimonial-card-header-scroll">
                                         <div className="testimonial-author-section-scroll">
                                             <div className="testimonial-avatar-scroll">
@@ -142,7 +142,7 @@ export default function TestimonialsSection() {
                                         <div className="testimonial-rating-scroll">
                                             {[...Array(5)].map((_, i) => (
                                                 <svg key={i} viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                                    <path d="M12 3 21 12 12 21 3 12 12 3Z" />
                                                 </svg>
                                             ))}
                                         </div>
@@ -193,7 +193,7 @@ export default function TestimonialsSection() {
                             key={index}
                             className={`testimonial-dot-below ${index === activeIndex ? 'active' : ''}`}
                             onClick={() => scrollToIndex(index)}
-                            aria-label={`Ver testimonio ${index + 1}`}
+                            aria-label={`Ver principio ${index + 1}`}
                         />
                     ))}
                 </div>
@@ -201,19 +201,19 @@ export default function TestimonialsSection() {
                 {/* Statistics */}
                 <ScrollReveal variant="fade" delay={400}>
                     <div className="testimonials-stats">
-                        <p className="testimonials-stats-label">Más de 150 clientes transformados en 3 años</p>
+                        <p className="testimonials-stats-label">Un método integral para construir disciplina, claridad y propósito</p>
                         <div className="testimonials-stats-grid">
                             <div className="testimonials-stat">
-                                <div className="testimonials-stat-value">4.9/5</div>
-                                <div className="testimonials-stat-label">CALIFICACIÓN PROMEDIO</div>
+                                <div className="testimonials-stat-value">1:1</div>
+                                <div className="testimonials-stat-label">ACOMPAÑAMIENTO PERSONALIZADO</div>
                             </div>
                             <div className="testimonials-stat">
-                                <div className="testimonials-stat-value">95%</div>
-                                <div className="testimonials-stat-label">TASA DE RETENCIÓN</div>
+                                <div className="testimonials-stat-value">3</div>
+                                <div className="testimonials-stat-label">PILARES DEL MÉTODO</div>
                             </div>
                             <div className="testimonials-stat">
-                                <div className="testimonials-stat-value">100%</div>
-                                <div className="testimonials-stat-label">RECOMENDARÍAN</div>
+                                <div className="testimonials-stat-value">360°</div>
+                                <div className="testimonials-stat-label">ENFOQUE INTEGRAL</div>
                             </div>
                         </div>
                     </div>

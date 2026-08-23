@@ -29,26 +29,26 @@ export default function MethodSection() {
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
                             <h3 className="method-title-large">REPROGRAMACIÓN<br />MENTAL</h3>
                             <p className="method-description">
-                                Eliminamos creencias limitantes e instalamos modelos mentales de alto rendimiento.
-                                Adopta la estoicidad operativa para la toma de decisiones bajo presión y
-                                rediseña tu arquitectura cognitiva para el éxito.
+                                Trabajamos creencias limitantes y modelos mentales orientados al rendimiento.
+                                Aplica principios estoicos a la toma de decisiones bajo presión y crea un
+                                sistema personal para pensar y actuar con mayor claridad.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">+300%</span>
-                                    <span className="method-stat-label">FOCO</span>
+                                    <span className="method-stat-value">FOCO</span>
+                                    <span className="method-stat-label">PRIORIDADES</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">24/7</span>
-                                    <span className="method-stat-label">CLARIDAD</span>
+                                    <span className="method-stat-value">CALMA</span>
+                                    <span className="method-stat-label">BAJO PRESIÓN</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">100%</span>
-                                    <span className="method-stat-label">CONTROL</span>
+                                    <span className="method-stat-value">ACCIÓN</span>
+                                    <span className="method-stat-label">CON INTENCIÓN</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                CONOCER EL PROGRAMA <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>
@@ -72,26 +72,26 @@ export default function MethodSection() {
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
                             <h3 className="method-title-large">OPTIMIZACIÓN<br />FÍSICA</h3>
                             <p className="method-description">
-                                No es solo fitness, es ingeniería corporal. Protocolos de entrenamiento y
-                                nutrición diseñados científicamente para construir una presencia imponente,
-                                una estética superior y una energía inagotable.
+                                No es solo fitness: es estructura, seguimiento y criterio. Integramos
+                                entrenamiento, nutrición y recuperación en un plan adaptado a tu punto de
+                                partida, tus objetivos y tu vida real.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">+5kg</span>
-                                    <span className="method-stat-label">MÚSCULO</span>
+                                    <span className="method-stat-value">FUERZA</span>
+                                    <span className="method-stat-label">ENTRENAMIENTO</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">-10%</span>
-                                    <span className="method-stat-label">GRASA</span>
+                                    <span className="method-stat-value">SALUD</span>
+                                    <span className="method-stat-label">NUTRICIÓN</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">MAX</span>
-                                    <span className="method-stat-label">ENERGÍA</span>
+                                    <span className="method-stat-value">ENERGÍA</span>
+                                    <span className="method-stat-label">RECUPERACIÓN</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                CONOCER EL PROGRAMA <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>
@@ -115,26 +115,26 @@ export default function MethodSection() {
                         <ScrollReveal variant="fade" delay={300} className="method-content-col">
                             <h3 className="method-title-large">DOMINIO ESPIRITUAL<br />Y PROPÓSITO</h3>
                             <p className="method-description">
-                                Alinea tus acciones con tu propósito vital. Desarrolla una brújula interna
-                                inquebrantable que te guíe más allá del éxito material y conecta con una
-                                hermandad global de hombres de alto valor.
+                                Alinea tus acciones con tus valores y tu propósito vital. Desarrolla una
+                                brújula interna que te ayude a decidir con coherencia, sostener tus compromisos
+                                y construir una dirección propia.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">150+</span>
-                                    <span className="method-stat-label">MIEMBROS</span>
+                                    <span className="method-stat-value">VALORES</span>
+                                    <span className="method-stat-label">BRÚJULA INTERNA</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">∞</span>
-                                    <span className="method-stat-label">NETWORKING</span>
+                                    <span className="method-stat-value">RUMBO</span>
+                                    <span className="method-stat-label">PROPÓSITO</span>
                                 </div>
                                 <div className="method-stat-item">
-                                    <span className="method-stat-value">1</span>
-                                    <span className="method-stat-label">LEGADO</span>
+                                    <span className="method-stat-value">LEGADO</span>
+                                    <span className="method-stat-label">COHERENCIA</span>
                                 </div>
                             </div>
                             <Link href="/programas" className="method-link">
-                                VER CASO DE ESTUDIO <span className="arrow">→</span>
+                                CONOCER EL PROGRAMA <span className="arrow">→</span>
                             </Link>
                         </ScrollReveal>
                     </div>

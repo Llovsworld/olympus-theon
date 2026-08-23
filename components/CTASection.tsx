@@ -15,8 +15,8 @@ export default function CTASection() {
                     <ScrollReveal variant="fade" delay={200}>
                         <p className="cta-main-description">
                             Cada gran proyecto comienza con una conversación. Descubre cómo
-                            nuestra metodología puede transformar tu visión en resultados
-                            medibles y sostenibles.
+                            nuestra metodología puede convertir tu visión en objetivos concretos
+                            y un plan de trabajo sostenible.
                         </p>
                     </ScrollReveal>
 
