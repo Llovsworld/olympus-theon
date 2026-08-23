@@ -9,6 +9,7 @@ interface BlogCardProps {
         id: string;
         title: string;
         slug: string;
+        category: string | null;
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;
@@ -38,6 +39,19 @@ function BlogCard({ post }: BlogCardProps) {
                 )}
 
                 <div className="blog-card-content">
+                    {post.category && (
+                        <span style={{
+                            color: '#FFD700',
+                            display: 'inline-block',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.12em',
+                            marginBottom: '0.75rem',
+                            textTransform: 'uppercase'
+                        }}>
+                            {post.category}
+                        </span>
+                    )}
                     <h2 className="blog-card-title">
                         {post.title}
                     </h2>
@@ -47,7 +61,7 @@ function BlogCard({ post }: BlogCardProps) {
                     </p>
 
                     <div className="blog-card-meta">
-                        <time className="blog-card-date">
+                        <time className="blog-card-date" dateTime={new Date(post.createdAt).toISOString()}>
                             {new Date(post.createdAt).toLocaleDateString('es-ES', {
                                 year: 'numeric',
                                 month: 'short',

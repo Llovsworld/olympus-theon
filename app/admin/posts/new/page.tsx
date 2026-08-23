@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
+
+function generateSlug(text: string) {
+    return text
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
 
 export default function NewPostPage() {
     const router = useRouter();
@@ -24,6 +32,7 @@ export default function NewPostPage() {
     const [editorKey, setEditorKey] = useState(0);
 
     const categories = [
+        'Psicología',
         'Mindset',
         'Productividad',
         'Fitness',
@@ -76,23 +85,6 @@ export default function NewPostPage() {
         return () => clearTimeout(timeoutId);
     }, [title, subtitle, slug, content, excerpt, metaDescription, category, featuredImage]);
 
-    // Keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-                e.preventDefault();
-                handleSaveDraft();
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handlePublish();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [title, slug, content, featuredImage]);
-
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
         setTitle(newTitle);
@@ -101,15 +93,7 @@ export default function NewPostPage() {
         }
     }
 
-    function generateSlug(text: string) {
-        return text
-            .toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-    }
-
-    async function handleSaveDraft() {
+    const handleSaveDraft = useCallback(async () => {
         if (!title.trim()) {
             setStatus('❌ Title is required');
             return;
@@ -148,9 +132,9 @@ export default function NewPostPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [title, slug, content, excerpt, metaDescription, category, featuredImage, router]);
 
-    async function handlePublish() {
+    const handlePublish = useCallback(async () => {
         if (!title.trim()) {
             setStatus('❌ Title is required');
             return;
@@ -193,7 +177,20 @@ export default function NewPostPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [title, slug, content, excerpt, metaDescription, category, featuredImage, router]);
+
+    // Keep keyboard shortcuts synchronized with every editor field.
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                void handleSaveDraft();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleSaveDraft]);
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
@@ -535,6 +532,8 @@ export default function NewPostPage() {
                         border: '1px solid #1f1f1f'
                     }} onClick={(e) => e.stopPropagation()}>
                         {featuredImage && (
+                            // Draft previews may use temporary local or data URLs.
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={featuredImage} alt={title} style={{
                                 width: '100%',
                                 height: 'auto',

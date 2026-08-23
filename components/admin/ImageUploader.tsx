@@ -108,6 +108,8 @@ export default function ImageUploader({ onUpload, label = "Imagen Destacada", cu
                     </div>
                 ) : preview ? (
                     <div style={{ position: 'relative' }}>
+                        {/* Upload previews may be local object or data URLs. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={preview}
                             alt="Preview"

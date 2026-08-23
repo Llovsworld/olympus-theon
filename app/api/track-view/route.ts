@@ -13,31 +13,32 @@ export async function POST(request: Request) {
             );
         }
 
+        let updatedRows = 0;
+
         if (type === 'post') {
-            await prisma.post.update({
-                where: { slug },
-                data: {
-                    views: {
-                        increment: 1
-                    }
-                },
-                select: { id: true },
-            });
+            // Prisma's normal update also refreshes the @updatedAt field. A
+            // view is analytics, not an editorial change, so update only the
+            // counter to keep SEO modification dates truthful.
+            updatedRows = await prisma.$executeRaw`
+                UPDATE "Post"
+                SET "views" = "views" + 1
+                WHERE "slug" = ${slug} AND "published" = true
+            `;
         } else if (type === 'book') {
-            await prisma.book.update({
-                where: { slug },
-                data: {
-                    views: {
-                        increment: 1
-                    }
-                },
-                select: { id: true },
-            });
+            updatedRows = await prisma.$executeRaw`
+                UPDATE "Book"
+                SET "views" = "views" + 1
+                WHERE "slug" = ${slug} AND "published" = true
+            `;
         } else {
             return NextResponse.json(
                 { error: 'Invalid type' },
                 { status: 400 }
             );
+        }
+
+        if (updatedRows === 0) {
+            return NextResponse.json({ error: 'Content not found' }, { status: 404 });
         }
 
         return NextResponse.json({ success: true });

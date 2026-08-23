@@ -4,6 +4,8 @@ import { sendNewsletter } from '@/lib/email';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
+import { sanitizeRichText } from '@/lib/sanitize-content';
+import { getContentImageUrl } from '@/lib/seo';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -37,22 +39,51 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { title, slug, content, excerpt, metaDescription, category, featuredImage, published = false } = body;
-        requestedSlug = slug;
+        const normalizedTitle = typeof title === 'string' ? title.trim() : '';
+        const normalizedSlug = typeof slug === 'string' ? slug.trim() : '';
+        const normalizedContent = typeof content === 'string' ? sanitizeRichText(content.trim()) : '';
+        const normalizedExcerpt = typeof excerpt === 'string' ? excerpt.trim() : '';
+        const normalizedMetaDescription = typeof metaDescription === 'string' ? metaDescription.trim() : '';
+        const normalizedCategory = typeof category === 'string' ? category.trim() : '';
+        const normalizedFeaturedImage = typeof featuredImage === 'string' ? featuredImage.trim() : '';
+        const shouldPublish = published === true;
+        requestedSlug = normalizedSlug;
+
+        if (!normalizedTitle || !normalizedSlug || (shouldPublish && !normalizedContent)) {
+            return NextResponse.json(
+                { error: 'Título, URL y contenido son obligatorios para publicar.' },
+                { status: 400 },
+            );
+        }
+
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(normalizedSlug)) {
+            return NextResponse.json(
+                { error: 'La URL solo puede contener letras minúsculas, números y guiones.' },
+                { status: 400 },
+            );
+        }
+
+        if (shouldPublish && (!normalizedExcerpt || !normalizedMetaDescription || !normalizedCategory || !getContentImageUrl(normalizedFeaturedImage))) {
+            return NextResponse.json(
+                { error: 'Para publicar, completa el extracto, la descripción SEO, la categoría y una imagen válida.' },
+                { status: 400 },
+            );
+        }
 
         const post = await prisma.post.create({
             data: {
-                title,
-                slug,
-                content,
-                excerpt: excerpt || null,
-                metaDescription: metaDescription || null,
-                category: category || null,
-                featuredImage,
-                published: published === true,
+                title: normalizedTitle,
+                slug: normalizedSlug,
+                content: normalizedContent,
+                excerpt: normalizedExcerpt || null,
+                metaDescription: normalizedMetaDescription || null,
+                category: normalizedCategory || null,
+                featuredImage: normalizedFeaturedImage || null,
+                published: shouldPublish,
             },
         });
 
-        revalidateBlogContent();
+        revalidateBlogContent(post.slug);
 
         // Keep email work out of the response path while allowing the runtime
         // to finish it after the response has been sent.
@@ -106,11 +137,11 @@ export async function DELETE(request: Request) {
             );
         }
 
-        await prisma.post.delete({
+        const deletedPost = await prisma.post.delete({
             where: { id },
         });
 
-        revalidateBlogContent();
+        revalidateBlogContent(deletedPost.slug);
 
         return NextResponse.json({ success: true, message: 'Post deleted successfully' });
     } catch (error) {

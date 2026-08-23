@@ -10,12 +10,13 @@ export default function SocialShare({ url, title, description }: SocialShareProp
     const encodedUrl = encodeURIComponent(url);
     const encodedTitle = encodeURIComponent(title);
     const encodedDesc = encodeURIComponent(description || '');
+    const encodedMessage = [encodedTitle, encodedDesc, encodedUrl].filter(Boolean).join('%0A');
 
     const shareLinks = {
         twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
         linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-        whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+        whatsapp: `https://wa.me/?text=${encodedMessage}`,
         telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
     };
 

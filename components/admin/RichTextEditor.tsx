@@ -179,17 +179,12 @@ const RichTextEditor = memo(({ content, onChange, placeholder = "Start writing..
     // Manual content sync removed to strictly prevent focus-loss loops.
     // Content updates (like draft loading) are now handled by parent key-remounting.
 
-    // Word and character count
-    const wordCount = useMemo(() => {
-        if (!editor) return 0;
-        const text = editor.state.doc.textContent;
-        return text.trim() ? text.trim().split(/\s+/).length : 0;
-    }, [editor?.state.doc.textContent]);
-
-    const charCount = useMemo(() => {
-        if (!editor) return 0;
-        return editor.state.doc.textContent.length;
-    }, [editor?.state.doc.textContent]);
+    // These values are cheap to derive and stay in sync whenever the editor
+    // causes a render; memoizing them introduced fragile hook dependencies.
+    const editorText = editor?.state.doc.textContent ?? '';
+    const trimmedEditorText = editorText.trim();
+    const wordCount = trimmedEditorText ? trimmedEditorText.split(/\s+/).length : 0;
+    const charCount = editorText.length;
 
     const openPrompt = useCallback((config: PromptConfig) => {
         setPromptConfig(config);
@@ -1133,6 +1128,8 @@ function ResizableImage({ node, updateAttributes, selected }: NodeViewProps) {
             }}
         >
             <div style={{ position: 'relative', display: 'inline-block' }}>
+                {/* Tiptap needs the native image ref for interactive resizing. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     ref={imgRef}
                     src={node.attrs.src}

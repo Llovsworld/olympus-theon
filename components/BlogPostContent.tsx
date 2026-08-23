@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Post {
     slug: string;
@@ -37,14 +38,15 @@ export default function BlogPostContent({ post }: { post: Post }) {
                     borderRadius: '12px',
                     overflow: 'hidden',
                     marginBottom: '3rem',
+                    position: 'relative',
                     background: 'linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,165,0,0.1) 100%)'
                 }}>
-                    <img
+                    <Image
                         src={post.featuredImage}
-                        alt={post.title}
+                        alt={`Portada del artículo ${post.title}`}
+                        fill
+                        sizes="(max-width: 900px) 100vw, 900px"
                         style={{
-                            width: '100%',
-                            height: '100%',
                             objectFit: 'cover'
                         }}
                     />
@@ -64,7 +66,7 @@ export default function BlogPostContent({ post }: { post: Post }) {
                 }}>
                     {post.title}
                 </h1>
-                <time style={{
+                <time dateTime={post.createdAt.toISOString()} style={{
                     color: '#888',
                     fontSize: '1rem',
                     display: 'block'

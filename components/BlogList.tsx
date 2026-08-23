@@ -11,6 +11,7 @@ interface BlogListProps {
         id: string;
         title: string;
         slug: string;
+        category: string | null;
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;
@@ -28,6 +29,7 @@ export default function BlogList({ posts }: BlogListProps) {
         const query = searchQuery.toLowerCase();
         return posts.filter(post =>
             post.title.toLowerCase().includes(query) ||
+            post.category?.toLowerCase().includes(query) ||
             post.searchText.includes(query)
         );
     }, [posts, searchQuery]);
@@ -55,6 +57,7 @@ export default function BlogList({ posts }: BlogListProps) {
                 </div>
                 <input
                     type="text"
+                    aria-label="Buscar artículos"
                     placeholder="Buscar artículos..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -154,6 +157,18 @@ export default function BlogList({ posts }: BlogListProps) {
                                             textAlign: 'center',
                                             alignItems: 'center'
                                         }}>
+                                            {post.category && (
+                                                <span style={{
+                                                    color: '#FFD700',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: 700,
+                                                    letterSpacing: '0.12em',
+                                                    marginBottom: '0.75rem',
+                                                    textTransform: 'uppercase'
+                                                }}>
+                                                    {post.category}
+                                                </span>
+                                            )}
                                             <h2 style={{
                                                 fontSize: '1.2rem',
                                                 fontWeight: '700',
@@ -187,7 +202,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                                 alignItems: 'center',
                                                 gap: '1rem'
                                             }}>
-                                                <time style={{
+                                                <time dateTime={new Date(post.createdAt).toISOString()} style={{
                                                     color: '#666',
                                                     fontSize: '0.7rem',
                                                     textTransform: 'uppercase',

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
@@ -276,6 +276,7 @@ export default function EditPostPage() {
                             className="admin-select"
                         >
                             <option value="">Seleccionar categoría...</option>
+                            <option value="Psicología">Psicología</option>
                             <option value="entrenamiento">Entrenamiento</option>
                             <option value="nutricion">Nutrición</option>
                             <option value="mentalidad">Mentalidad</option>

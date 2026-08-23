@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
+
+function generateSlug(text: string) {
+    return text
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
 
 export default function NewBookPage() {
     const router = useRouter();
@@ -62,23 +70,6 @@ export default function NewBookPage() {
         return () => clearTimeout(timeoutId);
     }, [title, slug, author, description, content, coverImage, link]);
 
-    // Keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-                e.preventDefault();
-                handleSaveDraft();
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                e.preventDefault();
-                handlePublish();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [title, slug, content, coverImage, link]);
-
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
         setTitle(newTitle);
@@ -87,15 +78,7 @@ export default function NewBookPage() {
         }
     }
 
-    function generateSlug(text: string) {
-        return text
-            .toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-    }
-
-    async function handleSaveDraft() {
+    const handleSaveDraft = useCallback(async () => {
         if (!title.trim()) {
             setStatus('❌ Title is required');
             return;
@@ -134,9 +117,9 @@ export default function NewBookPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [title, slug, author, description, content, coverImage, link, router]);
 
-    async function handlePublish() {
+    const handlePublish = useCallback(async () => {
         if (!title.trim()) {
             setStatus('❌ Title is required');
             return;
@@ -175,7 +158,20 @@ export default function NewBookPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [title, slug, author, description, content, coverImage, link, router]);
+
+    // Keep keyboard shortcuts synchronized with every editor field.
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                void handleSaveDraft();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleSaveDraft]);
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
@@ -504,6 +500,8 @@ export default function NewBookPage() {
                         border: '1px solid #1f1f1f'
                     }} onClick={(e) => e.stopPropagation()}>
                         {coverImage && (
+                            // Draft previews may use temporary local or data URLs.
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={coverImage} alt={title} style={{
                                 maxWidth: '200px',
                                 height: 'auto',

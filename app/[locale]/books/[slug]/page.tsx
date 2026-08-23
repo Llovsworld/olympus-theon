@@ -1,10 +1,11 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { getPublishedBookBySlug } from '@/lib/content';
+import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const revalidate = 300;
 
@@ -16,19 +17,30 @@ export function generateStaticParams() {
 
 interface BookPageProps {
     params: Promise<{
+        locale: string;
         slug: string;
     }>;
 }
 
 // Dynamic SEO metadata for each book
 export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
-    const { slug } = await params;
+    const { locale, slug } = await params;
+    const canonical = `${SITE_URL}/books/${slug}`;
+
+    if (locale !== 'es') {
+        return {
+            title: 'Libro en español',
+            alternates: { canonical },
+            robots: { index: false, follow: true },
+        };
+    }
 
     const book = await getPublishedBookBySlug(slug);
 
     if (!book) {
         return {
             title: 'Libro no encontrado',
+            robots: { index: false, follow: false },
         };
     }
 
@@ -37,10 +49,14 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
     return {
         title: book.title,
         description,
+        alternates: { canonical },
         openGraph: {
             title: `${book.title} | Biblioteca Olympus Theon`,
             description,
             type: 'book',
+            url: canonical,
+            siteName: SITE_NAME,
+            locale: DEFAULT_LOCALE,
             authors: book.author ? [book.author] : undefined,
             images: book.coverImage ? [
                 {
@@ -49,19 +65,22 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
                     height: 1200,
                     alt: book.title,
                 }
-            ] : undefined,
+            ] : [],
         },
         twitter: {
             card: 'summary_large_image',
             title: book.title,
             description,
-            images: book.coverImage ? [book.coverImage] : undefined,
+            images: book.coverImage ? [book.coverImage] : [],
         },
     };
 }
 
 export default async function BookPage({ params }: BookPageProps) {
-    const { slug } = await params;
+    const { locale, slug } = await params;
+    if (locale !== 'es') {
+        permanentRedirect(`/books/${slug}`);
+    }
 
     const book = await getPublishedBookBySlug(slug);
 
@@ -168,13 +187,13 @@ export default async function BookPage({ params }: BookPageProps) {
                             textTransform: 'uppercase',
                             letterSpacing: '0.05em'
                         }}>
-                            <span>
+                            <time dateTime={book.createdAt.toISOString()}>
                                 {new Date(book.createdAt).toLocaleDateString('es-ES', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
                                 })}
-                            </span>
+                            </time>
                             {book.content && (
                                 <>
                                     <span style={{ width: '4px', height: '4px', background: '#FFD700', borderRadius: '50%' }} />

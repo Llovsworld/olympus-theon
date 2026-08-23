@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
+import { getContentImageUrl } from '@/lib/seo';
 
 function getPlainTextExcerpt(html: string, maxLength: number) {
     const text = html.replace(/<[^>]*>/g, '');
@@ -19,14 +20,17 @@ export async function getPublishedPostList() {
             title: true,
             slug: true,
             content: true,
+            excerpt: true,
+            category: true,
             featuredImage: true,
             createdAt: true,
         },
     });
 
-    return posts.map(({ content, ...post }) => ({
+    return posts.map(({ content, excerpt, ...post }) => ({
         ...post,
-        excerpt: getPlainTextExcerpt(content, 100),
+        featuredImage: getContentImageUrl(post.featuredImage),
+        excerpt: excerpt || getPlainTextExcerpt(content, 160),
         searchText: getPlainTextExcerpt(content, 1000).toLowerCase(),
         readingTime: getReadingTime(content),
     }));
@@ -74,8 +78,10 @@ export const getPublishedPostBySlug = cache(async (slug: string) =>
             content: true,
             excerpt: true,
             metaDescription: true,
+            category: true,
             featuredImage: true,
             createdAt: true,
+            updatedAt: true,
         },
     })
 );

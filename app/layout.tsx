@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { AUTHOR_NAME, DEFAULT_LOCALE, SITE_NAME, SITE_URL, serializeJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const inter = localFont({
@@ -24,22 +25,19 @@ export const metadata: Metadata = {
     },
     description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching, mentoría y desarrollo personal para hombres.",
     keywords: ["coaching masculino", "desarrollo personal", "mentoría hombres", "alto rendimiento", "estoicismo", "Olympus Theon"],
-    authors: [{ name: "Alejandro Lloveras" }],
-    creator: "Olympus Theon",
-    metadataBase: new URL("https://olympustheon.com"),
-    alternates: {
-        canonical: "/",
-    },
+    authors: [{ name: AUTHOR_NAME, url: `${SITE_URL}/#fundador` }],
+    creator: SITE_NAME,
+    metadataBase: new URL(SITE_URL),
     openGraph: {
         type: "website",
-        locale: "es_ES",
-        url: "https://olympustheon.com",
-        siteName: "Olympus Theon",
+        locale: DEFAULT_LOCALE,
+        url: SITE_URL,
+        siteName: SITE_NAME,
         title: "Olympus Theon | Forjando Hombres de Élite",
         description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching y desarrollo personal.",
         images: [
             {
-                url: "/og-image.png",
+                url: "/og.png",
                 width: 1200,
                 height: 630,
                 alt: "Olympus Theon - Forjando Hombres de Élite",
@@ -50,7 +48,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Olympus Theon | Forjando Hombres de Élite",
         description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto.",
-        images: ["/og-image.png"],
+        images: ["/og.png"],
     },
     robots: {
         index: true,
@@ -96,21 +94,23 @@ export default function RootLayout({
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
-                        __html: JSON.stringify({
+                        __html: serializeJsonLd({
                             "@context": "https://schema.org",
                             "@graph": [
                                 {
                                     "@type": "Organization",
-                                    "@id": "https://olympustheon.com/#organization",
-                                    "name": "Olympus Theon",
-                                    "url": "https://olympustheon.com",
+                                    "@id": `${SITE_URL}/#organization`,
+                                    "name": SITE_NAME,
+                                    "url": SITE_URL,
                                     "logo": {
                                         "@type": "ImageObject",
-                                        "url": "https://olympustheon.com/icon-512.png"
+                                        "url": `${SITE_URL}/icon-512.png`
                                     },
                                     "founder": {
                                         "@type": "Person",
-                                        "name": "Alejandro Lloveras"
+                                        "@id": `${SITE_URL}/#alejandro-lloveras`,
+                                        "name": AUTHOR_NAME,
+                                        "url": `${SITE_URL}/#fundador`
                                     },
                                     "description": "Potenciando la masculinidad y la filosofía del esfuerzo absoluto.",
                                     "sameAs": [
@@ -119,11 +119,11 @@ export default function RootLayout({
                                 },
                                 {
                                     "@type": "WebSite",
-                                    "@id": "https://olympustheon.com/#website",
-                                    "url": "https://olympustheon.com",
-                                    "name": "Olympus Theon",
+                                    "@id": `${SITE_URL}/#website`,
+                                    "url": SITE_URL,
+                                    "name": SITE_NAME,
                                     "publisher": {
-                                        "@id": "https://olympustheon.com/#organization"
+                                        "@id": `${SITE_URL}/#organization`
                                     },
                                     "inLanguage": "es-ES"
                                 }

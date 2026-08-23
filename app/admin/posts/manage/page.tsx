@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Edit, Trash2, Eye, Plus, FileText } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 interface Post {
     id: string;
@@ -19,8 +18,6 @@ export default function ManagePostsPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [deletingId, setDeletingId] = useState<string | null>(null);
-    const router = useRouter();
-
     useEffect(() => {
         fetchPosts();
     }, []);

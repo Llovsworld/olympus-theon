@@ -3,6 +3,12 @@ import AuthorityBar from '@/components/AuthorityBar';
 import Story from '@/components/Story';
 import MethodSection from '@/components/MethodSection';
 import dynamic from 'next/dynamic';
+import type { Metadata } from 'next';
+import { SITE_URL } from '@/lib/seo';
+
+export const metadata: Metadata = {
+    alternates: { canonical: SITE_URL },
+};
 
 // Dynamic imports for below-the-fold components to reduce initial bundle
 const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'), {

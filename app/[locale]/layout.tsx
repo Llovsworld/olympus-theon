@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Script from 'next/script';
 import Header from "@/components/Header";
@@ -8,6 +9,21 @@ import { routing } from '@/i18n/routing';
 
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+    const { locale } = await params;
+
+    // The English routes are not translated yet. Keep them available for
+    // navigation work, but do not let search engines index duplicate Spanish
+    // content as English.
+    return locale === 'en'
+        ? { robots: { index: false, follow: true } }
+        : {};
 }
 
 export default async function LocaleLayout({

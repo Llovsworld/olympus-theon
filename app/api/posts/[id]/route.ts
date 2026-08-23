@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
+import { sanitizeRichText } from '@/lib/sanitize-content';
+import { getContentImageUrl } from '@/lib/seo';
 
 function isMissingRecord(error: unknown) {
     return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
@@ -50,21 +52,60 @@ export async function PUT(
         const { id } = await params;
         const body = await request.json();
 
+        const existingPost = await prisma.post.findUnique({
+            where: { id },
+            select: { slug: true, published: true },
+        });
+
+        if (!existingPost) {
+            return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        }
+
+        const title = typeof body.title === 'string' ? body.title.trim() : '';
+        const slug = typeof body.slug === 'string' ? body.slug.trim() : '';
+        const content = typeof body.content === 'string' ? sanitizeRichText(body.content.trim()) : '';
+        const excerpt = typeof body.excerpt === 'string' ? body.excerpt.trim() : '';
+        const metaDescription = typeof body.metaDescription === 'string' ? body.metaDescription.trim() : '';
+        const category = typeof body.category === 'string' ? body.category.trim() : '';
+        const featuredImage = typeof body.featuredImage === 'string' ? body.featuredImage.trim() : '';
+        const published = body.published === true;
+
+        if (!title || !slug || (published && !content)) {
+            return NextResponse.json(
+                { error: 'Título, URL y contenido son obligatorios para publicar.' },
+                { status: 400 },
+            );
+        }
+
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+            return NextResponse.json(
+                { error: 'La URL solo puede contener letras minúsculas, números y guiones.' },
+                { status: 400 },
+            );
+        }
+
+        if (published && (!excerpt || !metaDescription || !category || !getContentImageUrl(featuredImage))) {
+            return NextResponse.json(
+                { error: 'Para publicar, completa el extracto, la descripción SEO, la categoría y una imagen válida.' },
+                { status: 400 },
+            );
+        }
+
         const updatedPost = await prisma.post.update({
             where: { id },
             data: {
-                title: body.title,
-                slug: body.slug,
-                content: body.content,
-                excerpt: body.excerpt || null,
-                metaDescription: body.metaDescription || null,
-                category: body.category || null,
-                featuredImage: body.featuredImage || null,
-                published: body.published,
+                title,
+                slug,
+                content,
+                excerpt: excerpt || null,
+                metaDescription: metaDescription || null,
+                category: category || null,
+                featuredImage: featuredImage || null,
+                published,
             },
         });
 
-        revalidateBlogContent();
+        revalidateBlogContent(updatedPost.slug, existingPost.slug);
 
         return NextResponse.json(updatedPost);
     } catch (error) {
@@ -89,8 +130,8 @@ export async function DELETE(
 
         const { id } = await params;
 
-        await prisma.post.delete({ where: { id } });
-        revalidateBlogContent();
+        const deletedPost = await prisma.post.delete({ where: { id } });
+        revalidateBlogContent(deletedPost.slug);
 
         return NextResponse.json({ message: 'Post deleted successfully' }, { status: 200 });
     } catch (error) {

@@ -17,7 +17,7 @@ interface Post {
 
 export default function PostsManagementPage() {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function PostsManagementPage() {
 
     const fetchPosts = async () => {
         try {
-            const res = await fetch('/api/posts');
+            const res = await fetch('/api/posts?all=true');
             const data = await res.json();
             setPosts(data);
         } catch (error) {

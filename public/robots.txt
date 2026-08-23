@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://olympustheon.com/sitemap.xml
+Sitemap: https://www.olympustheon.com/sitemap.xml
 
 # Disallow admin routes
 Disallow: /api/

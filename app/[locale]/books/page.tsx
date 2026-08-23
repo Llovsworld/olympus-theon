@@ -1,13 +1,25 @@
 import BookList from '@/components/BookList';
 import { Metadata } from 'next';
 import { getPublishedBookList } from '@/lib/content';
+import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
     title: "Biblioteca",
     description: "Conocimiento esencial para el hombre moderno. Libros sobre desarrollo personal, filosofía estoica y alto rendimiento.",
+    alternates: { canonical: `${SITE_URL}/books` },
     openGraph: {
         title: "Biblioteca | Olympus Theon",
         description: "Libros sobre desarrollo personal, filosofía estoica y alto rendimiento.",
+        url: `${SITE_URL}/books`,
+        siteName: SITE_NAME,
+        locale: DEFAULT_LOCALE,
+        images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: SITE_NAME }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Biblioteca | Olympus Theon',
+        description: 'Libros sobre desarrollo personal, filosofía estoica y alto rendimiento.',
+        images: [`${SITE_URL}/og.png`],
     },
 };
 

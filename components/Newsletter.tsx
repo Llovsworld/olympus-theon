@@ -42,7 +42,7 @@ export default function Newsletter() {
                 setStatus('error');
                 setMessage(data.error || t('error'));
             }
-        } catch (error) {
+        } catch {
             setStatus('error');
             setMessage(t('error'));
         }

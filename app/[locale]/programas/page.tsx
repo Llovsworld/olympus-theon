@@ -1,14 +1,25 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import ProgramsFAQ from '@/components/ProgramsFAQ';
-import Link from 'next/link';
 import { Metadata } from 'next';
+import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
     title: "Programas",
     description: "Arsenal de desarrollo personal. The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+    alternates: { canonical: `${SITE_URL}/programas` },
     openGraph: {
         title: "Programas | Olympus Theon",
         description: "The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+        url: `${SITE_URL}/programas`,
+        siteName: SITE_NAME,
+        locale: DEFAULT_LOCALE,
+        images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: SITE_NAME }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Programas | Olympus Theon',
+        description: 'The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood.',
+        images: [`${SITE_URL}/og.png`],
     },
 };
 

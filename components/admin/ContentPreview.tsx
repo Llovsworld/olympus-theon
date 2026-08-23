@@ -10,6 +10,8 @@ export default function ContentPreview({ content, title, featuredImage }: Conten
     return (
         <div className="admin-preview">
             {featuredImage && (
+                // The admin preview accepts temporary local and data URLs.
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={featuredImage}
                     alt={title || 'Featured image'}

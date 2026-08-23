@@ -4,7 +4,7 @@ import ScrollReveal from './ScrollReveal';
 
 export default function StorySection() {
     return (
-        <section className="ceo-philosophy-section">
+        <section id="fundador" className="ceo-philosophy-section">
             <div className="container-full">
                 <div className="ceo-philosophy-grid">
                     {/* Left Column: Content */}
