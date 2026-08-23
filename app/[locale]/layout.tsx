@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageTransition from '@/components/PageTransition';
@@ -73,6 +75,8 @@ export default async function LocaleLayout({
             <Script id="register-service-worker" strategy="lazyOnload">
                 {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(() => {}); }`}
             </Script>
+            <Analytics />
+            <SpeedInsights />
         </>
     );
 }
