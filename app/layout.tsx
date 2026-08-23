@@ -20,11 +20,11 @@ const dancingScript = localFont({
 
 export const metadata: Metadata = {
     title: {
-        default: "Olympus Theon | Forjando Hombres de Élite",
+        default: "Olympus Theon | Forjando Personas de Élite",
         template: "%s | Olympus Theon"
     },
-    description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching, mentoría y desarrollo personal para hombres.",
-    keywords: ["coaching masculino", "desarrollo personal", "mentoría hombres", "alto rendimiento", "estoicismo", "Olympus Theon"],
+    description: "Carácter, disciplina y filosofía del esfuerzo absoluto. Programas de coaching, mentoría y desarrollo personal para personas comprometidas con su crecimiento.",
+    keywords: ["coaching personal", "desarrollo personal", "mentoría de alto rendimiento", "disciplina", "estoicismo", "Olympus Theon"],
     authors: [{ name: AUTHOR_NAME, url: `${SITE_URL}/#fundador` }],
     creator: SITE_NAME,
     metadataBase: new URL(SITE_URL),
@@ -33,21 +33,21 @@ export const metadata: Metadata = {
         locale: DEFAULT_LOCALE,
         url: SITE_URL,
         siteName: SITE_NAME,
-        title: "Olympus Theon | Forjando Hombres de Élite",
-        description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto. Programas de coaching y desarrollo personal.",
+        title: "Olympus Theon | Forjando Personas de Élite",
+        description: "Carácter, disciplina y filosofía del esfuerzo absoluto. Programas de coaching y desarrollo personal.",
         images: [
             {
                 url: "/og.png",
                 width: 1200,
                 height: 630,
-                alt: "Olympus Theon - Forjando Hombres de Élite",
+                alt: "Olympus Theon - Forjando Personas de Élite",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Olympus Theon | Forjando Hombres de Élite",
-        description: "Potenciando la masculinidad y la filosofía del esfuerzo absoluto.",
+        title: "Olympus Theon | Forjando Personas de Élite",
+        description: "Carácter, disciplina y filosofía del esfuerzo absoluto.",
         images: ["/og.png"],
     },
     robots: {
@@ -115,7 +115,7 @@ export default function RootLayout({
                                         "name": AUTHOR_NAME,
                                         "url": `${SITE_URL}/#fundador`
                                     },
-                                    "description": "Potenciando la masculinidad y la filosofía del esfuerzo absoluto.",
+                                    "description": "Carácter, disciplina y filosofía del esfuerzo absoluto.",
                                     "sameAs": [
                                         "https://wa.me/34608961701"
                                     ]

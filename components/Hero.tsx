@@ -115,8 +115,8 @@ export default function Hero() {
             }}></div>
 
             <div className="container hero-content" style={{ position: 'relative', zIndex: 1 }}>
-                <h1 className="hero-title">FORJANDO HOMBRES DE ÉLITE</h1>
-                <p className="hero-subtitle">Potenciando la masculinidad y la filosofía del esfuerzo absoluto.</p>
+                <h1 className="hero-title">FORJANDO PERSONAS DE ÉLITE</h1>
+                <p className="hero-subtitle">Potenciando el carácter, la disciplina y la filosofía del esfuerzo absoluto.</p>
 
                 <div className="hero-actions">
                     <a href="#method" className="btn btn-primary" onClick={(e) => {

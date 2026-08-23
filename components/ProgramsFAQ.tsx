@@ -10,8 +10,8 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
     {
-        question: "¿Es para principiantes?",
-        answer: "Nuestros programas están diseñados tanto para principiantes ambiciosos como para hombres que ya han comenzado su transformación pero buscan llevarla al siguiente nivel. Adaptamos la intensidad según tu punto de partida, pero todos siguen los mismos principios de excelencia."
+        question: "¿Puedo empezar desde cero?",
+        answer: "Nuestros programas están diseñados tanto para personas que empiezan desde cero como para quienes ya han iniciado su transformación y quieren llevarla al siguiente nivel. Adaptamos la intensidad al punto de partida de cada participante, manteniendo los mismos principios de excelencia."
     },
     {
         question: "¿Cuánto tiempo requiere?",
@@ -19,15 +19,15 @@ const faqData: FAQItem[] = [
     },
     {
         question: "¿Qué incluye el programa?",
-        answer: "Acceso completo a protocolos de entrenamiento, planes de nutrición personalizados, sesiones de coaching en vivo, biblioteca de recursos sobre estoicismo y desarrollo masculino, comunidad privada de élite, y seguimiento semanal de progreso."
+        answer: "Acceso completo a protocolos de entrenamiento, planes de nutrición personalizados, sesiones de coaching en vivo, biblioteca de recursos sobre estoicismo y desarrollo personal, comunidad privada de élite y seguimiento semanal del progreso."
     },
     {
         question: "¿Hay garantía de resultados?",
-        answer: "Garantizamos resultados solo para aquellos que se comprometen completamente. Si sigues el protocolo al 100% durante 12 semanas y no ves transformación medible (física, mental, espiritual), trabajamos contigo hasta que la alcances. La mediocridad no es una opción."
+        answer: "Los resultados dependen del punto de partida, la constancia y el cumplimiento del plan; no existen resultados automáticos. Sí ofrecemos una metodología estructurada, seguimiento y ajustes durante todo el proceso."
     },
     {
         question: "¿Cómo es el proceso de aplicación?",
-        answer: "Iniciamos con una entrevista de admisión donde evaluamos tu compromiso, situación actual y objetivos. No aceptamos a todos. Buscamos hombres dispuestos a hacer el trabajo duro. Tras la aprobación, recibes acceso inmediato y comenzamos tu transformación."
+        answer: "Iniciamos con una entrevista donde conocemos tu situación actual, objetivos y nivel de compromiso. Buscamos personas dispuestas a realizar el trabajo necesario. Si el programa encaja contigo, definimos el punto de partida y comenzamos el proceso."
     }
 ];
 

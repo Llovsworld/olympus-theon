@@ -5,7 +5,7 @@ import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
     title: "Biblioteca",
-    description: "Conocimiento esencial para el hombre moderno. Libros sobre desarrollo personal, filosofía estoica y alto rendimiento.",
+    description: "Lecturas para cultivar disciplina, criterio y propósito. Libros sobre desarrollo personal, filosofía estoica y alto rendimiento.",
     alternates: { canonical: `${SITE_URL}/books` },
     openGraph: {
         title: "Biblioteca | Olympus Theon",
@@ -40,7 +40,7 @@ export default async function BooksPage() {
                         BIBLIOTECA
                     </h1>
                     <p className="page-hero-subtitle">
-                        Conocimiento esencial para el hombre moderno.
+                        Conocimiento esencial para una vida con propósito.
                     </p>
                 </div>
             </div>

@@ -8,18 +8,18 @@
         "books": "Libros"
     },
     "Hero": {
-        "title": "Masculinidad. Visión. Poder.",
-        "subtitle": "Redefiniendo lo que significa ser un hombre en el mundo moderno.",
+        "title": "Carácter. Visión. Propósito.",
+        "subtitle": "Redefiniendo lo que significa vivir con carácter en el mundo moderno.",
         "cta": "Comienza tu Viaje"
     },
     "Story": {
         "title": "Nuestra Historia",
-        "description": "Olympus Theon nació del deseo de restaurar las virtudes perdidas de la masculinidad."
+        "description": "Olympus Theon nació para recuperar valores como la disciplina, el carácter y el propósito."
     },
     "CEO": {
         "title": "Conoce al CEO",
         "subtitle": "Visionario. Líder. Mentor.",
-        "description": "Liderando la carga hacia una nueva era de masculinidad."
+        "description": "Liderando el camino hacia una nueva cultura de disciplina y propósito."
     },
     "Footer": {
         "rights": "Todos los derechos reservados."

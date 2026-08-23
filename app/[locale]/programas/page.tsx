@@ -5,11 +5,11 @@ import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
     title: "Programas",
-    description: "Arsenal de desarrollo personal. The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+    description: "Arsenal de desarrollo personal. The Spartan Protocol, Consultoría 1-a-1 y Elite Community. Elige tu camino hacia la excelencia.",
     alternates: { canonical: `${SITE_URL}/programas` },
     openGraph: {
         title: "Programas | Olympus Theon",
-        description: "The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood. Elige tu camino hacia la excelencia.",
+        description: "The Spartan Protocol, Consultoría 1-a-1 y Elite Community. Elige tu camino hacia la excelencia.",
         url: `${SITE_URL}/programas`,
         siteName: SITE_NAME,
         locale: DEFAULT_LOCALE,
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Programas | Olympus Theon',
-        description: 'The Spartan Protocol, Consultoría 1-a-1 y Elite Brotherhood.',
+        description: 'The Spartan Protocol, Consultoría 1-a-1 y Elite Community.',
         images: [`${SITE_URL}/og.png`],
     },
 };
@@ -102,7 +102,7 @@ export default function ProgramasPage() {
                             </div>
                         </ScrollReveal>
 
-                        {/* Program 3: Elite Brotherhood (Optional Community) */}
+                        {/* Program 3: Elite Community (Optional Community) */}
                         <ScrollReveal variant="slideScale" direction="up" delay={400}>
                             <div className="program-card">
                                 <div className="program-badge">COMUNIDAD</div>
@@ -113,19 +113,19 @@ export default function ProgramasPage() {
                                         <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
-                                <h3 className="program-title">ELITE BROTHERHOOD</h3>
+                                <h3 className="program-title">ELITE COMMUNITY</h3>
                                 <p className="program-description">
-                                    Membresía mensual a la hermandad de hombres de alto rendimiento. Networking, recursos premium y eventos exclusivos.
+                                    Membresía mensual para una comunidad de personas comprometidas con el alto rendimiento. Conexiones, recursos premium y eventos exclusivos.
                                 </p>
                                 <ul className="program-benefits">
                                     <li>✓ Acceso a comunidad privada de élite</li>
                                     <li>✓ Masterclasses mensuales exclusivas</li>
                                     <li>✓ Biblioteca de recursos en expansión</li>
-                                    <li>✓ Networking con hombres de alto nivel</li>
+                                    <li>✓ Conexiones con personas de alto nivel</li>
                                     <li>✓ Descuentos en otros programas</li>
                                 </ul>
                                 <div className="program-price">Mensual  •  Consultar inversión</div>
-                                <a href="https://wa.me/34608961701?text=Quiero%20información%20sobre%20Elite%20Brotherhood" target="_blank" rel="noopener noreferrer" className="program-btn">
+                                <a href="https://wa.me/34608961701?text=Quiero%20información%20sobre%20Elite%20Community" target="_blank" rel="noopener noreferrer" className="program-btn">
                                     MÁS INFORMACIÓN
                                 </a>
                             </div>
@@ -142,9 +142,9 @@ export default function ProgramasPage() {
                 <div className="container">
                     <ScrollReveal variant="scale">
                         <div className="cta-content-wrapper">
-                            <h2 className="cta-main-title">¿LISTO PARA LA TRANSFORMACIÓN?</h2>
+                            <h2 className="cta-main-title">¿ES EL MOMENTO DE TU TRANSFORMACIÓN?</h2>
                             <p className="cta-main-description">
-                                No aceptamos a todos. Si estás preparado para comprometerte completamente con tu transformación, da el primer paso.
+                                Si quieres comprometerte plenamente con tu transformación, da el primer paso y descubre qué programa encaja contigo.
                             </p>
                             <div className="cta-whatsapp-container" style={{ marginBottom: 0 }}>
                                 <a href="https://wa.me/34608961701?text=Quiero%20comenzar%20mi%20transformación%20con%20Olympus%20Theon" target="_blank" rel="noopener noreferrer" className="btn-cta-whatsapp">

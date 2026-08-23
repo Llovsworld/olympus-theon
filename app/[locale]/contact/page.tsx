@@ -96,7 +96,7 @@ export default function ContactPage() {
                             lineHeight: '1.65',
                             fontWeight: '300'
                         }}>
-                            El viaje de todo hombre de élite comienza con un primer paso. Ya sea que estés listo para forjar tu camino o tengas preguntas sobre nuestra filosofía, estamos aquí para guiarte.
+                            Todo camino hacia la excelencia comienza con un primer paso. Si quieres forjar el tuyo o tienes preguntas sobre nuestra filosofía, estamos aquí para guiarte.
                         </p>
                     </div>
                 </ScrollReveal>

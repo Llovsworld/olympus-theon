@@ -27,13 +27,13 @@ export default function CEOSection() {
                         <ScrollReveal direction="right" variant="fade" delay={400}>
                             <div className="ceo-bio">
                                 <p>
-                                    Visionario. Líder. Estoico. Alejandro fundó Olympus Theon con una misión singular: forjar la próxima generación de hombres de élite. Con experiencia en atletismo de alto rendimiento y un profundo estudio de la filosofía clásica, combina disciplina física con fortaleza mental.
+                                    Visionario. Líder. Estoico. Alejandro fundó Olympus Theon con una misión singular: forjar la próxima generación de personas de élite. Con experiencia en atletismo de alto rendimiento y un profundo estudio de la filosofía clásica, combina disciplina física con fortaleza mental.
                                 </p>
                             </div>
                         </ScrollReveal>
                         <ScrollReveal direction="right" variant="slideScale" delay={600}>
                             <blockquote className="ceo-quote">
-                                &quot;No solo construimos cuerpos; construimos carácter. El mundo moderno necesita hombres fuertes: capaces, responsables y virtuosos. Ese es el estándar que establecemos aquí.&quot;
+                                &quot;No solo construimos cuerpos; construimos carácter. El mundo moderno necesita personas fuertes: capaces, responsables y virtuosas. Ese es el estándar que establecemos aquí.&quot;
                             </blockquote>
                         </ScrollReveal>
                     </div>

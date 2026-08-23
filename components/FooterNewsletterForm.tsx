@@ -23,7 +23,7 @@ export default function FooterNewsletterForm() {
 
             if (response.ok) {
                 setStatus('success');
-                setMessage('Bienvenido a la élite.');
+                setMessage('Ya formas parte de la élite.');
                 setEmail('');
             } else {
                 setStatus('error');

@@ -8,7 +8,7 @@ export default function CTASection() {
                 <div className="cta-content-wrapper">
                     <ScrollReveal variant="fade">
                         <h2 className="cta-main-title">
-                            ¿LISTO PARA LA<br />TRANSFORMACIÓN?
+                            ¿ES EL MOMENTO DE TU<br />TRANSFORMACIÓN?
                         </h2>
                     </ScrollReveal>
 
