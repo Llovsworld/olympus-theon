@@ -2,10 +2,12 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
+import ConsentRichContent from '@/components/ConsentRichContent';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { getPublishedBookBySlug } from '@/lib/content';
 import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { sanitizePublicRichText, sanitizeRichText } from '@/lib/sanitize-content';
 
 export const revalidate = 300;
 
@@ -88,8 +90,11 @@ export default async function BookPage({ params }: BookPageProps) {
         notFound();
     }
 
+    const safeContent = book.content ? sanitizeRichText(book.content) : null;
+    const publicContent = book.content ? sanitizePublicRichText(book.content) : null;
+
     // Calculate reading time (200 words per minute average)
-    const wordCount = book.content ? book.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
+    const wordCount = safeContent ? safeContent.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
     const readingTime = Math.max(Math.ceil(wordCount / 200), 1);
 
     return (
@@ -194,11 +199,11 @@ export default async function BookPage({ params }: BookPageProps) {
                                     day: 'numeric'
                                 })}
                             </time>
-                            {book.content && (
+                            {safeContent && (
                                 <>
                                     <span style={{ width: '4px', height: '4px', background: '#FFD700', borderRadius: '50%' }} />
                                     <span>
-                                        {Math.ceil(book.content.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)} min de lectura
+                                        {Math.ceil(wordCount / 200)} min de lectura
                                     </span>
                                 </>
                             )}
@@ -251,15 +256,15 @@ export default async function BookPage({ params }: BookPageProps) {
                 </div>
 
                 {/* Main Content */}
-                {book.content && (
-                    <div
+                {publicContent && (
+                    <ConsentRichContent
+                        html={publicContent}
                         className="prose prose-invert prose-lg"
                         style={{
                             maxWidth: '100%',
                             color: '#ccc',
                             lineHeight: '1.8'
                         }}
-                        dangerouslySetInnerHTML={{ __html: book.content }}
                     />
                 )}
             </article>

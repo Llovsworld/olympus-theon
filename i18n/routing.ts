@@ -7,5 +7,6 @@ export const routing = defineRouting({
     // English routes still reuse Spanish content. Keep crawlers and language
     // detection from creating duplicate localized URLs until translations exist.
     localeDetection: false,
+    localeCookie: false,
     alternateLinks: false,
 });

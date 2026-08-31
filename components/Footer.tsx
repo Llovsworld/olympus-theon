@@ -76,10 +76,7 @@ export default function Footer() {
                     <div className="footer-links-col">
                         <h4 className="footer-col-title">LEGAL</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/privacy">Política de Privacidad</Link>
-                            <Link href="/terms">Términos de Servicio</Link>
-                            <Link href="/privacy">Accesibilidad</Link>
-                            <Link href="/privacy">Cookies</Link>
+                            <Link href="/cookies">Cookies y tecnologías similares</Link>
                         </nav>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import SocialShare from '@/components/SocialShare';
+import ConsentRichContent from '@/components/ConsentRichContent';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { getPublishedPostBySlug } from '@/lib/content';
@@ -18,7 +19,7 @@ import {
     getPlainText,
     serializeJsonLd,
 } from '@/lib/seo';
-import { sanitizeRichText } from '@/lib/sanitize-content';
+import { sanitizePublicRichText, sanitizeRichText } from '@/lib/sanitize-content';
 
 export const revalidate = 300;
 
@@ -127,6 +128,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
     // Calculate reading time (200 words per minute average)
     const safeContent = sanitizeRichText(post.content);
+    const publicContent = sanitizePublicRichText(post.content);
     const featuredImage = getContentImageUrl(post.featuredImage);
     const wordCount = getPlainText(safeContent).split(/\s+/).filter(Boolean).length;
     const readingTime = Math.ceil(wordCount / 200);
@@ -341,14 +343,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 position: 'relative',
                 zIndex: 10
             }}>
-                <div
+                <ConsentRichContent
+                    html={publicContent}
                     className="prose prose-invert prose-lg"
                     style={{
                         fontSize: '1.2rem',
                         lineHeight: '1.8',
                         color: '#d4d4d4'
                     }}
-                    dangerouslySetInnerHTML={{ __html: safeContent }}
                 />
 
                 <aside style={{

@@ -1,5 +1,42 @@
 import sanitizeHtml from 'sanitize-html';
 
+const YOUTUBE_VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
+const YOUTUBE_HOSTNAMES = new Set([
+    'youtube.com',
+    'www.youtube.com',
+    'm.youtube.com',
+    'youtube-nocookie.com',
+    'www.youtube-nocookie.com',
+    'youtu.be',
+]);
+
+function getYoutubeVideoId(value: string | undefined) {
+    if (!value) return null;
+
+    try {
+        const url = new URL(value);
+        if (url.protocol !== 'https:' || !YOUTUBE_HOSTNAMES.has(url.hostname.toLowerCase())) {
+            return null;
+        }
+
+        let candidate = '';
+        if (url.hostname.toLowerCase() === 'youtu.be') {
+            candidate = url.pathname.split('/').filter(Boolean)[0] || '';
+        } else {
+            const pathParts = url.pathname.split('/').filter(Boolean);
+            if (pathParts[0] === 'embed' || pathParts[0] === 'shorts') {
+                candidate = pathParts[1] || '';
+            } else if (url.pathname === '/watch') {
+                candidate = url.searchParams.get('v') || '';
+            }
+        }
+
+        return YOUTUBE_VIDEO_ID.test(candidate) ? candidate : null;
+    } catch {
+        return null;
+    }
+}
+
 const allowedTags = [
     ...sanitizeHtml.defaults.allowedTags,
     'div',
@@ -7,6 +44,7 @@ const allowedTags = [
     'figcaption',
     'img',
     'iframe',
+    'button',
     'mark',
     's',
     'u',
@@ -21,21 +59,25 @@ const allowedTags = [
     'td',
 ];
 
-/**
- * Clean rich text before it reaches a public page. The allow-list mirrors the
- * elements produced by the Tiptap editor while removing scripts, event
- * handlers, unsafe URL schemes and unrestricted inline CSS.
- */
-export function sanitizeRichText(html: string) {
-    return sanitizeHtml(html, {
+function blockedResource(label: string): sanitizeHtml.Tag {
+    return {
+        tagName: 'span',
+        attribs: { class: 'consent-rich-content__blocked-resource' },
+        text: label,
+    };
+}
+
+function getSanitizeOptions(requireYoutubeConsent: boolean): sanitizeHtml.IOptions {
+    return {
         allowedTags,
         allowedAttributes: {
             ...sanitizeHtml.defaults.allowedAttributes,
             '*': ['class', 'style'],
             a: ['href', 'name', 'target', 'rel', 'title'],
+            button: ['type', 'class', 'data-youtube-consent', 'data-youtube-id', 'aria-label'],
             div: ['class', 'style', 'data-youtube-video'],
             img: ['src', 'alt', 'title', 'width', 'height', 'style', 'class', 'data-align'],
-            iframe: ['src', 'title', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder', 'class'],
+            iframe: ['src', 'title', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder', 'class', 'loading', 'referrerpolicy'],
             video: ['src', 'controls', 'width', 'height', 'poster', 'preload', 'class'],
             source: ['src', 'type'],
             th: ['colspan', 'rowspan', 'scope', 'style', 'class'],
@@ -78,6 +120,51 @@ export function sanitizeRichText(html: string) {
                     ? { ...attribs, rel: 'noopener noreferrer' }
                     : attribs,
             }),
+            iframe: (_tagName, attribs): sanitizeHtml.Tag => {
+                const videoId = getYoutubeVideoId(attribs.src);
+                if (!videoId) return blockedResource('Contenido externo bloqueado.');
+
+                if (requireYoutubeConsent) {
+                    const label = 'Reproducir vídeo de YouTube. Al activarlo, tu navegador conectará con Google/YouTube y se aplicará su política de privacidad.';
+                    return {
+                        tagName: 'button',
+                        attribs: {
+                            type: 'button',
+                            class: 'consent-rich-content__youtube-button',
+                            'data-youtube-consent': 'true',
+                            'data-youtube-id': videoId,
+                            'aria-label': label,
+                        },
+                        text: label,
+                    };
+                }
+
+                return {
+                    tagName: 'iframe',
+                    attribs: {
+                        src: `https://www.youtube-nocookie.com/embed/${videoId}`,
+                        title: 'Vídeo de YouTube',
+                        width: attribs.width || '640',
+                        height: attribs.height || '360',
+                        loading: 'lazy',
+                        referrerpolicy: 'strict-origin-when-cross-origin',
+                        allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+                        allowfullscreen: '',
+                        frameborder: '0',
+                        class: 'consent-rich-content__youtube-frame',
+                    },
+                };
+            },
         },
-    });
+    };
+}
+
+/** Clean rich text when it is stored or used outside a public visitor page. */
+export function sanitizeRichText(html: string) {
+    return sanitizeHtml(html, getSanitizeOptions(false));
+}
+
+/** Replace YouTube embeds with an inert control until the visitor activates one. */
+export function sanitizePublicRichText(html: string) {
+    return sanitizeHtml(html, getSanitizeOptions(true));
 }
