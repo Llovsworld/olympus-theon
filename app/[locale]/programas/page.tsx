@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function ProgramasPage() {
     return (
-        <main>
+        <div>
             {/* Hero Section */}
             {/* Hero Section */}
             <section className="page-hero programs-hero-bg">
@@ -55,11 +55,11 @@ export default function ProgramasPage() {
                                 </div>
                                 <h3 className="program-title">THE SPARTAN PROTOCOL</h3>
                                 <p className="program-description">
-                                    Transformación completa de 12 semanas. Reprogramación mental, optimización física y dominio espiritual en un solo sistema integrado.
+                                    Programa integral de 12 semanas. Reprogramación mental, optimización física y dominio espiritual en un solo sistema integrado.
                                 </p>
                                 <ul className="program-benefits">
-                                    <li>✓ Protocolos de entrenamiento personalizados</li>
-                                    <li>✓ Plan de nutrición de alto rendimiento</li>
+                                    <li>✓ Entrenamiento adaptado al punto de partida</li>
+                                    <li>✓ Educación en hábitos y nutrición no clínica</li>
                                     <li>✓ Sesiones de coaching semanal en vivo</li>
                                     <li>✓ Acceso a comunidad privada de élite</li>
                                     <li>✓ Biblioteca completa de recursos estoicos</li>
@@ -84,13 +84,13 @@ export default function ProgramasPage() {
                                 </div>
                                 <h3 className="program-title">CONSULTORÍA 1-A-1</h3>
                                 <p className="program-description">
-                                    Mentoría personal con Alejandro. Estrategia individualizada, accountability total y acceso directo al método más exclusivo.
+                                    Mentoría personal con Alejandro. Estrategia individualizada, seguimiento acordado y acceso directo al método.
                                 </p>
                                 <ul className="program-benefits">
                                     <li>✓ Sesiones privadas semanales con Alejandro</li>
                                     <li>✓ Protocolo completamente personalizado</li>
-                                    <li>✓ Análisis profundo de mindset y bloqueos</li>
-                                    <li>✓ Soporte 24/7 vía WhatsApp</li>
+                                    <li>✓ Revisión de hábitos, objetivos y obstáculos</li>
+                                    <li>✓ Seguimiento por WhatsApp en el horario acordado</li>
                                     <li>✓ Revisión y ajuste continuo del plan</li>
                                 </ul>
                                 <div className="program-price premium-price">
@@ -158,6 +158,6 @@ export default function ProgramasPage() {
                     </ScrollReveal>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }

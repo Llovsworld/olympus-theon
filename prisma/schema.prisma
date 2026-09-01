@@ -16,9 +16,9 @@ model Post {
   title           String
   slug            String   @unique
   content         String
-  excerpt         String?  // Short summary for listings
-  metaDescription String?  // SEO meta description
-  category        String?  // Post category/tag
+  excerpt         String? // Short summary for listings
+  metaDescription String? // SEO meta description
+  category        String? // Post category/tag
   featuredImage   String?
   published       Boolean  @default(false)
   views           Int      @default(0)
@@ -30,9 +30,10 @@ model Book {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  author      String?  // Book author name
-  description String   // Short description for listings
-  content     String?  // Optional long content or details
+  author      String? // Book author name
+  category    String? // Controlled editorial category
+  description String // Short description for listings
+  content     String? // Optional long content or details
   coverImage  String?
   link        String?
   published   Boolean  @default(false)
@@ -41,10 +42,16 @@ model Book {
   updatedAt   DateTime @updatedAt
 }
 
-
 model Subscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  active                Boolean   @default(false)
+  consentAt             DateTime?
+  consentVersion        String?
+  consentSource         String?
+  confirmationTokenHash String?   @unique
+  confirmationExpiresAt DateTime?
+  confirmedAt           DateTime?
+  unsubscribedAt        DateTime?
+  createdAt             DateTime  @default(now())
 }

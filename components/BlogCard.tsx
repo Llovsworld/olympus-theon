@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { memo } from 'react';
+import type { PostCategory } from '@/lib/post-categories';
 
 interface BlogCardProps {
     post: {
         id: string;
         title: string;
         slug: string;
-        category: string | null;
+        category: PostCategory | null;
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;

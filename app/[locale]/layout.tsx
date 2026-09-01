@@ -50,6 +50,7 @@ export default async function LocaleLayout({
     return (
         <>
             <PageTransition>
+                <a href="#contenido-principal" className="skip-link">Saltar al contenido principal</a>
                 {/* Fixed Background Layer - The Infinite Tunnel */}
                 <div
                     style={{
@@ -67,7 +68,7 @@ export default async function LocaleLayout({
                     }}
                 />
                 <Header />
-                <main style={{ minHeight: '80vh', position: 'relative', zIndex: 1 }}>
+                <main id="contenido-principal" tabIndex={-1} style={{ minHeight: '80vh', position: 'relative', zIndex: 1 }}>
                     {children}
                 </main>
                 <Footer />

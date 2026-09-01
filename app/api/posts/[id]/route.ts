@@ -1,10 +1,12 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sendNewsletter } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
 import { sanitizeRichText } from '@/lib/sanitize-content';
 import { getContentImageUrl } from '@/lib/seo';
+import { getCanonicalPostCategory, POST_CATEGORIES } from '@/lib/post-categories';
 
 function isMissingRecord(error: unknown) {
     return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
@@ -66,7 +68,8 @@ export async function PUT(
         const content = typeof body.content === 'string' ? sanitizeRichText(body.content.trim()) : '';
         const excerpt = typeof body.excerpt === 'string' ? body.excerpt.trim() : '';
         const metaDescription = typeof body.metaDescription === 'string' ? body.metaDescription.trim() : '';
-        const category = typeof body.category === 'string' ? body.category.trim() : '';
+        const categoryInput = typeof body.category === 'string' ? body.category.trim() : '';
+        const category = categoryInput ? getCanonicalPostCategory(categoryInput) : null;
         const featuredImage = typeof body.featuredImage === 'string' ? body.featuredImage.trim() : '';
         const published = body.published === true;
 
@@ -80,6 +83,16 @@ export async function PUT(
         if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
             return NextResponse.json(
                 { error: 'La URL solo puede contener letras minúsculas, números y guiones.' },
+                { status: 400 },
+            );
+        }
+
+        if ((body.category !== undefined && body.category !== null && typeof body.category !== 'string') || (categoryInput && !category)) {
+            return NextResponse.json(
+                {
+                    error: 'Selecciona una categoría válida.',
+                    allowedCategories: POST_CATEGORIES.map(({ label }) => label),
+                },
                 { status: 400 },
             );
         }
@@ -99,13 +112,27 @@ export async function PUT(
                 content,
                 excerpt: excerpt || null,
                 metaDescription: metaDescription || null,
-                category: category || null,
+                category,
                 featuredImage: featuredImage || null,
                 published,
             },
         });
 
         revalidateBlogContent(updatedPost.slug, existingPost.slug);
+
+        if (!existingPost.published && updatedPost.published) {
+            after(async () => {
+                try {
+                    await sendNewsletter('post', {
+                        title: updatedPost.title,
+                        slug: updatedPost.slug,
+                        description: updatedPost.excerpt || undefined,
+                    });
+                } catch (error) {
+                    console.error('Background newsletter error:', error);
+                }
+            });
+        }
 
         return NextResponse.json(updatedPost);
     } catch (error) {

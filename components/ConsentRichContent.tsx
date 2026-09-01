@@ -11,8 +11,9 @@ interface ConsentRichContentProps {
 }
 
 /**
- * YouTube stays inert until the visitor deliberately activates that video.
- * The choice is limited to the current page and is not saved as global consent.
+ * Renders server-sanitized editorial HTML. YouTube starts as an inert button;
+ * the privacy-enhanced iframe is created only for the video the visitor chose.
+ * Consent deliberately lasts only for this rendered page instance.
  */
 export default function ConsentRichContent({ html, className, style }: ConsentRichContentProps) {
     function activateYoutube(event: MouseEvent<HTMLDivElement>) {

@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import {
+    CONTENT_CATEGORIES,
+    getCanonicalContentCategory,
+    getContentCategoryDefinition,
+} from '@/lib/content-categories';
 
 function generateSlug(text: string) {
     return text
@@ -19,6 +24,7 @@ export default function NewBookPage() {
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
     const [author, setAuthor] = useState('');
+    const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [coverImage, setCoverImage] = useState('');
@@ -38,6 +44,7 @@ export default function NewBookPage() {
                 setTitle(parsed.title || '');
                 setSlug(parsed.slug || '');
                 setAuthor(parsed.author || '');
+                setCategory(getCanonicalContentCategory(parsed.category) || '');
                 setDescription(parsed.description || '');
                 setContent(parsed.content || '');
                 setCoverImage(parsed.coverImage || '');
@@ -58,6 +65,7 @@ export default function NewBookPage() {
                     title,
                     slug,
                     author,
+                    category,
                     description,
                     content,
                     coverImage,
@@ -68,7 +76,7 @@ export default function NewBookPage() {
         }, 1000);
 
         return () => clearTimeout(timeoutId);
-    }, [title, slug, author, description, content, coverImage, link]);
+    }, [title, slug, author, category, description, content, coverImage, link]);
 
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
@@ -95,6 +103,7 @@ export default function NewBookPage() {
                     title,
                     slug: slug || generateSlug(title),
                     author: author || null,
+                    category,
                     description: description || '',
                     content,
                     coverImage,
@@ -105,23 +114,31 @@ export default function NewBookPage() {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.details || 'Failed to save draft');
+                throw new Error(errorData.details || errorData.error || 'No se pudo guardar el borrador');
             }
 
             setStatus('✅ Draft saved successfully!');
             localStorage.removeItem('draft-book');
-            setTimeout(() => router.push('/admin/books/manage'), 1500);
+            setTimeout(() => router.push('/admin/books'), 1500);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to save draft';
             setStatus(`❌ ${message}`);
         } finally {
             setLoading(false);
         }
-    }, [title, slug, author, description, content, coverImage, link, router]);
+    }, [title, slug, author, category, description, content, coverImage, link, router]);
 
     const handlePublish = useCallback(async () => {
         if (!title.trim()) {
             setStatus('❌ Title is required');
+            return;
+        }
+        if (!category) {
+            setStatus('❌ Selecciona una categoría antes de publicar');
+            return;
+        }
+        if (!description.trim()) {
+            setStatus('❌ Añade una descripción antes de publicar');
             return;
         }
 
@@ -136,6 +153,7 @@ export default function NewBookPage() {
                     title,
                     slug: slug || generateSlug(title),
                     author: author || null,
+                    category,
                     description: description || '',
                     content,
                     coverImage,
@@ -146,19 +164,19 @@ export default function NewBookPage() {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.details || 'Failed to publish book');
+                throw new Error(errorData.details || errorData.error || 'No se pudo publicar el libro');
             }
 
             setStatus('✅ Book published successfully!');
             localStorage.removeItem('draft-book');
-            setTimeout(() => router.push('/admin/books/manage'), 1500);
+            setTimeout(() => router.push('/admin/books'), 1500);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to publish book';
             setStatus(`❌ ${message}`);
         } finally {
             setLoading(false);
         }
-    }, [title, slug, author, description, content, coverImage, link, router]);
+    }, [title, slug, author, category, description, content, coverImage, link, router]);
 
     // Keep keyboard shortcuts synchronized with every editor field.
     useEffect(() => {
@@ -270,14 +288,14 @@ export default function NewBookPage() {
 
                     <button
                         onClick={handlePublish}
-                        disabled={loading || !title.trim()}
+                        disabled={loading || !title.trim() || !description.trim() || !category}
                         style={{
                             padding: '0.625rem 1.5rem',
-                            background: loading || !title.trim() ? '#333' : '#ff6719',
+                            background: loading || !title.trim() || !description.trim() || !category ? '#333' : '#ff6719',
                             color: '#fff',
                             border: 'none',
                             borderRadius: '6px',
-                            cursor: loading || !title.trim() ? 'not-allowed' : 'pointer',
+                            cursor: loading || !title.trim() || !description.trim() || !category ? 'not-allowed' : 'pointer',
                             fontSize: '0.95rem',
                             fontWeight: '600'
                         }}
@@ -368,6 +386,45 @@ export default function NewBookPage() {
                             background: 'rgba(255,255,255,0.05)'
                         }}
                     />
+                </div>
+
+                {/* Editorial Category */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <label style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                    }}>
+                        Categoría editorial
+                    </label>
+                    <select
+                        value={category}
+                        onChange={(event) => setCategory(event.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '0.85rem',
+                            border: '1px solid #333',
+                            borderRadius: '6px',
+                            fontSize: '0.95rem',
+                            color: '#ededed',
+                            background: 'rgba(255,255,255,0.05)',
+                            cursor: 'pointer'
+                        }}
+                        className="hover:border-yellow-500/30 focus:border-yellow-500/50 outline-none"
+                    >
+                        <option value="">Seleccionar categoría...</option>
+                        {CONTENT_CATEGORIES.map(({ label }) => (
+                            <option key={label} value={label}>{label}</option>
+                        ))}
+                    </select>
+                    <p style={{ fontSize: '0.78rem', color: '#6b7280', lineHeight: 1.45, marginTop: '0.6rem' }}>
+                        {getContentCategoryDefinition(category)?.description
+                            || 'La categoría es obligatoria para publicar y mantiene la biblioteca ordenada.'}
+                    </p>
                 </div>
 
                 {/* Description */}

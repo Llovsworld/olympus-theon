@@ -4,6 +4,15 @@ import type { NextConfig } from "next";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: '/privacy', destination: '/privacidad', permanent: true },
+      { source: '/terms', destination: '/terminos', permanent: true },
+      { source: '/legal', destination: '/aviso-legal', permanent: true },
+      { source: '/accessibility', destination: '/accesibilidad', permanent: true },
+    ];
+  },
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -35,6 +44,17 @@ const nextConfig: NextConfig = {
   // keeping an outdated version for a full year. Next.js owns /_next/static.
   async headers() {
     return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-DNS-Prefetch-Control', value: 'off' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+        ],
+      },
       {
         source: '/admin/:path*',
         headers: [

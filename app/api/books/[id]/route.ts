@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sendNewsletter } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 import { revalidateBookContent } from '@/lib/revalidate-content';
+import { getSafeExternalHref, getTrustedPublicMediaUrl, sanitizeRichText } from '@/lib/sanitize-content';
+import { CONTENT_CATEGORIES, getCanonicalContentCategory } from '@/lib/content-categories';
 
 function isMissingRecord(error: unknown) {
     return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
@@ -49,22 +52,77 @@ export async function PUT(
 
         const { id } = await params;
         const body = await request.json();
+        const title = typeof body.title === 'string' ? body.title.trim() : '';
+        const slug = typeof body.slug === 'string' ? body.slug.trim() : '';
+        const author = typeof body.author === 'string' ? body.author.trim() : '';
+        const categoryInput = typeof body.category === 'string' ? body.category.trim() : '';
+        const category = categoryInput ? getCanonicalContentCategory(categoryInput) : null;
+        const description = typeof body.description === 'string' ? body.description.trim() : '';
+        const content = typeof body.content === 'string' ? sanitizeRichText(body.content.trim()) : '';
+        const coverImage = getTrustedPublicMediaUrl(typeof body.coverImage === 'string' ? body.coverImage : null);
+        const link = getSafeExternalHref(typeof body.link === 'string' ? body.link : null);
+        const published = body.published === true;
+
+        const existingBook = await prisma.book.findUnique({
+            where: { id },
+            select: { published: true },
+        });
+
+        if (!existingBook) {
+            return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+        }
+
+        if (!title || !slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+            return NextResponse.json({ error: 'Revisa el título y la URL.' }, { status: 400 });
+        }
+
+        if ((body.category !== undefined && body.category !== null && typeof body.category !== 'string') || (categoryInput && !category)) {
+            return NextResponse.json(
+                {
+                    error: 'Selecciona una categoría válida.',
+                    allowedCategories: CONTENT_CATEGORIES.map(({ label }) => label),
+                },
+                { status: 400 },
+            );
+        }
+
+        if (published && (!description || !category)) {
+            return NextResponse.json(
+                { error: 'Añade una descripción y selecciona una categoría antes de publicar el libro.' },
+                { status: 400 },
+            );
+        }
 
         const updatedBook = await prisma.book.update({
             where: { id },
             data: {
-                title: body.title,
-                slug: body.slug,
-                author: body.author || null,
-                description: body.description,
-                content: body.content || null,
-                coverImage: body.coverImage || null,
-                link: body.link || null,
-                published: body.published,
+                title,
+                slug,
+                author: author || null,
+                category,
+                description,
+                content: content || null,
+                coverImage,
+                link,
+                published,
             },
         });
 
         revalidateBookContent();
+
+        if (!existingBook.published && updatedBook.published) {
+            after(async () => {
+                try {
+                    await sendNewsletter('book', {
+                        title: updatedBook.title,
+                        slug: updatedBook.slug,
+                        description: updatedBook.description,
+                    });
+                } catch (error) {
+                    console.error('Background newsletter error:', error);
+                }
+            });
+        }
 
         return NextResponse.json(updatedBook);
     } catch (error) {

@@ -6,6 +6,11 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import ContentPreview from '@/components/admin/ContentPreview';
+import {
+    getCanonicalPostCategory,
+    getPostCategoryDefinition,
+    POST_CATEGORIES,
+} from '@/lib/post-categories';
 
 export default function EditPostPage() {
     const router = useRouter();
@@ -20,6 +25,7 @@ export default function EditPostPage() {
     const [excerpt, setExcerpt] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
     const [category, setCategory] = useState('');
+    const [legacyCategoryWarning, setLegacyCategoryWarning] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
 
     const [saving, setSaving] = useState(false);
@@ -42,7 +48,14 @@ export default function EditPostPage() {
                 setContent(post.content || '');
                 setExcerpt(post.excerpt || '');
                 setMetaDescription(post.metaDescription || '');
-                setCategory(post.category || '');
+                const savedCategory = typeof post.category === 'string' ? post.category.trim() : '';
+                const canonicalCategory = getCanonicalPostCategory(savedCategory);
+                setCategory(canonicalCategory || '');
+                setLegacyCategoryWarning(
+                    savedCategory && !canonicalCategory
+                        ? `Categoría anterior: “${savedCategory}”. Selecciona una categoría válida antes de guardar.`
+                        : '',
+                );
                 setFeaturedImage(post.featuredImage || '');
                 setIsPublished(post.published || false);
             } catch (error) {
@@ -272,16 +285,25 @@ export default function EditPostPage() {
                         <label className="admin-label">Categoría</label>
                         <select
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => {
+                                setCategory(e.target.value);
+                                setLegacyCategoryWarning('');
+                            }}
                             className="admin-select"
                         >
                             <option value="">Seleccionar categoría...</option>
-                            <option value="Psicología">Psicología</option>
-                            <option value="entrenamiento">Entrenamiento</option>
-                            <option value="nutricion">Nutrición</option>
-                            <option value="mentalidad">Mentalidad</option>
-                            <option value="lifestyle">Lifestyle</option>
+                            {POST_CATEGORIES.map(({ label }) => (
+                                <option key={label} value={label}>{label}</option>
+                            ))}
                         </select>
+                        <p
+                            className="admin-helper-text"
+                            style={legacyCategoryWarning ? { color: '#f59e0b' } : undefined}
+                        >
+                            {legacyCategoryWarning
+                                || getPostCategoryDefinition(category)?.description
+                                || 'Elige la categoría principal del artículo. Así evitamos duplicados y filtros confusos.'}
+                        </p>
                     </div>
 
                     <div>

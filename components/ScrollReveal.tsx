@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type AnimationDirection = 'up' | 'down' | 'left' | 'right';
 export type AnimationVariant = 'fade' | 'slide' | 'scale' | 'slideScale' | 'rotate';
@@ -50,6 +50,7 @@ export default function ScrollReveal({
     duration = 500  // Faster default for snappier feel
 }: ScrollRevealProps) {
     const ref = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         const element = ref.current;
@@ -57,7 +58,7 @@ export default function ScrollReveal({
 
         const pool = getObserverPool(threshold);
         const reveal = () => {
-            element.classList.add('is-visible');
+            setIsVisible(true);
             pool.observer.unobserve(element);
             pool.callbacks.delete(element);
         };
@@ -76,7 +77,7 @@ export default function ScrollReveal({
     return (
         <div
             ref={ref}
-            className={`scroll-reveal ${animationClass} ${className}`}
+            className={`scroll-reveal ${animationClass} ${isVisible ? 'is-visible' : ''} ${className}`}
             style={{
                 transitionDelay: `${delay}ms`,
                 transitionDuration: `${duration}ms`

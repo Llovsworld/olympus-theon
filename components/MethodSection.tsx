@@ -73,8 +73,8 @@ export default function MethodSection() {
                             <h3 className="method-title-large">OPTIMIZACIÓN<br />FÍSICA</h3>
                             <p className="method-description">
                                 No es solo fitness: es estructura, seguimiento y criterio. Integramos
-                                entrenamiento, nutrición y recuperación en un plan adaptado a tu punto de
-                                partida, tus objetivos y tu vida real.
+                                entrenamiento, educación general sobre hábitos de alimentación y recuperación
+                                en un plan adaptado a tu punto de partida, tus objetivos y tu vida real.
                             </p>
                             <div className="method-stats-grid">
                                 <div className="method-stat-item">

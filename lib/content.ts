@@ -1,14 +1,28 @@
 import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { getContentImageUrl } from '@/lib/seo';
+import { normalizeSearchText } from '@/lib/search';
+import { getCanonicalPostCategory } from '@/lib/post-categories';
+import { getCanonicalContentCategory } from '@/lib/content-categories';
+
+function getPlainText(html: string) {
+    return html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#(?:39|x27);/gi, "'")
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 
 function getPlainTextExcerpt(html: string, maxLength: number) {
-    const text = html.replace(/<[^>]*>/g, '');
+    const text = getPlainText(html);
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 }
 
 function getReadingTime(html: string) {
-    return Math.ceil(html.replace(/<[^>]*>/g, '').split(/\s+/).length / 200);
+    return Math.max(Math.ceil(getPlainText(html).split(/\s+/).length / 200), 1);
 }
 
 export async function getPublishedPostList() {
@@ -27,13 +41,25 @@ export async function getPublishedPostList() {
         },
     });
 
-    return posts.map(({ content, excerpt, ...post }) => ({
-        ...post,
-        featuredImage: getContentImageUrl(post.featuredImage),
-        excerpt: excerpt || getPlainTextExcerpt(content, 160),
-        searchText: getPlainTextExcerpt(content, 1000).toLowerCase(),
-        readingTime: getReadingTime(content),
-    }));
+    return posts.map(({ content, excerpt, ...post }) => {
+        const resolvedExcerpt = excerpt || getPlainTextExcerpt(content, 160);
+        const fullText = getPlainText(content);
+        const category = getCanonicalPostCategory(post.category);
+
+        return {
+            ...post,
+            category,
+            featuredImage: getContentImageUrl(post.featuredImage),
+            excerpt: resolvedExcerpt,
+            searchText: normalizeSearchText([
+                post.title,
+                category || '',
+                resolvedExcerpt,
+                fullText,
+            ].join(' ')),
+            readingTime: getReadingTime(content),
+        };
+    });
 }
 
 export async function getPublishedBookList() {
@@ -44,6 +70,8 @@ export async function getPublishedBookList() {
             id: true,
             title: true,
             slug: true,
+            author: true,
+            category: true,
             description: true,
             content: true,
             coverImage: true,
@@ -51,13 +79,23 @@ export async function getPublishedBookList() {
         },
     });
 
-    return books.map(({ content, ...book }) => ({
-        ...book,
-        contentSearchText: content
-            ? getPlainTextExcerpt(content, 1000).toLowerCase()
-            : null,
-        readingTime: content ? getReadingTime(content) : null,
-    }));
+    return books.map(({ content, ...book }) => {
+        const fullText = content ? getPlainText(content) : '';
+        const category = getCanonicalContentCategory(book.category);
+
+        return {
+            ...book,
+            category,
+            searchText: normalizeSearchText([
+                book.title,
+                book.author || '',
+                category || '',
+                book.description,
+                fullText,
+            ].join(' ')),
+            readingTime: content ? getReadingTime(content) : null,
+        };
+    });
 }
 
 /**
@@ -65,8 +103,8 @@ export async function getPublishedBookList() {
  * page during the same render. Route-level revalidation handles reuse across
  * requests.
  */
-export const getPublishedPostBySlug = cache(async (slug: string) =>
-    prisma.post.findUnique({
+export const getPublishedPostBySlug = cache(async (slug: string) => {
+    const post = await prisma.post.findUnique({
         where: {
             slug,
             published: true,
@@ -83,11 +121,15 @@ export const getPublishedPostBySlug = cache(async (slug: string) =>
             createdAt: true,
             updatedAt: true,
         },
-    })
-);
+    });
 
-export const getPublishedBookBySlug = cache(async (slug: string) =>
-    prisma.book.findUnique({
+    return post
+        ? { ...post, category: getCanonicalPostCategory(post.category) }
+        : null;
+});
+
+export const getPublishedBookBySlug = cache(async (slug: string) => {
+    const book = await prisma.book.findUnique({
         where: {
             slug,
             published: true,
@@ -96,11 +138,16 @@ export const getPublishedBookBySlug = cache(async (slug: string) =>
             title: true,
             slug: true,
             author: true,
+            category: true,
             description: true,
             content: true,
             coverImage: true,
             link: true,
             createdAt: true,
         },
-    })
-);
+    });
+
+    return book
+        ? { ...book, category: getCanonicalContentCategory(book.category) }
+        : null;
+});

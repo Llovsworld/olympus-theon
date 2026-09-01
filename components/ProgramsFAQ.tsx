@@ -19,7 +19,7 @@ const faqData: FAQItem[] = [
     },
     {
         question: "¿Qué incluye el programa?",
-        answer: "Acceso completo a protocolos de entrenamiento, planes de nutrición personalizados, sesiones de coaching en vivo, biblioteca de recursos sobre estoicismo y desarrollo personal, comunidad privada de élite y seguimiento semanal del progreso."
+        answer: "Acceso a entrenamiento adaptado, educación general sobre hábitos y nutrición no clínica, sesiones de coaching en vivo, biblioteca de recursos sobre estoicismo y desarrollo personal, comunidad privada y seguimiento semanal del progreso."
     },
     {
         question: "¿Hay garantía de resultados?",

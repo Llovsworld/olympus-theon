@@ -50,7 +50,6 @@ export function LegalPage({
         </article>
     );
 }
-
 export function LegalSection({
     id,
     title,
@@ -68,9 +67,17 @@ export function LegalSection({
     );
 }
 
-export function LegalCallout({ title, children }: { title: string; children: ReactNode }) {
+export function LegalCallout({
+    title,
+    children,
+    tone = 'neutral',
+}: {
+    title: string;
+    children: ReactNode;
+    tone?: 'neutral' | 'warning';
+}) {
     return (
-        <aside className="legal-callout">
+        <aside className={`legal-callout legal-callout--${tone}`}>
             <h2>{title}</h2>
             {children}
         </aside>

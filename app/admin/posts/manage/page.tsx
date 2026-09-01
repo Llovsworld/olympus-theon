@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Edit, Trash2, Eye, Plus, FileText } from 'lucide-react';
+import { getCanonicalPostCategory } from '@/lib/post-categories';
 
 interface Post {
     id: string;
     title: string;
     slug: string;
+    category: string | null;
     published: boolean;
     createdAt: string;
     views: number;
@@ -58,10 +60,14 @@ export default function ManagePostsPage() {
         }
     }
 
-    const filteredPosts = posts.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.slug.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredPosts = posts.filter((post) => {
+        const category = getCanonicalPostCategory(post.category) || '';
+        const query = searchTerm.toLowerCase();
+
+        return post.title.toLowerCase().includes(query)
+            || post.slug.toLowerCase().includes(query)
+            || category.toLowerCase().includes(query);
+    });
 
     return (
         <div className="animate-fade-in">
@@ -119,6 +125,7 @@ export default function ManagePostsPage() {
                         <thead>
                             <tr style={{ borderBottom: '1px solid var(--border)', textAlign: 'left', background: 'rgba(255,255,255,0.01)' }}>
                                 <th style={thStyle}>Title</th>
+                                <th style={thStyle}>Categoría</th>
                                 <th style={thStyle}>Status</th>
                                 <th style={thStyle}>Views</th>
                                 <th style={thStyle}>Date</th>
@@ -131,6 +138,15 @@ export default function ManagePostsPage() {
                                     <td style={tdStyle}>
                                         <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>{post.title}</div>
                                         <div style={{ fontSize: '0.8rem', color: '#666', fontFamily: 'monospace' }}>/{post.slug}</div>
+                                    </td>
+                                    <td style={tdStyle}>
+                                        <span style={{
+                                            color: getCanonicalPostCategory(post.category) ? '#FFD700' : '#777',
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600
+                                        }}>
+                                            {getCanonicalPostCategory(post.category) || 'Sin categoría'}
+                                        </span>
                                     </td>
                                     <td style={tdStyle}>
                                         <span style={{

@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Plus, Trash2, ExternalLink, AlertTriangle, Pencil } from 'lucide-react';
+import { getCanonicalContentCategory } from '@/lib/content-categories';
 
 interface Book {
     id: string;
     title: string;
     slug: string;
+    category: string | null;
     published: boolean;
     createdAt: string;
     updatedAt: string;
@@ -35,7 +37,7 @@ export default function BooksManagementPage() {
 
     const fetchBooks = async () => {
         try {
-            const res = await fetch('/api/books');
+            const res = await fetch('/api/books?all=true');
             const data = await res.json();
             setBooks(data);
         } catch (error) {
@@ -130,6 +132,7 @@ export default function BooksManagementPage() {
                         <thead>
                             <tr>
                                 <th>Título</th>
+                                <th>Categoría</th>
                                 <th>Slug</th>
                                 <th style={{ textAlign: 'center' }}>Estado</th>
                                 <th style={{ textAlign: 'center' }}>Creado</th>
@@ -155,6 +158,9 @@ export default function BooksManagementPage() {
                                             {book.title}
                                             <ExternalLink size={14} style={{ opacity: 0.5 }} />
                                         </Link>
+                                    </td>
+                                    <td style={{ color: 'var(--admin-text-muted)', fontSize: '0.9rem' }}>
+                                        {getCanonicalContentCategory(book.category) || 'Sin categoría'}
                                     </td>
                                     <td style={{ color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
                                         /{book.slug}

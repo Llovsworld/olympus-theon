@@ -1,254 +1,158 @@
 "use client";
 
+import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
+
+import { legalPublic } from '@/lib/legal-public';
+
+type ContactStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export default function ContactForm() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        message: ''
+        message: '',
+        website: '',
+        privacyAccepted: false,
     });
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<ContactStatus>('idle');
+    const [statusMessage, setStatusMessage] = useState('');
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
         setStatus('loading');
+        setStatusMessage('');
 
         try {
-            const res = await fetch('/api/contact', {
+            const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData),
             });
+            const data = await response.json();
 
-            if (res.ok) {
-                setStatus('success');
-                setFormData({ name: '', email: '', message: '' });
-            } else {
+            if (!response.ok) {
                 setStatus('error');
+                setStatusMessage(data.error || 'No hemos podido enviar el mensaje.');
+                return;
             }
+
+            setStatus('success');
+            setStatusMessage(data.message || 'Mensaje enviado correctamente.');
+            setFormData({
+                name: '',
+                email: '',
+                message: '',
+                website: '',
+                privacyAccepted: false,
+            });
         } catch {
             setStatus('error');
+            setStatusMessage('No hemos podido conectar con el servicio de correo.');
         }
-    };
+    }
 
     return (
-        <div style={{
-            background: 'rgba(15, 15, 15, 0.8)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            padding: '3.5rem',
-            backdropFilter: 'blur(10px)'
-        }}>
-            <h2 style={{
-                fontSize: '1.8rem',
-                marginBottom: '0.5rem',
-                color: '#fff',
-                fontWeight: '700',
-                letterSpacing: '-0.02em'
-            }}>
-                Enviar un Mensaje
-            </h2>
-            <p style={{
-                fontSize: '0.9rem',
-                color: '#666',
-                marginBottom: '3rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em'
-            }}>
-                Respondemos en 24 horas
-            </p>
+        <div className="contact-form-card">
+            <h2>Enviar un mensaje</h2>
+            <p className="contact-form-kicker">Respuesta personal, normalmente en un día hábil</p>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-                {/* Name Field */}
-                <div style={{ position: 'relative' }}>
+            <form onSubmit={handleSubmit} className="contact-form-stack">
+                <div className="form-honeypot" aria-hidden="true">
+                    <label htmlFor="contact-website">No rellenes este campo</label>
                     <input
+                        id="contact-website"
+                        name="website"
                         type="text"
-                        id="name"
-                        required
-                        placeholder=" "
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        style={{
-                            width: '100%',
-                            padding: '1.2rem 0',
-                            background: 'transparent',
-                            border: 'none',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-                            color: '#fff',
-                            fontSize: '1.1rem',
-                            outline: 'none',
-                            transition: 'border-color 0.3s',
-                            fontWeight: '300'
-                        }}
-                        onFocus={(e) => e.target.style.borderBottomColor = '#fff'}
-                        onBlur={(e) => e.target.style.borderBottomColor = 'rgba(255, 255, 255, 0.15)'}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={formData.website}
+                        onChange={(event) => setFormData((current) => ({ ...current, website: event.target.value }))}
                     />
-                    <label
-                        htmlFor="name"
-                        style={{
-                            position: 'absolute',
-                            top: formData.name ? '-20px' : '1.2rem',
-                            left: 0,
-                            color: formData.name ? '#fff' : '#666',
-                            fontSize: formData.name ? '0.75rem' : '1rem',
-                            transition: 'all 0.3s ease',
-                            pointerEvents: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.15em',
-                            fontWeight: '400'
-                        }}
-                    >
-                        Tu Nombre
-                    </label>
                 </div>
 
-                {/* Email Field */}
-                <div style={{ position: 'relative' }}>
+                <label className="contact-field" htmlFor="contact-name">
+                    <span>Tu nombre</span>
                     <input
-                        type="email"
-                        id="email"
+                        id="contact-name"
+                        name="name"
+                        type="text"
                         required
-                        placeholder=" "
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        style={{
-                            width: '100%',
-                            padding: '1.2rem 0',
-                            background: 'transparent',
-                            border: 'none',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-                            color: '#fff',
-                            fontSize: '1.1rem',
-                            outline: 'none',
-                            transition: 'border-color 0.3s',
-                            fontWeight: '300'
-                        }}
-                        onFocus={(e) => e.target.style.borderBottomColor = '#fff'}
-                        onBlur={(e) => e.target.style.borderBottomColor = 'rgba(255, 255, 255, 0.15)'}
+                        minLength={2}
+                        maxLength={100}
+                        autoComplete="name"
+                        value={formData.name}
+                        onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
                     />
-                    <label
-                        htmlFor="email"
-                        style={{
-                            position: 'absolute',
-                            top: formData.email ? '-20px' : '1.2rem',
-                            left: 0,
-                            color: formData.email ? '#fff' : '#666',
-                            fontSize: formData.email ? '0.75rem' : '1rem',
-                            transition: 'all 0.3s ease',
-                            pointerEvents: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.15em',
-                            fontWeight: '400'
-                        }}
-                    >
-                        Correo Electrónico
-                    </label>
-                </div>
+                </label>
 
-                {/* Message Field */}
-                <div style={{ position: 'relative' }}>
-                    <textarea
-                        id="message"
-                        rows={4}
+                <label className="contact-field" htmlFor="contact-email">
+                    <span>Correo electrónico</span>
+                    <input
+                        id="contact-email"
+                        name="email"
+                        type="email"
                         required
-                        placeholder=" "
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        style={{
-                            width: '100%',
-                            padding: '1.2rem 0',
-                            background: 'transparent',
-                            border: 'none',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-                            color: '#fff',
-                            fontSize: '1.1rem',
-                            outline: 'none',
-                            resize: 'vertical',
-                            transition: 'border-color 0.3s',
-                            fontFamily: 'inherit',
-                            fontWeight: '300'
-                        }}
-                        onFocus={(e) => e.target.style.borderBottomColor = '#fff'}
-                        onBlur={(e) => e.target.style.borderBottomColor = 'rgba(255, 255, 255, 0.15)'}
-                    ></textarea>
-                    <label
-                        htmlFor="message"
-                        style={{
-                            position: 'absolute',
-                            top: formData.message ? '-20px' : '1.2rem',
-                            left: 0,
-                            color: formData.message ? '#fff' : '#666',
-                            fontSize: formData.message ? '0.75rem' : '1rem',
-                            transition: 'all 0.3s ease',
-                            pointerEvents: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.15em',
-                            fontWeight: '400'
-                        }}
-                    >
-                        Tu Mensaje
-                    </label>
-                </div>
+                        maxLength={254}
+                        autoComplete="email"
+                        inputMode="email"
+                        value={formData.email}
+                        onChange={(event) => setFormData((current) => ({ ...current, email: event.target.value }))}
+                    />
+                </label>
 
-                <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    style={{
-                        padding: '1.3rem 3rem',
-                        background: '#fff',
-                        color: '#000',
-                        border: 'none',
-                        fontSize: '0.8rem',
-                        fontWeight: '700',
-                        cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-                        opacity: status === 'loading' ? 0.7 : 1,
-                        marginTop: '1rem',
-                        transition: 'all 0.3s ease',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.2em',
-                        position: 'relative',
-                        overflow: 'hidden'
-                    }}
-                    onMouseOver={(e) => {
-                        if (status !== 'loading') {
-                            e.currentTarget.style.background = '#e0e0e0';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                        }
-                    }}
-                    onMouseOut={(e) => {
-                        if (status !== 'loading') {
-                            e.currentTarget.style.background = '#fff';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }
-                    }}
-                >
-                    {status === 'loading' ? 'Enviando...' : 'Enviar Mensaje'}
+                <label className="contact-field" htmlFor="contact-message">
+                    <span>Tu mensaje</span>
+                    <textarea
+                        id="contact-message"
+                        name="message"
+                        rows={5}
+                        required
+                        minLength={10}
+                        maxLength={3000}
+                        value={formData.message}
+                        onChange={(event) => setFormData((current) => ({ ...current, message: event.target.value }))}
+                        aria-describedby="contact-sensitive-note"
+                    />
+                </label>
+
+                <p id="contact-sensitive-note" className="form-privacy-summary">
+                    No incluyas datos médicos, psicológicos ni otra información especialmente sensible. Responsable:{' '}
+                    {legalPublic.responsibleName}. Finalidad: responder a tu consulta. No recibirás publicidad por usar
+                    este formulario. Puedes ejercer tus derechos en{' '}
+                    <a href={`mailto:${legalPublic.email}`}>{legalPublic.email}</a>.
+                </p>
+
+                <label className="form-consent-row">
+                    <input
+                        type="checkbox"
+                        required
+                        checked={formData.privacyAccepted}
+                        onChange={(event) => setFormData((current) => ({
+                            ...current,
+                            privacyAccepted: event.target.checked,
+                        }))}
+                    />
+                    <span>
+                        He leído la <Link href="/privacidad">Política de privacidad</Link> y entiendo el tratamiento
+                        de mis datos para atender esta consulta.
+                    </span>
+                </label>
+
+                <button type="submit" className="contact-submit" disabled={status === 'loading'}>
+                    {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
                 </button>
 
-                {status === 'success' && (
-                    <div style={{
-                        padding: '1.2rem',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderLeft: '2px solid #fff',
-                        color: '#fff',
-                        fontSize: '0.9rem',
-                        letterSpacing: '0.02em'
-                    }}>
-                        <strong>Mensaje recibido.</strong> Te contactaremos en las próximas 24 horas.
-                    </div>
-                )}
-
-                {status === 'error' && (
-                    <div style={{
-                        padding: '1.2rem',
-                        background: 'rgba(255, 50, 50, 0.1)',
-                        borderLeft: '2px solid #ff3333',
-                        color: '#ffaaaa',
-                        fontSize: '0.9rem'
-                    }}>
-                        Error al enviar. Por favor intenta de nuevo o contáctanos directamente.
-                    </div>
-                )}
+                <div className="form-status-slot" aria-live="polite" aria-atomic="true">
+                    {statusMessage ? (
+                        <p className={`form-status form-status--${status}`} role={status === 'error' ? 'alert' : 'status'}>
+                            {statusMessage}{' '}
+                            {status === 'error' ? (
+                                <a href={`mailto:${legalPublic.email}`}>Escribir por correo</a>
+                            ) : null}
+                        </p>
+                    ) : null}
+                </div>
             </form>
         </div>
     );

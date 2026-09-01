@@ -34,11 +34,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'monthly',
             priority: 0.7,
         },
-        {
-            url: `${baseUrl}/cookies`,
-            changeFrequency: 'yearly',
+        ...['aviso-legal', 'privacidad', 'cookies', 'terminos', 'accesibilidad'].map((path) => ({
+            url: `${baseUrl}/${path}`,
+            changeFrequency: 'yearly' as const,
             priority: 0.2,
-        },
+        })),
     ];
 
     // Fetch independent content collections concurrently.

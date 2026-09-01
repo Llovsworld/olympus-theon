@@ -1,5 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 
+import { SITE_URL } from '@/lib/seo';
+
 const YOUTUBE_VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 const YOUTUBE_HOSTNAMES = new Set([
     'youtube.com',
@@ -32,6 +34,46 @@ function getYoutubeVideoId(value: string | undefined) {
         }
 
         return YOUTUBE_VIDEO_ID.test(candidate) ? candidate : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Only first-party files and the project's managed Vercel Blob files may load
+ * automatically inside editorial content. Links remain clickable, but unknown
+ * media hosts cannot act as tracking pixels or receive a visitor request.
+ */
+export function getTrustedPublicMediaUrl(value: string | null | undefined) {
+    if (!value) return null;
+
+    try {
+        const url = new URL(value.trim(), SITE_URL);
+        const hostname = url.hostname.toLowerCase();
+        const isOwnDomain = hostname === 'olympustheon.com' || hostname === 'www.olympustheon.com';
+        const isVercelBlob = hostname.endsWith('.vercel-storage.com');
+
+        if (url.protocol !== 'https:' || url.username || url.password || (!isOwnDomain && !isVercelBlob)) {
+            return null;
+        }
+
+        return isOwnDomain
+            ? `${url.pathname}${url.search}${url.hash}`
+            : url.toString();
+    } catch {
+        return null;
+    }
+}
+
+/** Only HTTPS destinations can be emitted as public editorial links. */
+export function getSafeExternalHref(value: string | null | undefined) {
+    if (!value) return null;
+
+    try {
+        const url = new URL(value.trim());
+        return url.protocol === 'https:' && !url.username && !url.password
+            ? url.toString()
+            : null;
     } catch {
         return null;
     }
@@ -83,17 +125,15 @@ function getSanitizeOptions(requireYoutubeConsent: boolean): sanitizeHtml.IOptio
             th: ['colspan', 'rowspan', 'scope', 'style', 'class'],
             td: ['colspan', 'rowspan', 'style', 'class'],
         },
-        allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+        allowedSchemes: ['https', 'mailto', 'tel'],
         allowProtocolRelative: false,
         allowedSchemesByTag: {
-            img: ['http', 'https'],
+            img: ['https'],
             iframe: ['https'],
-            video: ['http', 'https'],
-            source: ['http', 'https'],
+            video: ['https'],
+            source: ['https'],
         },
         allowedIframeHostnames: [
-            'www.youtube.com',
-            'youtube.com',
             'www.youtube-nocookie.com',
             'youtube-nocookie.com',
         ],
@@ -120,6 +160,33 @@ function getSanitizeOptions(requireYoutubeConsent: boolean): sanitizeHtml.IOptio
                     ? { ...attribs, rel: 'noopener noreferrer' }
                     : attribs,
             }),
+            img: (tagName, attribs) => {
+                const src = getTrustedPublicMediaUrl(attribs.src);
+                return src
+                    ? { tagName, attribs: { ...attribs, src } }
+                    : blockedResource('Imagen externa bloqueada.');
+            },
+            video: (tagName, attribs) => {
+                const nextAttribs = { ...attribs };
+                if (attribs.src) {
+                    const src = getTrustedPublicMediaUrl(attribs.src);
+                    if (src) nextAttribs.src = src;
+                    else delete nextAttribs.src;
+                }
+                if (attribs.poster) {
+                    const poster = getTrustedPublicMediaUrl(attribs.poster);
+                    if (poster) nextAttribs.poster = poster;
+                    else delete nextAttribs.poster;
+                }
+                return { tagName, attribs: nextAttribs };
+            },
+            source: (tagName, attribs) => {
+                const src = getTrustedPublicMediaUrl(attribs.src);
+                return {
+                    tagName,
+                    attribs: src ? { ...attribs, src } : {},
+                };
+            },
             iframe: (_tagName, attribs): sanitizeHtml.Tag => {
                 const videoId = getYoutubeVideoId(attribs.src);
                 if (!videoId) return blockedResource('Contenido externo bloqueado.');
@@ -159,12 +226,19 @@ function getSanitizeOptions(requireYoutubeConsent: boolean): sanitizeHtml.IOptio
     };
 }
 
-/** Clean rich text when it is stored or used outside a public visitor page. */
+/**
+ * Clean rich text before it reaches a public page. The allow-list mirrors the
+ * elements produced by the Tiptap editor while removing scripts, event
+ * handlers, unsafe URL schemes and unrestricted inline CSS.
+ */
 export function sanitizeRichText(html: string) {
     return sanitizeHtml(html, getSanitizeOptions(false));
 }
 
-/** Replace YouTube embeds with an inert control until the visitor activates one. */
+/**
+ * Public rendering variant: YouTube iframes become inert, accessible buttons.
+ * ConsentRichContent creates the privacy-enhanced iframe only after activation.
+ */
 export function sanitizePublicRichText(html: string) {
     return sanitizeHtml(html, getSanitizeOptions(true));
 }

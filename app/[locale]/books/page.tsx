@@ -31,7 +31,6 @@ export default async function BooksPage() {
     return (
         <div style={{ minHeight: '100vh', background: '#050505' }}>
             {/* Header Section with Background */}
-            {/* Header Section with Background */}
             <div className="page-hero" style={{
                 backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url("/snake-bg.webp")'
             }}>

@@ -67,9 +67,9 @@ export default function CTASection() {
                                         <path d="M12 6v6l4 2" />
                                     </svg>
                                 </div>
-                                <h3 className="cta-benefit-title">RESPUESTA EN 24H</h3>
+                                <h3 className="cta-benefit-title">RESPUESTA PERSONAL</h3>
                                 <p className="cta-benefit-text">
-                                    Garantizamos respuesta profesional en menos de un día hábil
+                                    Respondemos normalmente en un día hábil
                                 </p>
                             </div>
 
@@ -79,9 +79,9 @@ export default function CTASection() {
                                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                     </svg>
                                 </div>
-                                <h3 className="cta-benefit-title">CONFIDENCIALIDAD TOTAL</h3>
+                                <h3 className="cta-benefit-title">TRATO RESPONSABLE</h3>
                                 <p className="cta-benefit-text">
-                                    Tu información y proyectos están protegidos con máxima seguridad
+                                    Solicitamos solo la información necesaria para atenderte
                                 </p>
                             </div>
 

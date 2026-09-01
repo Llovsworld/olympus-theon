@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import {
+    getCanonicalPostCategory,
+    getPostCategoryDefinition,
+    POST_CATEGORIES,
+} from '@/lib/post-categories';
 
 function generateSlug(text: string) {
     return text
@@ -23,6 +28,7 @@ export default function NewPostPage() {
     const [excerpt, setExcerpt] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
     const [category, setCategory] = useState('');
+    const [legacyCategoryWarning, setLegacyCategoryWarning] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(false);
@@ -30,17 +36,6 @@ export default function NewPostPage() {
     const [showPreview, setShowPreview] = useState(false);
 
     const [editorKey, setEditorKey] = useState(0);
-
-    const categories = [
-        'Psicología',
-        'Mindset',
-        'Productividad',
-        'Fitness',
-        'Negocios',
-        'Desarrollo Personal',
-        'Lifestyle',
-        'Motivación'
-    ];
 
     // Auto-save to localStorage
     useEffect(() => {
@@ -54,7 +49,14 @@ export default function NewPostPage() {
                 setContent(parsed.content || '');
                 setExcerpt(parsed.excerpt || '');
                 setMetaDescription(parsed.metaDescription || '');
-                setCategory(parsed.category || '');
+                const savedCategory = typeof parsed.category === 'string' ? parsed.category.trim() : '';
+                const canonicalCategory = getCanonicalPostCategory(savedCategory);
+                setCategory(canonicalCategory || '');
+                setLegacyCategoryWarning(
+                    savedCategory && !canonicalCategory
+                        ? `La categoría anterior “${savedCategory}” ya no forma parte de la estructura. Selecciona la opción que corresponda.`
+                        : '',
+                );
                 setFeaturedImage(parsed.featuredImage || '');
                 // Force editor remount to show loaded content
                 setEditorKey(k => k + 1);
@@ -371,7 +373,10 @@ export default function NewPostPage() {
                         </label>
                         <select
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => {
+                                setCategory(e.target.value);
+                                setLegacyCategoryWarning('');
+                            }}
                             style={{
                                 width: '100%',
                                 padding: '1rem',
@@ -386,10 +391,20 @@ export default function NewPostPage() {
                             className="hover:border-yellow-500/30 focus:border-yellow-500/50 outline-none"
                         >
                             <option value="">Seleccionar...</option>
-                            {categories.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
+                            {POST_CATEGORIES.map(({ label }) => (
+                                <option key={label} value={label}>{label}</option>
                             ))}
                         </select>
+                        <p style={{
+                            color: legacyCategoryWarning ? '#f59e0b' : '#6b7280',
+                            fontSize: '0.78rem',
+                            lineHeight: 1.45,
+                            marginTop: '0.6rem'
+                        }}>
+                            {legacyCategoryWarning
+                                || getPostCategoryDefinition(category)?.description
+                                || 'Elige la categoría principal del artículo. Así evitamos duplicados y filtros confusos.'}
+                        </p>
                     </div>
 
                     <div>

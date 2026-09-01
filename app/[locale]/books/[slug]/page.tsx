@@ -6,8 +6,19 @@ import ConsentRichContent from '@/components/ConsentRichContent';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { getPublishedBookBySlug } from '@/lib/content';
-import { DEFAULT_LOCALE, SITE_NAME, SITE_URL } from '@/lib/seo';
-import { sanitizePublicRichText, sanitizeRichText } from '@/lib/sanitize-content';
+import {
+    DEFAULT_LOCALE,
+    getContentImageUrl,
+    serializeJsonLd,
+    SITE_NAME,
+    SITE_URL,
+} from '@/lib/seo';
+import {
+    getSafeExternalHref,
+    getTrustedPublicMediaUrl,
+    sanitizePublicRichText,
+    sanitizeRichText,
+} from '@/lib/sanitize-content';
 
 export const revalidate = 300;
 
@@ -47,10 +58,20 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
     }
 
     const description = book.description || `Lee ${book.title} en Olympus Theon`;
+    const coverImage = getTrustedPublicMediaUrl(book.coverImage) || undefined;
 
     return {
         title: book.title,
         description,
+        authors: book.author ? [{ name: book.author }] : undefined,
+        category: book.category || undefined,
+        keywords: [
+            book.title,
+            book.author,
+            book.category,
+            'reseña de libros',
+            'Olympus Theon',
+        ].filter((value): value is string => Boolean(value)),
         alternates: { canonical },
         openGraph: {
             title: `${book.title} | Biblioteca Olympus Theon`,
@@ -60,9 +81,9 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
             siteName: SITE_NAME,
             locale: DEFAULT_LOCALE,
             authors: book.author ? [book.author] : undefined,
-            images: book.coverImage ? [
+            images: coverImage ? [
                 {
-                    url: book.coverImage,
+                    url: coverImage,
                     width: 800,
                     height: 1200,
                     alt: book.title,
@@ -73,7 +94,7 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
             card: 'summary_large_image',
             title: book.title,
             description,
-            images: book.coverImage ? [book.coverImage] : [],
+            images: coverImage ? [coverImage] : [],
         },
     };
 }
@@ -92,6 +113,22 @@ export default async function BookPage({ params }: BookPageProps) {
 
     const safeContent = book.content ? sanitizeRichText(book.content) : null;
     const publicContent = book.content ? sanitizePublicRichText(book.content) : null;
+    const coverImage = getTrustedPublicMediaUrl(book.coverImage);
+    const purchaseLink = getSafeExternalHref(book.link);
+    const bookJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Book',
+        name: book.title,
+        description: book.description,
+        author: book.author ? {
+            '@type': 'Person',
+            name: book.author,
+        } : undefined,
+        genre: book.category || undefined,
+        image: getContentImageUrl(coverImage) || undefined,
+        url: `${SITE_URL}/books/${book.slug}`,
+        sameAs: purchaseLink || undefined,
+    };
 
     // Calculate reading time (200 words per minute average)
     const wordCount = safeContent ? safeContent.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
@@ -99,6 +136,12 @@ export default async function BookPage({ params }: BookPageProps) {
 
     return (
         <div style={{ minHeight: '100vh', background: '#050505', color: '#ededed' }}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: serializeJsonLd(bookJsonLd),
+                }}
+            />
             <ViewTracker type="book" slug={slug} />
             <ReadingProgress totalReadingTime={readingTime} />
 
@@ -113,10 +156,10 @@ export default async function BookPage({ params }: BookPageProps) {
                 justifyContent: 'center',
                 marginTop: '100px' // Account for sticky header height
             }}>
-                {book.coverImage ? (
+                {coverImage ? (
                     <>
                         <Image
-                            src={book.coverImage}
+                            src={coverImage}
                             alt={book.title}
                             fill
                             sizes="100vw"
@@ -165,7 +208,7 @@ export default async function BookPage({ params }: BookPageProps) {
                             marginBottom: '1.5rem',
                             backdropFilter: 'blur(5px)'
                         }}>
-                            Libro
+                            {book.category ? `Libro · ${book.category}` : 'Libro'}
                         </span>
                     </ScrollReveal>
 
@@ -180,6 +223,20 @@ export default async function BookPage({ params }: BookPageProps) {
                             {book.title}
                         </h1>
                     </ScrollReveal>
+
+                    {book.author && (
+                        <ScrollReveal variant="fade" delay={300}>
+                            <p style={{
+                                color: '#ddd',
+                                fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                                fontWeight: 600,
+                                letterSpacing: '0.04em',
+                                margin: '-0.5rem 0 1.5rem',
+                            }}>
+                                Por {book.author}
+                            </p>
+                        </ScrollReveal>
+                    )}
 
                     <ScrollReveal variant="fade" delay={400}>
                         <div style={{
@@ -210,11 +267,11 @@ export default async function BookPage({ params }: BookPageProps) {
                         </div>
                     </ScrollReveal>
 
-                    {book.link && (
+                    {purchaseLink && (
                         <ScrollReveal variant="fade" delay={600}>
                             <div style={{ marginTop: '3rem' }}>
                                 <a
-                                    href={book.link}
+                                    href={purchaseLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn"

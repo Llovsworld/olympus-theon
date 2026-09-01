@@ -1,5 +1,6 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import ContactForm from '@/components/ContactForm';
+import { legalPublic } from '@/lib/legal-public';
 
 export default function ContactPage() {
     return (
@@ -229,7 +230,7 @@ export default function ContactPage() {
                             {/* Email */}
                             <a
                                 data-contact-direct-link
-                                href="mailto:contact@olympus.com"
+                                href={`mailto:${legalPublic.email}`}
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -256,7 +257,7 @@ export default function ContactPage() {
                                 </div>
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Correo</div>
-                                    <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: '500' }}>contact@olympus.com</div>
+                                    <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: '500' }}>{legalPublic.email}</div>
                                 </div>
                             </a>
                         </div>

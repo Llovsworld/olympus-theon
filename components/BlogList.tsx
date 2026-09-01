@@ -1,17 +1,23 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import BlogCard from './BlogCard';
 import ScrollReveal from './ScrollReveal';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Search, X } from 'lucide-react';
+import { getSearchTerms, normalizeSearchText } from '@/lib/search';
+import { getPostCategoryKey, POST_CATEGORIES } from '@/lib/post-categories';
+import type { PostCategory } from '@/lib/post-categories';
+
+const ALL_CATEGORIES = 'all';
 
 interface BlogListProps {
     posts: Array<{
         id: string;
         title: string;
         slug: string;
-        category: string | null;
+        category: PostCategory | null;
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;
@@ -22,66 +28,265 @@ interface BlogListProps {
 
 export default function BlogList({ posts }: BlogListProps) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    const categories = useMemo(() => {
+        const activeCategoryKeys = new Set(
+            posts.map((post) => getPostCategoryKey(post.category)).filter(Boolean),
+        );
+
+        return POST_CATEGORIES
+            .map(({ label }) => ({ key: getPostCategoryKey(label), label }))
+            .filter(({ key }) => activeCategoryKeys.has(key));
+    }, [posts]);
+
+    const indexedPosts = useMemo(() => posts.map((post) => ({
+        post,
+        categoryKey: getPostCategoryKey(post.category),
+        searchableText: normalizeSearchText([
+            post.title,
+            post.category || '',
+            post.excerpt,
+            post.searchText,
+        ].join(' ')),
+    })), [posts]);
+
+    const searchTerms = useMemo(() => getSearchTerms(searchQuery), [searchQuery]);
+    const hasSearch = searchTerms.length > 0;
+    const hasActiveFilters = hasSearch || selectedCategory !== ALL_CATEGORIES;
 
     const filteredPosts = useMemo(() => {
-        if (!searchQuery.trim()) return posts;
+        return indexedPosts
+            .filter(({ categoryKey, searchableText }) => {
+                const matchesCategory = selectedCategory === ALL_CATEGORIES || categoryKey === selectedCategory;
+                const matchesSearch = searchTerms.every((term) => searchableText.includes(term));
+                return matchesCategory && matchesSearch;
+            })
+            .map(({ post }) => post);
+    }, [indexedPosts, searchTerms, selectedCategory]);
 
-        const query = searchQuery.toLowerCase();
-        return posts.filter(post =>
-            post.title.toLowerCase().includes(query) ||
-            post.category?.toLowerCase().includes(query) ||
-            post.searchText.includes(query)
-        );
-    }, [posts, searchQuery]);
+    const selectedCategoryLabel = categories.find(({ key }) => key === selectedCategory)?.label;
+    const visibleQuery = searchQuery.trim().replace(/\s+/g, ' ');
+    const resultNoun = filteredPosts.length === 1 ? 'artículo' : 'artículos';
+    const resultSummary = hasActiveFilters
+        ? `${filteredPosts.length} ${resultNoun}${hasSearch ? ` para “${visibleQuery}”` : ''}${selectedCategoryLabel ? ` en ${selectedCategoryLabel}` : ''}`
+        : `${filteredPosts.length} ${resultNoun} para explorar`;
+
+    const clearFilters = () => {
+        setSearchQuery('');
+        setSelectedCategory(ALL_CATEGORIES);
+        searchInputRef.current?.focus();
+    };
 
     return (
         <div>
-            {/* Search Bar */}
-            <div style={{
-                maxWidth: '600px',
-                margin: '3rem auto',
-                position: 'relative'
-            }}>
-                <div style={{
-                    position: 'absolute',
-                    left: '1.5rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    pointerEvents: 'none'
-                }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+            <section
+                aria-labelledby="blog-search-title"
+                style={{
+                    maxWidth: '780px',
+                    margin: '2.5rem auto 2rem',
+                    padding: 'clamp(1.25rem, 3vw, 2rem)',
+                    background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025))',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '20px',
+                    boxShadow: '0 18px 45px rgba(0, 0, 0, 0.2)'
+                }}
+            >
+                <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                    <h2
+                        id="blog-search-title"
+                        style={{
+                            color: '#fff',
+                            fontSize: 'clamp(1.25rem, 3vw, 1.65rem)',
+                            lineHeight: 1.2,
+                            marginBottom: '0.5rem',
+                            letterSpacing: '-0.02em'
+                        }}
+                    >
+                        Encuentra lo que necesitas
+                    </h2>
+                    <p style={{ color: '#9d9d9d', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                        Busca una idea, una pregunta o el tema que quieres trabajar.
+                    </p>
                 </div>
-                <input
-                    type="text"
-                    aria-label="Buscar artículos"
-                    placeholder="Buscar artículos..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+
+                <div role="search" aria-label="Buscar en el blog">
+                    <label className="sr-only" htmlFor="blog-search-input">
+                        Buscar artículos por título, tema o contenido
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                        <Search
+                            aria-hidden="true"
+                            size={20}
+                            style={{
+                                position: 'absolute',
+                                left: '1.25rem',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                color: 'rgba(255, 255, 255, 0.48)',
+                                pointerEvents: 'none'
+                            }}
+                        />
+                        <input
+                            ref={searchInputRef}
+                            id="blog-search-input"
+                            type="text"
+                            role="searchbox"
+                            inputMode="search"
+                            enterKeyHint="search"
+                            autoComplete="off"
+                            aria-controls="blog-results"
+                            placeholder="Busca: meditación, pareja, ansiedad…"
+                            value={searchQuery}
+                            onChange={(event) => setSearchQuery(event.target.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Escape' && searchQuery) {
+                                    setSearchQuery('');
+                                }
+                            }}
+                            style={{
+                                width: '100%',
+                                minHeight: '56px',
+                                padding: '0.9rem 3.75rem 0.9rem 3.25rem',
+                                background: 'rgba(0, 0, 0, 0.32)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                borderRadius: '14px',
+                                color: '#fff',
+                                fontSize: '1rem',
+                                outline: 'none',
+                                transition: 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease'
+                            }}
+                            className="placeholder:text-white/35 focus:border-yellow-500/60 focus:bg-white/[0.07] focus:ring-4 focus:ring-yellow-500/10"
+                        />
+                        {searchQuery && (
+                            <button
+                                type="button"
+                                aria-label="Borrar búsqueda"
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    searchInputRef.current?.focus();
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    right: '0.45rem',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    width: '44px',
+                                    height: '44px',
+                                    display: 'grid',
+                                    placeItems: 'center',
+                                    border: 0,
+                                    borderRadius: '10px',
+                                    color: '#aaa',
+                                    background: 'transparent',
+                                    cursor: 'pointer'
+                                }}
+                                className="transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/70"
+                            >
+                                <X aria-hidden="true" size={18} />
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                <div
+                    role="group"
+                    aria-label="Filtrar artículos por categoría"
                     style={{
-                        width: '100%',
-                        padding: '1rem 1rem 1rem 3.5rem',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        borderRadius: '50px',
-                        color: '#fff',
-                        fontSize: '1rem',
-                        outline: 'none',
-                        transition: 'all 0.3s ease',
-                        backdropFilter: 'blur(10px)'
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        gap: '0.55rem',
+                        marginTop: '1rem'
                     }}
-                    className="focus:border-yellow-500/50 focus:bg-white/10 placeholder-white/30"
-                />
-            </div>
+                >
+                    {[{ key: ALL_CATEGORIES, label: 'Todos' }, ...categories].map(({ key, label }) => {
+                        const isActive = selectedCategory === key;
+
+                        return (
+                            <button
+                                key={key}
+                                type="button"
+                                aria-pressed={isActive}
+                                aria-controls="blog-results"
+                                onClick={() => setSelectedCategory(key)}
+                                style={{
+                                    minHeight: '44px',
+                                    padding: '0.65rem 1rem',
+                                    borderRadius: '999px',
+                                    border: isActive
+                                        ? '1px solid rgba(255, 215, 0, 0.65)'
+                                        : '1px solid rgba(255, 255, 255, 0.14)',
+                                    background: isActive
+                                        ? 'rgba(255, 215, 0, 0.14)'
+                                        : 'rgba(255, 255, 255, 0.035)',
+                                    color: isActive ? '#FFD700' : '#b8b8b8',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.04em',
+                                    whiteSpace: 'nowrap',
+                                    cursor: 'pointer'
+                                }}
+                                className="transition-colors hover:border-yellow-500/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/70"
+                            >
+                                {label}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    marginTop: '1rem',
+                    paddingTop: '1rem',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                    <p
+                        id="blog-results-status"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                        style={{ color: '#aaa', fontSize: '0.85rem' }}
+                    >
+                        {resultSummary}
+                    </p>
+                    {hasActiveFilters && (
+                        <button
+                            type="button"
+                            onClick={clearFilters}
+                            style={{
+                                minHeight: '44px',
+                                padding: '0.55rem 0.25rem',
+                                border: 0,
+                                background: 'transparent',
+                                color: '#FFD700',
+                                fontSize: '0.82rem',
+                                fontWeight: 700,
+                                cursor: 'pointer'
+                            }}
+                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/70"
+                        >
+                            Limpiar filtros
+                        </button>
+                    )}
+                </div>
+            </section>
 
             {/* Posts Grid */}
-            <div className="responsive-grid" style={{ marginTop: '0' }}>
+            <div
+                id="blog-results"
+                aria-labelledby="blog-results-status"
+                className="responsive-grid"
+                style={{ marginTop: '0' }}
+            >
                 {filteredPosts.map((post, index) => {
-                    // Only show featured style for the very first post AND if there is no search query
-                    const isFeatured = index === 0 && !searchQuery;
+                    // Keep the featured treatment only in the unfiltered view.
+                    const isFeatured = index === 0 && !hasActiveFilters;
 
                     if (isFeatured) {
                         return (
@@ -234,7 +439,7 @@ export default function BlogList({ posts }: BlogListProps) {
                     }
 
                     return (
-                        <ScrollReveal key={post.id} variant="slideScale" delay={index * 100}>
+                        <ScrollReveal key={post.id} variant="slideScale" delay={Math.min(index * 100, 500)}>
                             <BlogCard post={post} />
                         </ScrollReveal>
                     );
@@ -244,10 +449,55 @@ export default function BlogList({ posts }: BlogListProps) {
                     <div style={{
                         gridColumn: '1 / -1',
                         textAlign: 'center',
-                        padding: '4rem 0',
-                        color: '#888'
+                        padding: 'clamp(3rem, 8vw, 5rem) 1.25rem',
+                        color: '#aaa',
+                        background: 'rgba(255, 255, 255, 0.025)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        borderRadius: '16px'
                     }}>
-                        <p style={{ fontSize: '1.2rem' }}>No se encontraron artículos.</p>
+                        <div style={{
+                            width: '52px',
+                            height: '52px',
+                            display: 'grid',
+                            placeItems: 'center',
+                            margin: '0 auto 1rem',
+                            borderRadius: '50%',
+                            color: '#FFD700',
+                            background: 'rgba(255, 215, 0, 0.1)'
+                        }}>
+                            <Search aria-hidden="true" size={24} />
+                        </div>
+                        <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.6rem' }}>
+                            {posts.length === 0
+                                ? 'Todavía no hay artículos publicados'
+                                : hasSearch
+                                ? `No encontramos artículos sobre “${visibleQuery}”`
+                                : 'No hay artículos en esta categoría'}
+                        </h3>
+                        <p style={{ lineHeight: 1.6, margin: '0 auto 1.25rem', maxWidth: '480px' }}>
+                            {posts.length === 0
+                                ? 'Estamos preparando nuevos contenidos. Vuelve pronto para descubrirlos.'
+                                : 'Prueba con una palabra más general o explora todos los contenidos disponibles.'}
+                        </p>
+                        {hasActiveFilters && (
+                            <button
+                                type="button"
+                                onClick={clearFilters}
+                                style={{
+                                    minHeight: '44px',
+                                    padding: '0.7rem 1.1rem',
+                                    border: '1px solid rgba(255, 215, 0, 0.55)',
+                                    borderRadius: '10px',
+                                    background: 'rgba(255, 215, 0, 0.12)',
+                                    color: '#FFD700',
+                                    fontWeight: 700,
+                                    cursor: 'pointer'
+                                }}
+                                className="transition-colors hover:bg-yellow-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/70"
+                            >
+                                Ver todos los artículos
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

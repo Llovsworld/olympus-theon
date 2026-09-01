@@ -2,10 +2,15 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+
+import { legalPublic } from '@/lib/legal-public';
 
 export default function Newsletter() {
     const t = useTranslations('Newsletter');
     const [email, setEmail] = useState('');
+    const [consentAccepted, setConsentAccepted] = useState(false);
+    const [website, setWebsite] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [isHovered, setIsHovered] = useState(false);
@@ -25,7 +30,13 @@ export default function Newsletter() {
             const response = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({
+                    email,
+                    consentAccepted,
+                    privacyAccepted: consentAccepted,
+                    source: 'homepage',
+                    website,
+                }),
             });
 
             const data = await response.json();
@@ -34,6 +45,8 @@ export default function Newsletter() {
                 setStatus('success');
                 setMessage(data.message || t('success'));
                 setEmail('');
+                setConsentAccepted(false);
+                setWebsite('');
                 setTimeout(() => {
                     setStatus('idle');
                     setMessage('');
@@ -87,13 +100,33 @@ export default function Newsletter() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <div className="form-honeypot" aria-hidden="true">
+                    <label htmlFor="newsletter-website">No rellenes este campo</label>
                     <input
+                        id="newsletter-website"
+                        name="website"
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={website}
+                        onChange={(event) => setWebsite(event.target.value)}
+                    />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <label className="sr-only" htmlFor="homepage-newsletter-email">Correo electrónico</label>
+                    <input
+                        id="homepage-newsletter-email"
+                        name="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder={t('placeholder')}
                         disabled={status === 'loading'}
+                        required
+                        maxLength={254}
+                        autoComplete="email"
+                        inputMode="email"
                         style={{
                             flex: '1 1 250px',
                             padding: '0.875rem 1.25rem',
@@ -132,6 +165,22 @@ export default function Newsletter() {
                     </button>
                 </div>
 
+                <label className="form-consent-row">
+                    <input
+                        type="checkbox"
+                        required
+                        checked={consentAccepted}
+                        onChange={(event) => setConsentAccepted(event.target.checked)}
+                    />
+                    <span>
+                        Quiero recibir artículos y novedades por correo. Responsable: {legalPublic.responsibleName}.
+                        Base: mi consentimiento. Proveedores técnicos: Vercel, Neon y Resend, con posibles transferencias
+                        explicadas en la <Link href="/privacidad">Política de privacidad</Link>. Puedo retirar el
+                        consentimiento y ejercer mis derechos escribiendo a{' '}
+                        <a href={`mailto:${legalPublic.email}`}>{legalPublic.email}</a>.
+                    </span>
+                </label>
+
                 {message && (
                     <div style={{
                         padding: '1rem',
@@ -144,7 +193,7 @@ export default function Newsletter() {
                         fontSize: '0.9rem',
                         textAlign: 'center',
                         transition: 'all 0.3s ease'
-                    }}>
+                    }} role={status === 'error' ? 'alert' : 'status'} aria-live="polite" aria-atomic="true">
                         {message}
                     </div>
                 )}

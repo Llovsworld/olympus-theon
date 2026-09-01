@@ -13,8 +13,32 @@ POSTGRES_URL_NON_POOLING=your_direct_url_here
 ### Authentication (NextAuth)
 ```
 NEXTAUTH_SECRET=your_secret_here
-NEXTAUTH_URL=https://your-vercel-domain.vercel.app
+NEXTAUTH_URL=https://www.olympustheon.com
 ```
+
+### Public URL and transactional email
+```
+NEXT_PUBLIC_APP_URL=https://www.olympustheon.com
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM=Olympus Theon <hola@olympustheon.com>
+CONTACT_EMAIL=your_real_contact_email
+NEWSLETTER_TOKEN_SECRET=generate_a_long_random_secret
+```
+
+`EMAIL_FROM` must use a sender domain verified in Resend. `NEWSLETTER_TOKEN_SECRET`
+can fall back to `NEXTAUTH_SECRET`, but using a separate random value is recommended.
+
+### Verified legal identity
+```
+LEGAL_TAX_ID=your_real_nif_or_cif
+LEGAL_POSTAL_ADDRESS=your_real_professional_postal_address
+LEGAL_REGISTRY_DETAILS=only_if_applicable
+LEGAL_PROCESSOR_COVERAGE_CONFIRMED=false_until_contracts_are_verified
+```
+
+Never deploy the legal pages as final with placeholder or invented identity data.
+Set `LEGAL_PROCESSOR_COVERAGE_CONFIRMED=true` only after confirming that the
+hosting/database/email processor agreements cover the production setup.
 
 ### Admin Credentials
 ```
@@ -30,7 +54,7 @@ BLOB_READ_WRITE_TOKEN=your_blob_token_here
 ## How to Set Up
 
 1. Go to [Vercel Dashboard](https://vercel.com)
-2. Select your project "olympus-theon"
+2. Select the production project `olympus-theon-17nl`
 3. Go to **Settings** → **Environment Variables**
 4. Add each variable above
 5. **Important**: Set them for all environments (Production, Preview, Development)

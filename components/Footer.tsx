@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import FooterNewsletterForm from './FooterNewsletterForm';
+import { legalPublic } from '@/lib/legal-public';
 
 export default function Footer() {
     return (
@@ -36,7 +37,7 @@ export default function Footer() {
                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                                 </svg>
                             </a>
-                            <a href="mailto:Olympustheon@gmail.com" className="footer-social-link" aria-label="Email">
+                            <a href={`mailto:${legalPublic.email}`} className="footer-social-link" aria-label="Email">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                     <polyline points="22,6 12,13 2,6"></polyline>
@@ -76,13 +77,17 @@ export default function Footer() {
                     <div className="footer-links-col">
                         <h4 className="footer-col-title">LEGAL</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/cookies">Cookies y tecnologías similares</Link>
+                            <Link href="/aviso-legal">Aviso legal</Link>
+                            <Link href="/privacidad">Privacidad</Link>
+                            <Link href="/cookies">Cookies</Link>
+                            <Link href="/terminos">Condiciones de uso</Link>
+                            <Link href="/accesibilidad">Accesibilidad</Link>
                         </nav>
                     </div>
                 </div>
 
                 {/* Newsletter Section */}
-                <div className="footer-newsletter">
+                <div className="footer-newsletter" id="newsletter">
                     <div className="footer-newsletter-content">
                         <div className="footer-newsletter-text">
                             <h4 className="footer-newsletter-title">Únete a la Élite</h4>
@@ -96,8 +101,8 @@ export default function Footer() {
                 <div className="footer-bottom-compact">
                     <p className="footer-copyright">© {new Date().getFullYear()} Olympus Theon. Todos los derechos reservados.</p>
                     <div className="footer-contact-info">
-                        <a href="mailto:Olympustheon@gmail.com" className="footer-contact-link">Olympustheon@gmail.com</a>
-                        <a href="tel:+34608961701" className="footer-contact-link">+34 608 961 701</a>
+                        <a href={`mailto:${legalPublic.email}`} className="footer-contact-link">{legalPublic.email}</a>
+                        <a href={`tel:${legalPublic.phoneHref}`} className="footer-contact-link">{legalPublic.phoneDisplay}</a>
                     </div>
                 </div>
             </div>

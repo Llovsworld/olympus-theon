@@ -6,6 +6,11 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { Save, Eye, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import ContentPreview from '@/components/admin/ContentPreview';
+import {
+    CONTENT_CATEGORIES,
+    getCanonicalContentCategory,
+    getContentCategoryDefinition,
+} from '@/lib/content-categories';
 
 export default function EditBookPage() {
     const router = useRouter();
@@ -16,6 +21,7 @@ export default function EditBookPage() {
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
     const [author, setAuthor] = useState('');
+    const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [coverImage, setCoverImage] = useState('');
@@ -38,6 +44,7 @@ export default function EditBookPage() {
                 setTitle(book.title || '');
                 setSlug(book.slug || '');
                 setAuthor(book.author || '');
+                setCategory(getCanonicalContentCategory(book.category) || '');
                 setDescription(book.description || '');
                 setContent(book.content || '');
                 setCoverImage(book.coverImage || '');
@@ -58,8 +65,12 @@ export default function EditBookPage() {
     }, [bookId, router]);
 
     const handleSave = async () => {
-        if (!title.trim() || !description.trim()) {
-            alert('El título y la descripción son obligatorios');
+        if (!title.trim()) {
+            alert('El título es obligatorio');
+            return;
+        }
+        if (isPublished && (!description.trim() || !category)) {
+            alert('Añade una descripción y selecciona una categoría antes de guardar un libro publicado');
             return;
         }
 
@@ -74,6 +85,7 @@ export default function EditBookPage() {
                     title,
                     slug,
                     author,
+                    category,
                     description,
                     content,
                     coverImage,
@@ -99,8 +111,12 @@ export default function EditBookPage() {
     };
 
     const handlePublish = async () => {
-        if (!title.trim() || !description.trim()) {
-            alert('El título y la descripción son obligatorios');
+        if (!title.trim()) {
+            alert('El título es obligatorio');
+            return;
+        }
+        if (!isPublished && (!description.trim() || !category)) {
+            alert('Añade una descripción y selecciona una categoría antes de publicar');
             return;
         }
 
@@ -114,6 +130,7 @@ export default function EditBookPage() {
                     title,
                     slug,
                     author,
+                    category,
                     description,
                     content,
                     coverImage,
@@ -274,6 +291,24 @@ export default function EditBookPage() {
                         currentImage={coverImage}
                         label="Portada del Libro"
                     />
+
+                    <div>
+                        <label className="admin-label">Categoría editorial</label>
+                        <select
+                            value={category}
+                            onChange={(event) => setCategory(event.target.value)}
+                            className="admin-select"
+                        >
+                            <option value="">Seleccionar categoría...</option>
+                            {CONTENT_CATEGORIES.map(({ label }) => (
+                                <option key={label} value={label}>{label}</option>
+                            ))}
+                        </select>
+                        <p className="admin-helper-text">
+                            {getContentCategoryDefinition(category)?.description
+                                || 'La categoría es obligatoria para publicar y mantiene la biblioteca ordenada.'}
+                        </p>
+                    </div>
 
                     <div>
                         <label className="admin-label">Enlace de compra (opcional)</label>

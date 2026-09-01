@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
 import { sanitizeRichText } from '@/lib/sanitize-content';
 import { getContentImageUrl } from '@/lib/seo';
+import { getCanonicalPostCategory, POST_CATEGORIES } from '@/lib/post-categories';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -23,7 +24,14 @@ export async function GET(request: Request) {
         where: includeAll ? {} : { published: true },
         orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(posts, includeAll ? {
+    const responsePosts = includeAll
+        ? posts
+        : posts.map((post) => ({
+            ...post,
+            category: getCanonicalPostCategory(post.category),
+        }));
+
+    return NextResponse.json(responsePosts, includeAll ? {
         headers: { 'Cache-Control': 'private, no-store' },
     } : undefined);
 }
@@ -44,7 +52,8 @@ export async function POST(request: Request) {
         const normalizedContent = typeof content === 'string' ? sanitizeRichText(content.trim()) : '';
         const normalizedExcerpt = typeof excerpt === 'string' ? excerpt.trim() : '';
         const normalizedMetaDescription = typeof metaDescription === 'string' ? metaDescription.trim() : '';
-        const normalizedCategory = typeof category === 'string' ? category.trim() : '';
+        const categoryInput = typeof category === 'string' ? category.trim() : '';
+        const normalizedCategory = categoryInput ? getCanonicalPostCategory(categoryInput) : null;
         const normalizedFeaturedImage = typeof featuredImage === 'string' ? featuredImage.trim() : '';
         const shouldPublish = published === true;
         requestedSlug = normalizedSlug;
@@ -63,6 +72,16 @@ export async function POST(request: Request) {
             );
         }
 
+        if ((category !== undefined && category !== null && typeof category !== 'string') || (categoryInput && !normalizedCategory)) {
+            return NextResponse.json(
+                {
+                    error: 'Selecciona una categoría válida.',
+                    allowedCategories: POST_CATEGORIES.map(({ label }) => label),
+                },
+                { status: 400 },
+            );
+        }
+
         if (shouldPublish && (!normalizedExcerpt || !normalizedMetaDescription || !normalizedCategory || !getContentImageUrl(normalizedFeaturedImage))) {
             return NextResponse.json(
                 { error: 'Para publicar, completa el extracto, la descripción SEO, la categoría y una imagen válida.' },
@@ -77,7 +96,7 @@ export async function POST(request: Request) {
                 content: normalizedContent,
                 excerpt: normalizedExcerpt || null,
                 metaDescription: normalizedMetaDescription || null,
-                category: normalizedCategory || null,
+                category: normalizedCategory,
                 featuredImage: normalizedFeaturedImage || null,
                 published: shouldPublish,
             },

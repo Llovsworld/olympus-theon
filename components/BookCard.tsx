@@ -3,12 +3,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { memo } from 'react';
+import type { ContentCategory } from '@/lib/content-categories';
 
 interface BookCardProps {
     book: {
         id: string;
         title: string;
         slug: string;
+        author: string | null;
+        category: ContentCategory | null;
         description: string;
         coverImage: string | null;
     };
@@ -45,6 +48,32 @@ function BookCard({ book }: BookCardProps) {
                 )}
 
                 <div className="blog-card-content">
+                    {book.category && (
+                        <span style={{
+                            color: '#FFD700',
+                            display: 'block',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.12em',
+                            marginBottom: '0.6rem',
+                            textTransform: 'uppercase'
+                        }}>
+                            {book.category}
+                        </span>
+                    )}
+                    {book.author && (
+                        <span style={{
+                            color: '#aaa',
+                            display: 'block',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.12em',
+                            marginBottom: '0.75rem',
+                            textTransform: 'uppercase'
+                        }}>
+                            {book.author}
+                        </span>
+                    )}
                     <h2 className="blog-card-title">
                         {book.title}
                     </h2>

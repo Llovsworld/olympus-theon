@@ -4,6 +4,8 @@ import { sendNewsletter } from '@/lib/email';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidateBookContent } from '@/lib/revalidate-content';
+import { getSafeExternalHref, getTrustedPublicMediaUrl, sanitizeRichText } from '@/lib/sanitize-content';
+import { CONTENT_CATEGORIES, getCanonicalContentCategory } from '@/lib/content-categories';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -20,7 +22,14 @@ export async function GET(request: Request) {
         where: includeAll ? {} : { published: true },
         orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(books, includeAll ? {
+    const responseBooks = includeAll
+        ? books
+        : books.map((book) => ({
+            ...book,
+            category: getCanonicalContentCategory(book.category),
+        }));
+
+    return NextResponse.json(responseBooks, includeAll ? {
         headers: { 'Cache-Control': 'private, no-store' },
     } : undefined);
 }
@@ -35,19 +44,61 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { title, slug, author, description, content, coverImage, link, published = false } = body;
-        requestedSlug = slug;
+        const { title, slug, author, category, description, content, coverImage, link, published = false } = body;
+        const normalizedTitle = typeof title === 'string' ? title.trim() : '';
+        const normalizedSlug = typeof slug === 'string' ? slug.trim() : '';
+        const normalizedAuthor = typeof author === 'string' ? author.trim() : '';
+        const categoryInput = typeof category === 'string' ? category.trim() : '';
+        const normalizedCategory = categoryInput ? getCanonicalContentCategory(categoryInput) : null;
+        const normalizedDescription = typeof description === 'string' ? description.trim() : '';
+        const normalizedContent = typeof content === 'string' ? sanitizeRichText(content.trim()) : '';
+        const normalizedCoverImage = getTrustedPublicMediaUrl(typeof coverImage === 'string' ? coverImage : null);
+        const normalizedLink = getSafeExternalHref(typeof link === 'string' ? link : null);
+        const shouldPublish = published === true;
+        requestedSlug = normalizedSlug;
+
+        if (!normalizedTitle || !normalizedSlug) {
+            return NextResponse.json(
+                { error: 'Título y URL son obligatorios.' },
+                { status: 400 },
+            );
+        }
+
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(normalizedSlug)) {
+            return NextResponse.json(
+                { error: 'La URL solo puede contener letras minúsculas, números y guiones.' },
+                { status: 400 },
+            );
+        }
+
+        if ((category !== undefined && category !== null && typeof category !== 'string') || (categoryInput && !normalizedCategory)) {
+            return NextResponse.json(
+                {
+                    error: 'Selecciona una categoría válida.',
+                    allowedCategories: CONTENT_CATEGORIES.map(({ label }) => label),
+                },
+                { status: 400 },
+            );
+        }
+
+        if (shouldPublish && (!normalizedDescription || !normalizedCategory)) {
+            return NextResponse.json(
+                { error: 'Añade una descripción y selecciona una categoría antes de publicar el libro.' },
+                { status: 400 },
+            );
+        }
 
         const book = await prisma.book.create({
             data: {
-                title,
-                slug,
-                author: author || null,
-                description,
-                content,
-                coverImage,
-                link,
-                published: published === true,
+                title: normalizedTitle,
+                slug: normalizedSlug,
+                author: normalizedAuthor || null,
+                category: normalizedCategory,
+                description: normalizedDescription,
+                content: normalizedContent || null,
+                coverImage: normalizedCoverImage,
+                link: normalizedLink,
+                published: shouldPublish,
             },
         });
 
