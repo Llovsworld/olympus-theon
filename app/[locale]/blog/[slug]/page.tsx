@@ -1,14 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
-import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import SocialShare from '@/components/SocialShare';
-import ConsentRichContent from '@/components/ConsentRichContent';
+import EditorialRichContent from '@/components/EditorialRichContent';
 import { Metadata } from 'next';
 import Image from 'next/image';
-import { getPublishedPostBySlug } from '@/lib/content';
+import { getPublishedPostBySlug, getPublishedPostSlugs } from '@/lib/content';
 import {
     AUTHOR_NAME,
     AUTHOR_URL,
@@ -21,12 +20,13 @@ import {
 } from '@/lib/seo';
 import { sanitizePublicRichText, sanitizeRichText } from '@/lib/sanitize-content';
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-// An empty list enables on-demand ISR for slugs without querying the database
-// during every deployment build.
-export function generateStaticParams() {
-    return [];
+// Pre-render published articles so search visitors do not pay the cost of the
+// first database-backed render after each deployment.
+export async function generateStaticParams() {
+    const slugs = await getPublishedPostSlugs();
+    return slugs.map((slug) => ({ slug }));
 }
 
 interface BlogPostPageProps {
@@ -248,90 +248,82 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 )}
 
                 <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: '1000px' }}>
-                    <ScrollReveal variant="fade" direction="up">
-                        <Link
-                            href="/blog"
-                            style={{
-                                display: 'inline-block',
-                                color: '#FFD700',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.2em',
-                                fontSize: '0.8rem',
-                                marginBottom: '2rem',
-                                fontWeight: 600
-                            }}
-                        >
-                            ← Volver al blog
-                        </Link>
-                    </ScrollReveal>
+                    <Link
+                        href="/blog"
+                        style={{
+                            display: 'inline-block',
+                            color: '#FFD700',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.2em',
+                            fontSize: '0.8rem',
+                            marginBottom: '2rem',
+                            fontWeight: 600
+                        }}
+                    >
+                        ← Volver al blog
+                    </Link>
 
                     {post.category && (
-                        <ScrollReveal variant="fade" delay={100}>
-                            <p style={{
-                                color: '#FFD700',
-                                fontSize: '0.78rem',
-                                fontWeight: 700,
-                                letterSpacing: '0.16em',
-                                marginBottom: '1.25rem',
-                                textTransform: 'uppercase'
-                            }}>
-                                {post.category}
-                            </p>
-                        </ScrollReveal>
+                        <p style={{
+                            color: '#FFD700',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.16em',
+                            marginBottom: '1.25rem',
+                            textTransform: 'uppercase'
+                        }}>
+                            {post.category}
+                        </p>
                     )}
 
-                    <ScrollReveal variant="scale" delay={200}>
-                        <h1 style={{
-                            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-                            fontWeight: '800',
-                            lineHeight: '1.1',
-                            marginBottom: '2rem',
-                            textTransform: 'uppercase',
-                            textShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                            letterSpacing: '-0.02em'
-                        }}>
-                            {post.title}
-                        </h1>
-                    </ScrollReveal>
+                    <h1 style={{
+                        fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+                        fontWeight: '800',
+                        lineHeight: '1.1',
+                        marginBottom: '2rem',
+                        textTransform: 'uppercase',
+                        textShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                        letterSpacing: '-0.02em'
+                    }}>
+                        {post.title}
+                    </h1>
 
-                    <ScrollReveal variant="fade" delay={400}>
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '2rem',
-                            flexWrap: 'wrap',
-                            fontSize: '0.9rem',
-                            color: '#ccc',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.1em'
-                        }}>
-                            <time dateTime={post.createdAt.toISOString()}>
-                                {new Date(post.createdAt).toLocaleDateString('es-ES', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </time>
-                            {showModifiedDate && (
-                                <>
-                                    <span aria-hidden="true">•</span>
-                                    <time dateTime={post.updatedAt.toISOString()}>
-                                        Actualizado {new Date(post.updatedAt).toLocaleDateString('es-ES', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                    </time>
-                                </>
-                            )}
-                            <span aria-hidden="true">•</span>
-                            <Link href="/#fundador" style={{ color: 'inherit', textDecoration: 'none' }}>
-                                {AUTHOR_NAME}
-                            </Link>
-                            <span aria-hidden="true">•</span>
-                            <span>{readingTime} min de lectura</span>
-                        </div>
-                    </ScrollReveal>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '2rem',
+                        flexWrap: 'wrap',
+                        fontSize: '0.9rem',
+                        color: '#ccc',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em'
+                    }}>
+                        <time dateTime={post.createdAt.toISOString()}>
+                            {new Date(post.createdAt).toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </time>
+                        {showModifiedDate && (
+                            <>
+                                <span aria-hidden="true">•</span>
+                                <time dateTime={post.updatedAt.toISOString()}>
+                                    Actualizado {new Date(post.updatedAt).toLocaleDateString('es-ES', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </time>
+                            </>
+                        )}
+                        <span aria-hidden="true">•</span>
+                        <Link href="/#fundador" style={{ color: 'inherit', textDecoration: 'none' }}>
+                            {AUTHOR_NAME}
+                        </Link>
+                        <span aria-hidden="true">•</span>
+                        <span>{readingTime} min de lectura</span>
+                    </div>
                 </div>
             </div>
 
@@ -343,7 +335,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 position: 'relative',
                 zIndex: 10
             }}>
-                <ConsentRichContent
+                <EditorialRichContent
                     html={publicContent}
                     className="prose prose-invert prose-lg"
                     style={{

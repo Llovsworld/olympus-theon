@@ -1,12 +1,11 @@
 import { notFound, permanentRedirect } from 'next/navigation';
-import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
-import ConsentRichContent from '@/components/ConsentRichContent';
+import EditorialRichContent from '@/components/EditorialRichContent';
 import BookPurchaseLink from '@/components/BookPurchaseLink';
 import { Metadata } from 'next';
 import Image from 'next/image';
-import { getPublishedBookBySlug } from '@/lib/content';
+import { getPublishedBookBySlug, getPublishedBookSlugs } from '@/lib/content';
 import {
     DEFAULT_LOCALE,
     getContentImageUrl,
@@ -21,12 +20,13 @@ import {
     sanitizeRichText,
 } from '@/lib/sanitize-content';
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
-// An empty list enables on-demand ISR for slugs without querying the database
-// during every deployment build.
-export function generateStaticParams() {
-    return [];
+// Pre-render the small public catalogue so the first visitor after a deploy
+// receives a CDN response instead of waiting for a database-backed render.
+export async function generateStaticParams() {
+    const slugs = await getPublishedBookSlugs();
+    return slugs.map((slug) => ({ slug }));
 }
 
 interface BookPageProps {
@@ -205,88 +205,78 @@ export default async function BookPage({ params }: BookPageProps) {
                 )}
 
                 <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: '1000px' }}>
-                    <ScrollReveal variant="fade" direction="up">
-                        <span style={{
-                            display: 'inline-block',
-                            padding: '0.5rem 1rem',
-                            background: 'rgba(255, 215, 0, 0.1)',
-                            border: '1px solid rgba(255, 215, 0, 0.3)',
-                            borderRadius: '50px',
-                            color: '#FFD700',
-                            fontSize: '0.8rem',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.1em',
-                            marginBottom: '1.5rem',
-                            backdropFilter: 'blur(5px)'
-                        }}>
-                            {book.category ? `Libro · ${book.category}` : 'Libro'}
-                        </span>
-                    </ScrollReveal>
+                    <span style={{
+                        display: 'inline-block',
+                        padding: '0.5rem 1rem',
+                        background: 'rgba(255, 215, 0, 0.1)',
+                        border: '1px solid rgba(255, 215, 0, 0.3)',
+                        borderRadius: '50px',
+                        color: '#FFD700',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        marginBottom: '1.5rem',
+                        backdropFilter: 'blur(5px)'
+                    }}>
+                        {book.category ? `Libro · ${book.category}` : 'Libro'}
+                    </span>
 
-                    <ScrollReveal variant="scale" delay={200}>
-                        <h1 style={{
-                            fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
-                            fontWeight: 800,
-                            lineHeight: 1.1,
-                            marginBottom: '1.5rem',
-                            textShadow: '0 10px 30px rgba(0,0,0,0.5)'
-                        }}>
-                            {book.title}
-                        </h1>
-                    </ScrollReveal>
+                    <h1 style={{
+                        fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+                        fontWeight: 800,
+                        lineHeight: 1.1,
+                        marginBottom: '1.5rem',
+                        textShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                    }}>
+                        {book.title}
+                    </h1>
 
                     {book.author && (
-                        <ScrollReveal variant="fade" delay={300}>
-                            <p style={{
-                                color: '#ddd',
-                                fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-                                fontWeight: 600,
-                                letterSpacing: '0.04em',
-                                margin: '-0.5rem 0 1.5rem',
-                            }}>
-                                Por {book.author}
-                            </p>
-                        </ScrollReveal>
+                        <p style={{
+                            color: '#ddd',
+                            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                            fontWeight: 600,
+                            letterSpacing: '0.04em',
+                            margin: '-0.5rem 0 1.5rem',
+                        }}>
+                            Por {book.author}
+                        </p>
                     )}
 
-                    <ScrollReveal variant="fade" delay={400}>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '2rem',
-                            color: '#ccc',
-                            fontSize: '1rem',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em'
-                        }}>
-                            <time dateTime={book.createdAt.toISOString()}>
-                                {new Date(book.createdAt).toLocaleDateString('es-ES', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </time>
-                            {safeContent && (
-                                <>
-                                    <span style={{ width: '4px', height: '4px', background: '#FFD700', borderRadius: '50%' }} />
-                                    <span>
-                                        {Math.ceil(wordCount / 200)} min de lectura
-                                    </span>
-                                </>
-                            )}
-                        </div>
-                    </ScrollReveal>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '2rem',
+                        color: '#ccc',
+                        fontSize: '1rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                    }}>
+                        <time dateTime={book.createdAt.toISOString()}>
+                            {new Date(book.createdAt).toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </time>
+                        {safeContent && (
+                            <>
+                                <span style={{ width: '4px', height: '4px', background: '#FFD700', borderRadius: '50%' }} />
+                                <span>
+                                    {Math.ceil(wordCount / 200)} min de lectura
+                                </span>
+                            </>
+                        )}
+                    </div>
 
                     {purchaseLink && (
-                        <ScrollReveal variant="fade" delay={600}>
-                            <BookPurchaseLink
-                                href={purchaseLink}
-                                bookSlug={book.slug}
-                                isAmazonAffiliate={isAmazonAffiliate}
-                            />
-                        </ScrollReveal>
+                        <BookPurchaseLink
+                            href={purchaseLink}
+                            bookSlug={book.slug}
+                            isAmazonAffiliate={isAmazonAffiliate}
+                        />
                     )}
                 </div>
             </div>
@@ -314,7 +304,7 @@ export default async function BookPage({ params }: BookPageProps) {
 
                 {/* Main Content */}
                 {publicContent && (
-                    <ConsentRichContent
+                    <EditorialRichContent
                         html={publicContent}
                         className="prose prose-invert prose-lg"
                         style={{

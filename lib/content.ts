@@ -99,6 +99,28 @@ export async function getPublishedBookList() {
 }
 
 /**
+ * Keep build-time route generation lightweight: detail pages only need the
+ * published slugs, not the full article or review bodies.
+ */
+export const getPublishedPostSlugs = cache(async () => {
+    const posts = await prisma.post.findMany({
+        where: { published: true },
+        select: { slug: true },
+    });
+
+    return posts.map(({ slug }) => slug);
+});
+
+export const getPublishedBookSlugs = cache(async () => {
+    const books = await prisma.book.findMany({
+        where: { published: true },
+        select: { slug: true },
+    });
+
+    return books.map(({ slug }) => slug);
+});
+
+/**
  * React cache deduplicates the Prisma read shared by generateMetadata and the
  * page during the same render. Route-level revalidation handles reuse across
  * requests.
