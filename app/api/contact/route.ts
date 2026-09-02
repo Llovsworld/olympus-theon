@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
 
 import { sendContactMessage } from '@/lib/email';
+import { featureFlags } from '@/lib/features';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
+    if (!featureFlags.contactForm) {
+        return NextResponse.json(
+            { error: 'El formulario no está disponible. Utiliza el correo o WhatsApp de contacto.' },
+            { status: 503 },
+        );
+    }
+
     const rateLimit = checkRateLimit(request, {
         scope: 'contact',
         limit: 5,

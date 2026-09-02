@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
+import { legalPagesEnabled } from '@/lib/legal-identity';
 import { SITE_URL } from '@/lib/seo';
 
 export const revalidate = 3600;
@@ -34,7 +35,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'monthly',
             priority: 0.7,
         },
-        ...['aviso-legal', 'privacidad', 'cookies', 'terminos', 'accesibilidad'].map((path) => ({
+        ...[
+            'cookies',
+            'accesibilidad',
+            ...(legalPagesEnabled ? ['aviso-legal', 'privacidad', 'terminos'] : []),
+        ].map((path) => ({
             url: `${baseUrl}/${path}`,
             changeFrequency: 'yearly' as const,
             priority: 0.2,

@@ -23,6 +23,8 @@ RESEND_API_KEY=your_resend_api_key
 EMAIL_FROM=Olympus Theon <hola@olympustheon.com>
 CONTACT_EMAIL=your_real_contact_email
 NEWSLETTER_TOKEN_SECRET=generate_a_long_random_secret
+CONTACT_FORM_ENABLED=false
+NEWSLETTER_ENABLED=false
 ```
 
 `EMAIL_FROM` must use a sender domain verified in Resend. `NEWSLETTER_TOKEN_SECRET`
@@ -34,11 +36,17 @@ LEGAL_TAX_ID=your_real_nif_or_cif
 LEGAL_POSTAL_ADDRESS=your_real_professional_postal_address
 LEGAL_REGISTRY_DETAILS=only_if_applicable
 LEGAL_PROCESSOR_COVERAGE_CONFIRMED=false_until_contracts_are_verified
+LEGAL_PAGES_ENABLED=false
 ```
 
 Never deploy the legal pages as final with placeholder or invented identity data.
 Set `LEGAL_PROCESSOR_COVERAGE_CONFIRMED=true` only after confirming that the
 hosting/database/email processor agreements cover the production setup.
+
+Keep the three feature switches set to `false` while their setup is pending.
+Enable `CONTACT_FORM_ENABLED` and `NEWSLETTER_ENABLED` only after testing Resend.
+Enable `LEGAL_PAGES_ENABLED` only after adding the real identity details and
+confirming processor coverage.
 
 ### Admin Credentials
 ```

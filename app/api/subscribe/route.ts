@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { sendSubscriptionConfirmation } from '@/lib/email';
+import { featureFlags } from '@/lib/features';
 import { LEGAL_POLICY_VERSION } from '@/lib/legal-public';
 import { createConfirmationToken, normalizeEmail } from '@/lib/newsletter-token';
 import { prisma } from '@/lib/prisma';
@@ -11,6 +12,13 @@ const GENERIC_SUBSCRIPTION_MESSAGE =
     'Si la dirección puede suscribirse, recibirá un correo para confirmar la suscripción.';
 
 export async function POST(request: Request) {
+    if (!featureFlags.newsletter) {
+        return NextResponse.json(
+            { error: 'La newsletter no está disponible temporalmente.' },
+            { status: 503 },
+        );
+    }
+
     const rateLimit = checkRateLimit(request, {
         scope: 'subscribe',
         limit: 5,

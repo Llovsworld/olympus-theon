@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import { LegalCallout, LegalPage, LegalSection } from '@/components/legal/LegalPage';
-import { hasCompleteLegalIdentity, legalIdentity } from '@/lib/legal-identity';
+import { hasCompleteLegalIdentity, legalIdentity, legalPagesEnabled } from '@/lib/legal-identity';
 import { LEGAL_LAST_UPDATED } from '@/lib/legal-public';
 import { SITE_URL } from '@/lib/seo';
 
@@ -22,6 +23,8 @@ const toc = [
 ];
 
 export default function LegalNoticePage() {
+    if (!legalPagesEnabled) notFound();
+
     return (
         <LegalPage
             eyebrow="Información legal"

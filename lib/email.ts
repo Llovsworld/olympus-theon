@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Resend } from 'resend';
 
+import { featureFlags } from '@/lib/features';
 import { prisma } from '@/lib/prisma';
 import { createUnsubscribeToken } from '@/lib/newsletter-token';
 import { legalPublic } from '@/lib/legal-public';
@@ -94,7 +95,7 @@ export async function sendNewsletter(
     type: 'post' | 'book',
     item: { title: string; slug: string; description?: string; content?: string },
 ) {
-    if (!resend) {
+    if (!featureFlags.newsletter || !resend) {
         console.warn('Newsletter skipped because the email service is not configured.');
         return;
     }

@@ -1,6 +1,11 @@
 import ScrollReveal from '@/components/ScrollReveal';
-import ContactForm from '@/components/ContactForm';
+import dynamic from 'next/dynamic';
+import { featureFlags } from '@/lib/features';
 import { legalPublic } from '@/lib/legal-public';
+
+const ContactForm = featureFlags.contactForm
+    ? dynamic(() => import('@/components/ContactForm'))
+    : null;
 
 export default function ContactPage() {
     return (
@@ -165,9 +170,11 @@ export default function ContactPage() {
                     </div>
 
                     {/* Right: Contact Form */}
-                    <ScrollReveal variant="fade" direction="left">
-                        <ContactForm />
-                    </ScrollReveal>
+                    {ContactForm ? (
+                        <ScrollReveal variant="fade" direction="left">
+                            <ContactForm />
+                        </ScrollReveal>
+                    ) : null}
                 </div>
 
                 {/* Direct Contact Section */}
@@ -184,7 +191,7 @@ export default function ContactPage() {
                             color: '#666',
                             marginBottom: '3rem'
                         }}>
-                            O Contáctanos Directamente
+                            {featureFlags.contactForm ? 'O Contáctanos Directamente' : 'Contáctanos Directamente'}
                         </h3>
                         <div style={{
                             display: 'flex',

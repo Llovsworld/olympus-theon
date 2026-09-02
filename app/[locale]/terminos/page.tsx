@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import { LegalCallout, LegalPage, LegalSection } from '@/components/legal/LegalPage';
 import { LEGAL_LAST_UPDATED, legalPublic } from '@/lib/legal-public';
+import { legalPagesEnabled } from '@/lib/legal-identity';
 import { SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
@@ -21,6 +23,8 @@ const toc = [
 ];
 
 export default function TermsPage() {
+    if (!legalPagesEnabled) notFound();
+
     return (
         <LegalPage
             eyebrow="Reglas del servicio"

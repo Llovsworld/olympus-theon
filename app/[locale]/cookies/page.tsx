@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { LegalCallout, LegalPage, LegalSection } from '@/components/legal/LegalPage';
+import { legalPagesEnabled } from '@/lib/legal-identity';
 import { LEGAL_LAST_UPDATED, legalPublic } from '@/lib/legal-public';
 import { SITE_URL } from '@/lib/seo';
 
@@ -127,8 +128,10 @@ export default function CookiesPage() {
             <LegalSection id="cambios" title="5. Cambios y contacto">
                 <p>
                     Revisaremos esta política cuando cambie el inventario técnico. Para preguntas, escribe a{' '}
-                    <a href={`mailto:${legalPublic.email}`}>{legalPublic.email}</a>. La información general sobre datos
-                    personales está en la <Link href="/privacidad">Política de privacidad</Link>.
+                    <a href={`mailto:${legalPublic.email}`}>{legalPublic.email}</a>.
+                    {legalPagesEnabled ? (
+                        <> La información general sobre datos personales está en la <Link href="/privacidad">Política de privacidad</Link>.</>
+                    ) : null}
                 </p>
             </LegalSection>
         </LegalPage>

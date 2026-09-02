@@ -20,8 +20,12 @@ export const hasCompleteLegalIdentity = Boolean(
 
 export const hasConfirmedProcessorCoverage = process.env.LEGAL_PROCESSOR_COVERAGE_CONFIRMED === 'true';
 
-if (process.env.VERCEL_ENV === 'production' && (!hasCompleteLegalIdentity || !hasConfirmedProcessorCoverage)) {
-    throw new Error(
-        'Production legal configuration is incomplete: identity and processor coverage must be verified.',
-    );
+export const legalPagesEnabled = Boolean(
+    process.env.LEGAL_PAGES_ENABLED === 'true'
+    && hasCompleteLegalIdentity
+    && hasConfirmedProcessorCoverage,
+);
+
+if (process.env.VERCEL_ENV === 'production' && process.env.LEGAL_PAGES_ENABLED === 'true' && !legalPagesEnabled) {
+    console.warn('Legal pages remain disabled because their production configuration is incomplete.');
 }

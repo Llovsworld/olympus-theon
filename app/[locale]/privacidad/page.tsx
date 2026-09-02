@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import { LegalCallout, LegalPage, LegalSection } from '@/components/legal/LegalPage';
 import {
     hasCompleteLegalIdentity,
+    legalPagesEnabled,
     hasConfirmedProcessorCoverage,
     legalIdentity,
 } from '@/lib/legal-identity';
@@ -27,6 +29,8 @@ const toc = [
 ];
 
 export default function PrivacyPage() {
+    if (!legalPagesEnabled) notFound();
+
     return (
         <LegalPage
             eyebrow="Protección de datos"

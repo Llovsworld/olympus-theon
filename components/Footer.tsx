@@ -1,6 +1,12 @@
 import Link from 'next/link';
-import FooterNewsletterForm from './FooterNewsletterForm';
+import dynamic from 'next/dynamic';
+import { featureFlags } from '@/lib/features';
+import { legalPagesEnabled } from '@/lib/legal-identity';
 import { legalPublic } from '@/lib/legal-public';
+
+const FooterNewsletterForm = featureFlags.newsletter
+    ? dynamic(() => import('./FooterNewsletterForm'))
+    : null;
 
 export default function Footer() {
     return (
@@ -69,7 +75,7 @@ export default function Footer() {
                             <Link href="/#method">Metodología</Link>
                             <Link href="/#story">Sobre el CEO</Link>
                             <Link href="/#testimonials">Principios</Link>
-                            <Link href="#newsletter">Newsletter</Link>
+                            {featureFlags.newsletter ? <Link href="#newsletter">Newsletter</Link> : null}
                         </nav>
                     </div>
 
@@ -77,25 +83,27 @@ export default function Footer() {
                     <div className="footer-links-col">
                         <h4 className="footer-col-title">LEGAL</h4>
                         <nav className="footer-nav-list">
-                            <Link href="/aviso-legal">Aviso legal</Link>
-                            <Link href="/privacidad">Privacidad</Link>
+                            {legalPagesEnabled ? <Link href="/aviso-legal">Aviso legal</Link> : null}
+                            {legalPagesEnabled ? <Link href="/privacidad">Privacidad</Link> : null}
                             <Link href="/cookies">Cookies</Link>
-                            <Link href="/terminos">Condiciones de uso</Link>
+                            {legalPagesEnabled ? <Link href="/terminos">Condiciones de uso</Link> : null}
                             <Link href="/accesibilidad">Accesibilidad</Link>
                         </nav>
                     </div>
                 </div>
 
                 {/* Newsletter Section */}
-                <div className="footer-newsletter" id="newsletter">
-                    <div className="footer-newsletter-content">
-                        <div className="footer-newsletter-text">
-                            <h4 className="footer-newsletter-title">Únete a la Élite</h4>
-                            <p className="footer-newsletter-subtitle">Protocolos mentales y físicos. Sin spam.</p>
+                {featureFlags.newsletter ? (
+                    <div className="footer-newsletter" id="newsletter">
+                        <div className="footer-newsletter-content">
+                            <div className="footer-newsletter-text">
+                                <h4 className="footer-newsletter-title">Únete a la Élite</h4>
+                                <p className="footer-newsletter-subtitle">Protocolos mentales y físicos. Sin spam.</p>
+                            </div>
+                            {FooterNewsletterForm ? <FooterNewsletterForm /> : null}
                         </div>
-                        <FooterNewsletterForm />
                     </div>
-                </div>
+                ) : null}
 
                 {/* Bottom Section */}
                 <div className="footer-bottom-compact">
