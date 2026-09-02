@@ -311,14 +311,17 @@ export default function EditBookPage() {
                     </div>
 
                     <div>
-                        <label className="admin-label">Enlace de compra (opcional)</label>
+                        <label className="admin-label">Enlace externo o de afiliado (opcional)</label>
                         <input
                             type="url"
                             value={link}
                             onChange={(e) => setLink(e.target.value)}
                             className="admin-input"
-                            placeholder="https://..."
+                            placeholder="https://amzn.to/..."
                         />
+                        <p className="admin-helper-text">
+                            Pega el enlace generado por Amazon Afiliados. La ficha identificará automáticamente la publicidad.
+                        </p>
                     </div>
                 </div>
             </div>

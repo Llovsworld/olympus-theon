@@ -473,13 +473,13 @@ export default function NewBookPage() {
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em'
                     }}>
-                        Purchase / Download Link
+                        Enlace externo o de afiliado
                     </label>
                     <input
                         type="url"
                         value={link}
                         onChange={(e) => setLink(e.target.value)}
-                        placeholder="https://amazon.com/..."
+                        placeholder="https://amzn.to/..."
                         style={{
                             width: '100%',
                             padding: '0.75rem',
@@ -491,6 +491,9 @@ export default function NewBookPage() {
                             background: 'rgba(255,255,255,0.05)'
                         }}
                     />
+                    <p style={{ fontSize: '0.8rem', color: '#777', marginTop: '0.45rem' }}>
+                        Pega el enlace generado por Amazon Afiliados. La ficha identificará automáticamente la publicidad.
+                    </p>
                 </div>
 
                 {/* Cover Image */}

@@ -3,6 +3,7 @@ import ScrollReveal from '@/components/ScrollReveal';
 import ReadingProgress from '@/components/ReadingProgress';
 import ViewTracker from '@/components/ViewTracker';
 import ConsentRichContent from '@/components/ConsentRichContent';
+import BookPurchaseLink from '@/components/BookPurchaseLink';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { getPublishedBookBySlug } from '@/lib/content';
@@ -33,6 +34,17 @@ interface BookPageProps {
         locale: string;
         slug: string;
     }>;
+}
+
+function isAmazonAffiliateUrl(value: string) {
+    try {
+        const hostname = new URL(value).hostname.toLowerCase();
+        return hostname === 'amzn.to'
+            || hostname === 'amazon.es'
+            || hostname.endsWith('.amazon.es');
+    } catch {
+        return false;
+    }
 }
 
 // Dynamic SEO metadata for each book
@@ -115,6 +127,7 @@ export default async function BookPage({ params }: BookPageProps) {
     const publicContent = book.content ? sanitizePublicRichText(book.content) : null;
     const coverImage = getTrustedPublicMediaUrl(book.coverImage);
     const purchaseLink = getSafeExternalHref(book.link);
+    const isAmazonAffiliate = purchaseLink ? isAmazonAffiliateUrl(purchaseLink) : false;
     const bookJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Book',
@@ -127,7 +140,6 @@ export default async function BookPage({ params }: BookPageProps) {
         genre: book.category || undefined,
         image: getContentImageUrl(coverImage) || undefined,
         url: `${SITE_URL}/books/${book.slug}`,
-        sameAs: purchaseLink || undefined,
     };
 
     // Calculate reading time (200 words per minute average)
@@ -269,23 +281,11 @@ export default async function BookPage({ params }: BookPageProps) {
 
                     {purchaseLink && (
                         <ScrollReveal variant="fade" delay={600}>
-                            <div style={{ marginTop: '3rem' }}>
-                                <a
-                                    href={purchaseLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn"
-                                    style={{
-                                        background: '#FFD700',
-                                        color: '#000',
-                                        border: 'none',
-                                        padding: '1rem 2rem',
-                                        fontSize: '1rem'
-                                    }}
-                                >
-                                    Obtener este libro
-                                </a>
-                            </div>
+                            <BookPurchaseLink
+                                href={purchaseLink}
+                                bookSlug={book.slug}
+                                isAmazonAffiliate={isAmazonAffiliate}
+                            />
                         </ScrollReveal>
                     )}
                 </div>

@@ -97,7 +97,7 @@ export default function CookiesPage() {
                 </p>
             </LegalSection>
 
-            <LegalSection id="youtube" title="3. Vídeos y contenido de terceros">
+            <LegalSection id="youtube" title="3. Vídeos y enlaces de terceros">
                 <p>
                     Un vídeo de YouTube puede comunicar a Google datos técnicos como la dirección IP o el navegador.
                     Para evitar esa conexión automática, los vídeos aparecen bloqueados inicialmente. Solo se crea el
@@ -109,6 +109,11 @@ export default function CookiesPage() {
                     <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad de Google</a>.
                     Los enlaces a WhatsApp, Instagram, X, Substack u otros sitios solo conectan con esos servicios cuando
                     decides abrirlos.
+                </p>
+                <p>
+                    Los enlaces de afiliado a Amazon se identifican junto al botón correspondiente. Olympus Theon no
+                    carga recursos de Amazon ni instala cookies de Amazon antes del clic. Al abrir el enlace, Amazon
+                    puede utilizar sus propias cookies y tecnologías conforme a sus condiciones y política de privacidad.
                 </p>
             </LegalSection>
 

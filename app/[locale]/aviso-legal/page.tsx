@@ -118,6 +118,12 @@ export default function LegalNoticePage() {
                     Los contenidos de YouTube no se cargan automáticamente: se informa y se requiere una acción expresa
                     antes de conectar con esa plataforma. Consulta la <Link href="/cookies">Política de cookies y tecnologías similares</Link>.
                 </p>
+                <p>
+                    Algunas recomendaciones de libros pueden incluir enlaces de afiliado claramente identificados.
+                    Si una persona realiza una compra a través de ellos, Olympus Theon puede percibir una comisión sin
+                    coste adicional para quien compra. Esta relación comercial no condiciona el criterio editorial de
+                    las reseñas.
+                </p>
             </LegalSection>
 
             <LegalSection id="ley" title="6. Legislación aplicable y contacto">
