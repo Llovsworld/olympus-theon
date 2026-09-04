@@ -6,7 +6,12 @@ import { authOptions } from '@/lib/auth';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
 import { sanitizeRichText } from '@/lib/sanitize-content';
 import { getContentImageUrl } from '@/lib/seo';
-import { getCanonicalPostCategory, POST_CATEGORIES } from '@/lib/post-categories';
+import {
+    getCanonicalPostCategories,
+    isValidPostCategorySelection,
+    POST_CATEGORIES,
+    resolvePostCategories,
+} from '@/lib/post-categories';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -26,10 +31,14 @@ export async function GET(request: Request) {
     });
     const responsePosts = includeAll
         ? posts
-        : posts.map((post) => ({
-            ...post,
-            category: getCanonicalPostCategory(post.category),
-        }));
+        : posts.map((post) => {
+            const categories = resolvePostCategories(post.categories, post.category);
+            return {
+                ...post,
+                category: categories[0] ?? null,
+                categories,
+            };
+        });
 
     return NextResponse.json(responsePosts, includeAll ? {
         headers: { 'Cache-Control': 'private, no-store' },
@@ -46,14 +55,29 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { title, slug, content, excerpt, metaDescription, category, featuredImage, published = false } = body;
+        const {
+            title,
+            slug,
+            content,
+            excerpt,
+            metaDescription,
+            category,
+            categories,
+            featuredImage,
+            published = false,
+        } = body;
         const normalizedTitle = typeof title === 'string' ? title.trim() : '';
         const normalizedSlug = typeof slug === 'string' ? slug.trim() : '';
         const normalizedContent = typeof content === 'string' ? sanitizeRichText(content.trim()) : '';
         const normalizedExcerpt = typeof excerpt === 'string' ? excerpt.trim() : '';
         const normalizedMetaDescription = typeof metaDescription === 'string' ? metaDescription.trim() : '';
-        const categoryInput = typeof category === 'string' ? category.trim() : '';
-        const normalizedCategory = categoryInput ? getCanonicalPostCategory(categoryInput) : null;
+        const categorySelection = categories !== undefined
+            ? categories
+            : typeof category === 'string' && category.trim()
+                ? [category]
+                : [];
+        const normalizedCategories = getCanonicalPostCategories(categorySelection);
+        const normalizedCategory = normalizedCategories[0] ?? null;
         const normalizedFeaturedImage = typeof featuredImage === 'string' ? featuredImage.trim() : '';
         const shouldPublish = published === true;
         requestedSlug = normalizedSlug;
@@ -72,19 +96,28 @@ export async function POST(request: Request) {
             );
         }
 
-        if ((category !== undefined && category !== null && typeof category !== 'string') || (categoryInput && !normalizedCategory)) {
+        const hasInvalidCategories = categories !== undefined
+            ? !isValidPostCategorySelection(categories)
+            : category !== undefined
+                && category !== null
+                && (
+                    typeof category !== 'string'
+                    || (Boolean(category.trim()) && !normalizedCategory)
+                );
+
+        if (hasInvalidCategories) {
             return NextResponse.json(
                 {
-                    error: 'Selecciona una categoría válida.',
+                    error: 'Selecciona únicamente categorías válidas.',
                     allowedCategories: POST_CATEGORIES.map(({ label }) => label),
                 },
                 { status: 400 },
             );
         }
 
-        if (shouldPublish && (!normalizedExcerpt || !normalizedMetaDescription || !normalizedCategory || !getContentImageUrl(normalizedFeaturedImage))) {
+        if (shouldPublish && (!normalizedExcerpt || !normalizedMetaDescription || normalizedCategories.length === 0 || !getContentImageUrl(normalizedFeaturedImage))) {
             return NextResponse.json(
-                { error: 'Para publicar, completa el extracto, la descripción SEO, la categoría y una imagen válida.' },
+                { error: 'Para publicar, completa el extracto, la descripción SEO, al menos una categoría y una imagen válida.' },
                 { status: 400 },
             );
         }
@@ -97,6 +130,7 @@ export async function POST(request: Request) {
                 excerpt: normalizedExcerpt || null,
                 metaDescription: normalizedMetaDescription || null,
                 category: normalizedCategory,
+                categories: normalizedCategories,
                 featuredImage: normalizedFeaturedImage || null,
                 published: shouldPublish,
             },

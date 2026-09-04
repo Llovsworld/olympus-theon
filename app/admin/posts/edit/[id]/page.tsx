@@ -4,13 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
+import PostCategorySelector from '@/components/admin/PostCategorySelector';
 import { Save, Eye, ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import ContentPreview from '@/components/admin/ContentPreview';
-import {
-    getCanonicalPostCategory,
-    getPostCategoryDefinition,
-    POST_CATEGORIES,
-} from '@/lib/post-categories';
+import { resolvePostCategories } from '@/lib/post-categories';
+import type { PostCategory } from '@/lib/post-categories';
 
 export default function EditPostPage() {
     const router = useRouter();
@@ -24,8 +22,7 @@ export default function EditPostPage() {
     const [content, setContent] = useState('');
     const [excerpt, setExcerpt] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [legacyCategoryWarning, setLegacyCategoryWarning] = useState('');
+    const [categories, setCategories] = useState<PostCategory[]>([]);
     const [featuredImage, setFeaturedImage] = useState('');
 
     const [saving, setSaving] = useState(false);
@@ -48,14 +45,7 @@ export default function EditPostPage() {
                 setContent(post.content || '');
                 setExcerpt(post.excerpt || '');
                 setMetaDescription(post.metaDescription || '');
-                const savedCategory = typeof post.category === 'string' ? post.category.trim() : '';
-                const canonicalCategory = getCanonicalPostCategory(savedCategory);
-                setCategory(canonicalCategory || '');
-                setLegacyCategoryWarning(
-                    savedCategory && !canonicalCategory
-                        ? `Categoría anterior: “${savedCategory}”. Selecciona una categoría válida antes de guardar.`
-                        : '',
-                );
+                setCategories(resolvePostCategories(post.categories, post.category));
                 setFeaturedImage(post.featuredImage || '');
                 setIsPublished(post.published || false);
             } catch (error) {
@@ -92,7 +82,7 @@ export default function EditPostPage() {
                     content,
                     excerpt,
                     metaDescription,
-                    category,
+                    categories,
                     featuredImage,
                     published: isPublished
                 })
@@ -133,7 +123,7 @@ export default function EditPostPage() {
                     content,
                     excerpt,
                     metaDescription,
-                    category,
+                    categories,
                     featuredImage,
                     published: !isPublished
                 })
@@ -282,28 +272,7 @@ export default function EditPostPage() {
                     />
 
                     <div>
-                        <label className="admin-label">Categoría</label>
-                        <select
-                            value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value);
-                                setLegacyCategoryWarning('');
-                            }}
-                            className="admin-select"
-                        >
-                            <option value="">Seleccionar categoría...</option>
-                            {POST_CATEGORIES.map(({ label }) => (
-                                <option key={label} value={label}>{label}</option>
-                            ))}
-                        </select>
-                        <p
-                            className="admin-helper-text"
-                            style={legacyCategoryWarning ? { color: '#f59e0b' } : undefined}
-                        >
-                            {legacyCategoryWarning
-                                || getPostCategoryDefinition(category)?.description
-                                || 'Elige la categoría principal del artículo. Así evitamos duplicados y filtros confusos.'}
-                        </p>
+                        <PostCategorySelector value={categories} onChange={setCategories} compact />
                     </div>
 
                     <div>

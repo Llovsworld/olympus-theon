@@ -12,9 +12,18 @@ export function getContentImageUrl(value: string | null | undefined) {
         const isOwnDomain = url.hostname === 'olympustheon.com' || url.hostname === 'www.olympustheon.com';
         const isVercelBlob = url.hostname.endsWith('.vercel-storage.com');
 
-        return url.protocol === 'https:' && (isOwnDomain || isVercelBlob)
-            ? url.toString()
-            : null;
+        if (url.protocol !== 'https:' || url.username || url.password || (!isOwnDomain && !isVercelBlob)) {
+            return null;
+        }
+
+        // Keep safe first-party assets as local paths. Besides avoiding an
+        // unnecessary round trip through the public domain, this lets local
+        // previews render an image before that asset has been deployed.
+        if (value.startsWith('/') && !value.startsWith('//') && isOwnDomain) {
+            return `${url.pathname}${url.search}${url.hash}`;
+        }
+
+        return url.toString();
     } catch {
         return null;
     }

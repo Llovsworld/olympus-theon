@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { getContentImageUrl } from '@/lib/seo';
 import { normalizeSearchText } from '@/lib/search';
-import { getCanonicalPostCategory } from '@/lib/post-categories';
+import { resolvePostCategories } from '@/lib/post-categories';
 import { getCanonicalContentCategory } from '@/lib/content-categories';
 
 function getPlainText(html: string) {
@@ -36,6 +36,7 @@ export async function getPublishedPostList() {
             content: true,
             excerpt: true,
             category: true,
+            categories: true,
             featuredImage: true,
             createdAt: true,
         },
@@ -44,16 +45,18 @@ export async function getPublishedPostList() {
     return posts.map(({ content, excerpt, ...post }) => {
         const resolvedExcerpt = excerpt || getPlainTextExcerpt(content, 160);
         const fullText = getPlainText(content);
-        const category = getCanonicalPostCategory(post.category);
+        const categories = resolvePostCategories(post.categories, post.category);
+        const category = categories[0] ?? null;
 
         return {
             ...post,
             category,
+            categories,
             featuredImage: getContentImageUrl(post.featuredImage),
             excerpt: resolvedExcerpt,
             searchText: normalizeSearchText([
                 post.title,
-                category || '',
+                categories.join(' '),
                 resolvedExcerpt,
                 fullText,
             ].join(' ')),
@@ -139,15 +142,21 @@ export const getPublishedPostBySlug = cache(async (slug: string) => {
             excerpt: true,
             metaDescription: true,
             category: true,
+            categories: true,
             featuredImage: true,
             createdAt: true,
             updatedAt: true,
         },
     });
 
-    return post
-        ? { ...post, category: getCanonicalPostCategory(post.category) }
-        : null;
+    if (!post) return null;
+
+    const categories = resolvePostCategories(post.categories, post.category);
+    return {
+        ...post,
+        category: categories[0] ?? null,
+        categories,
+    };
 });
 
 export const getPublishedBookBySlug = cache(async (slug: string) => {

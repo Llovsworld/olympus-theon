@@ -4,12 +4,10 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUploader from '@/components/admin/ImageUploader';
+import PostCategorySelector from '@/components/admin/PostCategorySelector';
 import { Save, Eye, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import {
-    getCanonicalPostCategory,
-    getPostCategoryDefinition,
-    POST_CATEGORIES,
-} from '@/lib/post-categories';
+import { resolvePostCategories } from '@/lib/post-categories';
+import type { PostCategory } from '@/lib/post-categories';
 
 function generateSlug(text: string) {
     return text
@@ -27,8 +25,7 @@ export default function NewPostPage() {
     const [content, setContent] = useState('');
     const [excerpt, setExcerpt] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [legacyCategoryWarning, setLegacyCategoryWarning] = useState('');
+    const [categories, setCategories] = useState<PostCategory[]>([]);
     const [featuredImage, setFeaturedImage] = useState('');
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(false);
@@ -49,14 +46,7 @@ export default function NewPostPage() {
                 setContent(parsed.content || '');
                 setExcerpt(parsed.excerpt || '');
                 setMetaDescription(parsed.metaDescription || '');
-                const savedCategory = typeof parsed.category === 'string' ? parsed.category.trim() : '';
-                const canonicalCategory = getCanonicalPostCategory(savedCategory);
-                setCategory(canonicalCategory || '');
-                setLegacyCategoryWarning(
-                    savedCategory && !canonicalCategory
-                        ? `La categoría anterior “${savedCategory}” ya no forma parte de la estructura. Selecciona la opción que corresponda.`
-                        : '',
-                );
+                setCategories(resolvePostCategories(parsed.categories, parsed.category));
                 setFeaturedImage(parsed.featuredImage || '');
                 // Force editor remount to show loaded content
                 setEditorKey(k => k + 1);
@@ -77,7 +67,7 @@ export default function NewPostPage() {
                     content,
                     excerpt,
                     metaDescription,
-                    category,
+                    categories,
                     featuredImage
                 }));
                 setTimeout(() => setAutoSaveStatus('saved'), 500);
@@ -85,7 +75,7 @@ export default function NewPostPage() {
         }, 1000);
 
         return () => clearTimeout(timeoutId);
-    }, [title, subtitle, slug, content, excerpt, metaDescription, category, featuredImage]);
+    }, [title, subtitle, slug, content, excerpt, metaDescription, categories, featuredImage]);
 
     // Auto-generate slug from title
     function handleTitleChange(newTitle: string) {
@@ -114,7 +104,7 @@ export default function NewPostPage() {
                     content,
                     excerpt,
                     metaDescription,
-                    category,
+                    categories,
                     featuredImage,
                     published: false
                 }),
@@ -134,7 +124,7 @@ export default function NewPostPage() {
         } finally {
             setLoading(false);
         }
-    }, [title, slug, content, excerpt, metaDescription, category, featuredImage, router]);
+    }, [title, slug, content, excerpt, metaDescription, categories, featuredImage, router]);
 
     const handlePublish = useCallback(async () => {
         if (!title.trim()) {
@@ -159,7 +149,7 @@ export default function NewPostPage() {
                     content,
                     excerpt,
                     metaDescription,
-                    category,
+                    categories,
                     featuredImage,
                     published: true
                 }),
@@ -179,7 +169,7 @@ export default function NewPostPage() {
         } finally {
             setLoading(false);
         }
-    }, [title, slug, content, excerpt, metaDescription, category, featuredImage, router]);
+    }, [title, slug, content, excerpt, metaDescription, categories, featuredImage, router]);
 
     // Keep keyboard shortcuts synchronized with every editor field.
     useEffect(() => {
@@ -358,53 +348,9 @@ export default function NewPostPage() {
                 {/* Meta Description (MOVED DOWN) */}
 
                 {/* Category & Featured Image Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 2fr', gap: '2rem', marginBottom: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
                     <div>
-                        <label style={{
-                            display: 'block',
-                            fontSize: '0.85rem',
-                            color: '#6b7280',
-                            marginBottom: '0.5rem',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em'
-                        }}>
-                            Categoría
-                        </label>
-                        <select
-                            value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value);
-                                setLegacyCategoryWarning('');
-                            }}
-                            style={{
-                                width: '100%',
-                                padding: '1rem',
-                                border: '1px solid #333',
-                                borderRadius: '8px',
-                                fontSize: '0.95rem',
-                                color: '#ededed',
-                                background: 'rgba(255,255,255,0.02)',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease'
-                            }}
-                            className="hover:border-yellow-500/30 focus:border-yellow-500/50 outline-none"
-                        >
-                            <option value="">Seleccionar...</option>
-                            {POST_CATEGORIES.map(({ label }) => (
-                                <option key={label} value={label}>{label}</option>
-                            ))}
-                        </select>
-                        <p style={{
-                            color: legacyCategoryWarning ? '#f59e0b' : '#6b7280',
-                            fontSize: '0.78rem',
-                            lineHeight: 1.45,
-                            marginTop: '0.6rem'
-                        }}>
-                            {legacyCategoryWarning
-                                || getPostCategoryDefinition(category)?.description
-                                || 'Elige la categoría principal del artículo. Así evitamos duplicados y filtros confusos.'}
-                        </p>
+                        <PostCategorySelector value={categories} onChange={setCategories} compact />
                     </div>
 
                     <div>

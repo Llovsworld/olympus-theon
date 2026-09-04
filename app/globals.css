@@ -5297,11 +5297,6 @@ h6 {
     padding-inline: 1rem;
   }
 
-  /* Reduce padding on cards for mobile */
-  article {
-    padding: 1rem;
-  }
-
   /* Ensure images don't overflow */
   img {
     max-width: 100%;
@@ -5341,7 +5336,7 @@ h6 {
   }
 
   /* Smaller featured badge on mobile */
-  .responsive-grid>div>a>article>div:first-child {
+  .responsive-grid .blog-featured-badge {
     font-size: 0.6rem !important;
     padding: 0.3rem 0.6rem !important;
   }

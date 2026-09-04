@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Edit, Trash2, Eye, Plus, FileText } from 'lucide-react';
-import { getCanonicalPostCategory } from '@/lib/post-categories';
+import { resolvePostCategories } from '@/lib/post-categories';
 
 interface Post {
     id: string;
     title: string;
     slug: string;
     category: string | null;
+    categories?: string[];
     published: boolean;
     createdAt: string;
     views: number;
@@ -61,12 +62,12 @@ export default function ManagePostsPage() {
     }
 
     const filteredPosts = posts.filter((post) => {
-        const category = getCanonicalPostCategory(post.category) || '';
+        const categories = resolvePostCategories(post.categories, post.category);
         const query = searchTerm.toLowerCase();
 
         return post.title.toLowerCase().includes(query)
             || post.slug.toLowerCase().includes(query)
-            || category.toLowerCase().includes(query);
+            || categories.some((category) => category.toLowerCase().includes(query));
     });
 
     return (
@@ -141,11 +142,11 @@ export default function ManagePostsPage() {
                                     </td>
                                     <td style={tdStyle}>
                                         <span style={{
-                                            color: getCanonicalPostCategory(post.category) ? '#FFD700' : '#777',
+                                            color: resolvePostCategories(post.categories, post.category).length > 0 ? '#FFD700' : '#777',
                                             fontSize: '0.8rem',
                                             fontWeight: 600
                                         }}>
-                                            {getCanonicalPostCategory(post.category) || 'Sin categoría'}
+                                            {resolvePostCategories(post.categories, post.category).join(' · ') || 'Sin categoría'}
                                         </span>
                                     </td>
                                     <td style={tdStyle}>

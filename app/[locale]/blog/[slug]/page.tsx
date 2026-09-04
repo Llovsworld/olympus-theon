@@ -63,7 +63,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     const description = post.metaDescription || post.excerpt ||
         `${getPlainText(safeContent).substring(0, 157)}...`;
     const featuredImage = getContentImageUrl(post.featuredImage);
-    const socialImage = featuredImage || `${SITE_URL}/og.png`;
+    const socialImage = featuredImage
+        ? new URL(featuredImage, SITE_URL).toString()
+        : `${SITE_URL}/og.png`;
     const socialImages = featuredImage
         ? [{ url: featuredImage, alt: `Portada de ${post.title}` }]
         : [{ url: socialImage, width: 1200, height: 630, alt: SITE_NAME }];
@@ -83,7 +85,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             publishedTime: post.createdAt.toISOString(),
             modifiedTime: post.updatedAt.toISOString(),
             authors: [AUTHOR_URL],
-            section: post.category || undefined,
+            section: post.categories[0] || undefined,
             images: socialImages,
         },
         twitter: {
@@ -130,6 +132,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const safeContent = sanitizeRichText(post.content);
     const publicContent = sanitizePublicRichText(post.content);
     const featuredImage = getContentImageUrl(post.featuredImage);
+    const structuredDataImage = featuredImage
+        ? new URL(featuredImage, SITE_URL).toString()
+        : `${SITE_URL}/og.png`;
     const wordCount = getPlainText(safeContent).split(/\s+/).filter(Boolean).length;
     const readingTime = Math.ceil(wordCount / 200);
     const showModifiedDate = post.updatedAt.getTime() - post.createdAt.getTime() > 86_400_000;
@@ -147,10 +152,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 },
                 headline: post.title,
                 description,
-                image: [featuredImage || `${SITE_URL}/og.png`],
+                image: [structuredDataImage],
                 datePublished: post.createdAt.toISOString(),
                 dateModified: post.updatedAt.toISOString(),
-                articleSection: post.category || undefined,
+                articleSection: post.categories.length > 0 ? post.categories : undefined,
                 inLanguage: 'es-ES',
                 wordCount,
                 author: {
@@ -263,17 +268,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         ← Volver al blog
                     </Link>
 
-                    {post.category && (
-                        <p style={{
-                            color: '#FFD700',
-                            fontSize: '0.78rem',
-                            fontWeight: 700,
-                            letterSpacing: '0.16em',
-                            marginBottom: '1.25rem',
-                            textTransform: 'uppercase'
-                        }}>
-                            {post.category}
-                        </p>
+                    {post.categories.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                            {post.categories.map((category) => (
+                                <span
+                                    key={category}
+                                    style={{
+                                        color: '#FFD700',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 700,
+                                        letterSpacing: '0.14em',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    {category}
+                                </span>
+                            ))}
+                        </div>
                     )}
 
                     <h1 style={{

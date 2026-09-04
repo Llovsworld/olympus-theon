@@ -18,6 +18,7 @@ interface BlogListProps {
         title: string;
         slug: string;
         category: PostCategory | null;
+        categories: PostCategory[];
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;
@@ -33,7 +34,7 @@ export default function BlogList({ posts }: BlogListProps) {
 
     const categories = useMemo(() => {
         const activeCategoryKeys = new Set(
-            posts.map((post) => getPostCategoryKey(post.category)).filter(Boolean),
+            posts.flatMap((post) => post.categories.map(getPostCategoryKey)).filter(Boolean),
         );
 
         return POST_CATEGORIES
@@ -43,10 +44,10 @@ export default function BlogList({ posts }: BlogListProps) {
 
     const indexedPosts = useMemo(() => posts.map((post) => ({
         post,
-        categoryKey: getPostCategoryKey(post.category),
+        categoryKeys: post.categories.map(getPostCategoryKey).filter(Boolean),
         searchableText: normalizeSearchText([
             post.title,
-            post.category || '',
+            post.categories.join(' '),
             post.excerpt,
             post.searchText,
         ].join(' ')),
@@ -58,8 +59,8 @@ export default function BlogList({ posts }: BlogListProps) {
 
     const filteredPosts = useMemo(() => {
         return indexedPosts
-            .filter(({ categoryKey, searchableText }) => {
-                const matchesCategory = selectedCategory === ALL_CATEGORIES || categoryKey === selectedCategory;
+            .filter(({ categoryKeys, searchableText }) => {
+                const matchesCategory = selectedCategory === ALL_CATEGORIES || categoryKeys.includes(selectedCategory);
                 const matchesSearch = searchTerms.every((term) => searchableText.includes(term));
                 return matchesCategory && matchesSearch;
             })
@@ -308,7 +309,7 @@ export default function BlogList({ posts }: BlogListProps) {
                                         }}
                                     >
                                         {/* Featured Badge */}
-                                        <div style={{
+                                        <div className="blog-featured-badge" style={{
                                             position: 'absolute',
                                             top: '1rem',
                                             left: '1rem',
@@ -362,17 +363,23 @@ export default function BlogList({ posts }: BlogListProps) {
                                             textAlign: 'center',
                                             alignItems: 'center'
                                         }}>
-                                            {post.category && (
-                                                <span style={{
-                                                    color: '#FFD700',
-                                                    fontSize: '0.7rem',
-                                                    fontWeight: 700,
-                                                    letterSpacing: '0.12em',
-                                                    marginBottom: '0.75rem',
-                                                    textTransform: 'uppercase'
-                                                }}>
-                                                    {post.category}
-                                                </span>
+                                            {post.categories.length > 0 && (
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.55rem', marginBottom: '0.75rem' }}>
+                                                    {post.categories.map((category) => (
+                                                        <span
+                                                            key={category}
+                                                            style={{
+                                                                color: '#FFD700',
+                                                                fontSize: '0.7rem',
+                                                                fontWeight: 700,
+                                                                letterSpacing: '0.1em',
+                                                                textTransform: 'uppercase'
+                                                            }}
+                                                        >
+                                                            {category}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             )}
                                             <h2 style={{
                                                 fontSize: '1.2rem',

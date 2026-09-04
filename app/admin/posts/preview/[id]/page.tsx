@@ -7,6 +7,7 @@ import { ArrowLeft, ExternalLink, Pencil } from 'lucide-react';
 import ContentPreview from '@/components/admin/ContentPreview';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { resolvePostCategories } from '@/lib/post-categories';
 import { sanitizeRichText } from '@/lib/sanitize-content';
 import { getContentImageUrl } from '@/lib/seo';
 
@@ -36,6 +37,7 @@ export default async function PostPreviewPage({
             slug: true,
             content: true,
             category: true,
+            categories: true,
             featuredImage: true,
             published: true,
             updatedAt: true,
@@ -45,6 +47,8 @@ export default async function PostPreviewPage({
     if (!post) {
         notFound();
     }
+
+    const categories = resolvePostCategories(post.categories, post.category);
 
     return (
         <div className="admin-fade-enter" style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -81,7 +85,9 @@ export default async function PostPreviewPage({
                             <span className={`admin-badge ${post.published ? 'admin-badge-success' : 'admin-badge-warning'}`}>
                                 {post.published ? 'Publicado' : 'Borrador'}
                             </span>
-                            {post.category && <span className="admin-text-muted">{post.category}</span>}
+                            {categories.length > 0 && (
+                                <span className="admin-text-muted">{categories.join(' · ')}</span>
+                            )}
                             <span className="admin-text-muted">
                                 Actualizado {post.updatedAt.toLocaleDateString('es-ES')}
                             </span>

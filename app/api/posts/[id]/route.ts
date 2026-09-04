@@ -6,7 +6,11 @@ import { prisma } from '@/lib/prisma';
 import { revalidateBlogContent } from '@/lib/revalidate-content';
 import { sanitizeRichText } from '@/lib/sanitize-content';
 import { getContentImageUrl } from '@/lib/seo';
-import { getCanonicalPostCategory, POST_CATEGORIES } from '@/lib/post-categories';
+import {
+    getCanonicalPostCategories,
+    isValidPostCategorySelection,
+    POST_CATEGORIES,
+} from '@/lib/post-categories';
 
 function isMissingRecord(error: unknown) {
     return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2025');
@@ -68,8 +72,13 @@ export async function PUT(
         const content = typeof body.content === 'string' ? sanitizeRichText(body.content.trim()) : '';
         const excerpt = typeof body.excerpt === 'string' ? body.excerpt.trim() : '';
         const metaDescription = typeof body.metaDescription === 'string' ? body.metaDescription.trim() : '';
-        const categoryInput = typeof body.category === 'string' ? body.category.trim() : '';
-        const category = categoryInput ? getCanonicalPostCategory(categoryInput) : null;
+        const categorySelection = body.categories !== undefined
+            ? body.categories
+            : typeof body.category === 'string' && body.category.trim()
+                ? [body.category]
+                : [];
+        const categories = getCanonicalPostCategories(categorySelection);
+        const category = categories[0] ?? null;
         const featuredImage = typeof body.featuredImage === 'string' ? body.featuredImage.trim() : '';
         const published = body.published === true;
 
@@ -87,19 +96,28 @@ export async function PUT(
             );
         }
 
-        if ((body.category !== undefined && body.category !== null && typeof body.category !== 'string') || (categoryInput && !category)) {
+        const hasInvalidCategories = body.categories !== undefined
+            ? !isValidPostCategorySelection(body.categories)
+            : body.category !== undefined
+                && body.category !== null
+                && (
+                    typeof body.category !== 'string'
+                    || (Boolean(body.category.trim()) && !category)
+                );
+
+        if (hasInvalidCategories) {
             return NextResponse.json(
                 {
-                    error: 'Selecciona una categoría válida.',
+                    error: 'Selecciona únicamente categorías válidas.',
                     allowedCategories: POST_CATEGORIES.map(({ label }) => label),
                 },
                 { status: 400 },
             );
         }
 
-        if (published && (!excerpt || !metaDescription || !category || !getContentImageUrl(featuredImage))) {
+        if (published && (!excerpt || !metaDescription || categories.length === 0 || !getContentImageUrl(featuredImage))) {
             return NextResponse.json(
-                { error: 'Para publicar, completa el extracto, la descripción SEO, la categoría y una imagen válida.' },
+                { error: 'Para publicar, completa el extracto, la descripción SEO, al menos una categoría y una imagen válida.' },
                 { status: 400 },
             );
         }
@@ -113,6 +131,7 @@ export async function PUT(
                 excerpt: excerpt || null,
                 metaDescription: metaDescription || null,
                 category,
+                categories,
                 featuredImage: featuredImage || null,
                 published,
             },

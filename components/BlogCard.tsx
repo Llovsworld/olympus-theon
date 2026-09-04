@@ -11,6 +11,7 @@ interface BlogCardProps {
         title: string;
         slug: string;
         category: PostCategory | null;
+        categories: PostCategory[];
         featuredImage: string | null;
         createdAt: Date;
         excerpt: string;
@@ -40,18 +41,23 @@ function BlogCard({ post }: BlogCardProps) {
                 )}
 
                 <div className="blog-card-content">
-                    {post.category && (
-                        <span style={{
-                            color: '#FFD700',
-                            display: 'inline-block',
-                            fontSize: '0.68rem',
-                            fontWeight: 700,
-                            letterSpacing: '0.12em',
-                            marginBottom: '0.75rem',
-                            textTransform: 'uppercase'
-                        }}>
-                            {post.category}
-                        </span>
+                    {post.categories.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                            {post.categories.map((category) => (
+                                <span
+                                    key={category}
+                                    style={{
+                                        color: '#FFD700',
+                                        fontSize: '0.68rem',
+                                        fontWeight: 700,
+                                        letterSpacing: '0.1em',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    {category}
+                                </span>
+                            ))}
+                        </div>
                     )}
                     <h2 className="blog-card-title">
                         {post.title}
