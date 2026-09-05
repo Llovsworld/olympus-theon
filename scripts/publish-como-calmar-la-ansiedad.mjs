@@ -5,95 +5,72 @@ const prisma = new PrismaClient();
 const slug = 'como-calmar-la-ansiedad';
 const categories = ['Psicología', 'Mentalidad'];
 const content = `
-<p><strong>¿Alguna vez has sentido ansiedad y has intentado todo lo posible para hacerla desaparecer?</strong> ¿Lo conseguiste? ¿Cuánto tiempo llevas anhelando dejar atrás esa sensación?</p>
-<p>Quizá tus respuestas se parezcan a estas: «Es un infierno vivir con ansiedad», «Hago todo lo posible para que desaparezca y sigue ahí», «Llevo años intentando quitarme esta sensación y noto que cada vez voy a peor» o «Ni con fármacos consigo aliviarla».</p>
-<p>En este artículo quiero compartir contigo algunas ideas y hábitos que pueden ayudarte a comprender la ansiedad, manejarla mejor y observarla desde otra perspectiva. No se trata de obligarte a estar bien ni de prometer que desaparecerá de un día para otro, sino de desarrollar más calma y fortaleza mental para afrontarla.</p>
+<p>¿Alguna vez has sentido ansiedad y has intentado todo lo posible para hacerla desaparecer? ¿Lo conseguiste? ¿Cuánto tiempo llevas anhelando dejar atrás dicha sensación?</p>
+<p>Puede que tus respuestas sean parecidas a estas: «Es un infierno vivir con la ansiedad», «Hago todo lo posible para que desaparezca y sigue ahí», «Llevo años intentando quitarme esta sensación y noto que cada vez voy a peor» o «Ni con fármacos me la quito».</p>
+<p>Bien, en este artículo voy a enseñarte cómo poder controlar la ansiedad y, sobre todo, cómo empezar a vivir una vida más tranquila y con una mayor fortaleza mental para afrontar la ansiedad y observarla desde otra perspectiva.</p>
 
 <h2>¿Qué es la ansiedad?</h2>
-<p>La ansiedad es una respuesta natural ante el estrés o ante una amenaza percibida. Puede prepararnos para reaccionar, concentrarnos o afrontar una situación importante. El problema aparece cuando el miedo o la preocupación son intensos, difíciles de controlar, se mantienen en el tiempo o interfieren en nuestra vida cotidiana.</p>
-<p>Más que hablar de dos únicos tipos cerrados, me ayuda diferenciar entre la ansiedad que cumple una función puntual y aquella que comienza a condicionarnos.</p>
+<p>Es una reacción emocional normal y un mecanismo de defensa natural frente al estrés. Hay dos tipos que se diferencian en cuanto a la función y al impacto que pueden ocasionar en la persona: ansiedad adaptativa y ansiedad patológica.</p>
 
 <h3>Ansiedad adaptativa</h3>
-<p>Este tipo de ansiedad funciona como un sistema de alarma a corto plazo. Nos prepara para afrontar una situación importante, desafiante o peligrosa en un momento determinado. Tiene una causa reconocible y suele disminuir cuando el acontecimiento ha pasado.</p>
-<p>Puede aparecer, por ejemplo, antes de una entrevista de trabajo, un examen o una conversación difícil. También puede ayudarnos a reaccionar ante un peligro real. En esos casos eleva nuestro estado de alerta para que podamos responder.</p>
+<p>Este tipo funciona y actúa como un sistema de alarma a corto plazo. Te prepara para enfrentar una situación importante, desafiante o peligrosa en un momento determinado. En otras palabras, tiene una causa clara, ayuda a reaccionar de manera saludable y desaparece cuando el evento ha pasado.</p>
+<p>Esta se puede dar en entornos laborales, como en una entrevista de trabajo. También se puede dar al reaccionar ante la huida de alguna situación desastrosa, por lo que nos ayuda a elevar nuestro estado de alarma para ayudarnos y mejorarnos.</p>
 
-<h3>Cuando la ansiedad se convierte en un problema</h3>
-<p>En otras ocasiones, la ansiedad puede aparecer sin una amenaza inmediata, mantenerse con una intensidad desproporcionada o resultar muy difícil de controlar. Puede generar un gran sufrimiento e interferir en el descanso, el trabajo, las relaciones y otras actividades de la vida diaria.</p>
-<p>No es una elección ni una falta de fortaleza. Los trastornos de ansiedad surgen de una interacción compleja de factores psicológicos, sociales y biológicos. Como explica la <a href="https://www.who.int/es/news-room/fact-sheets/detail/anxiety-disorders" target="_blank" rel="noopener noreferrer">Organización Mundial de la Salud</a>, existen tratamientos eficaces y pedir ayuda forma parte del proceso de recuperación.</p>
-<p>La clave no siempre está en erradicar cualquier rastro de ansiedad, sino en aprender a relacionarnos con ella de una manera más consciente. Con práctica y, cuando sea necesario, apoyo profesional, puede perder intensidad y dejar de condicionar tanto nuestra vida.</p>
-<p>Esto también exige aprender a dar la importancia justa a lo que sucede. En lugar de <a href="/blog/que-es-terribilizar">terribilizar cada problema</a>, podemos intentar pensar con más perspectiva y reconocer los recursos que ya tenemos. En otro artículo profundizaremos en la diferencia entre pensar desde la abundancia o desde la escasez.</p>
+<h3>Ansiedad patológica</h3>
+<p>Como comentábamos en el punto anterior, la ansiedad adaptativa es un estado de alarma «natural». Cuando se desregula o desconfigura, ocasiona un trastorno que se activa sin que exista una amenaza o peligro real.</p>
+<p>Esta desregulación viene provocada por amenazas imaginarias o exageradas respecto a lo que realmente se está viviendo. Suele generar un gran sufrimiento en la persona que lo está experimentando y llega a interferir en la vida diaria.</p>
+<p>Como puedes comprobar, la ansiedad es una emoción totalmente normal y natural del ser humano. La clave no está en hacerla desaparecer o erradicarla totalmente, sino en saber convivir con ella y, con un razonamiento continuado, manejarla y controlarla a través de nuestros pensamientos.</p>
+<p>Hablando sobre pensamientos, me refiero a saber dar la importancia justa y necesaria a todos los sucesos que vayan ocurriendo en nuestra vida. Aquí dependemos más de pensar en abundancia que en escasez. Lo trataremos en otro artículo.</p>
 
-<h2>Canalizar la ansiedad: orden y caos</h2>
-<p>La ansiedad suele sentirse como inquietud, tensión o un exceso de activación, aunque cada persona puede experimentarla de una manera diferente.</p>
-<p>Para explicarlo de forma sencilla, utilizo una metáfora personal: podemos dirigir esa energía hacia hábitos que aportan <strong>orden</strong> o buscar un alivio inmediato que, con el tiempo, puede generar más <strong>caos</strong>.</p>
-<p>Afrontar la ansiedad no significa soportarlo todo sin ayuda. Significa reconocer lo que sentimos y avanzar poco a poco, dentro de nuestros límites. Evitar sistemáticamente aquello que nos genera ansiedad puede aliviarnos durante unos minutos, pero también puede reforzar la idea de que esa situación era peligrosa.</p>
-<p>Acercarnos de manera gradual y segura a lo que tememos puede ayudarnos a relacionarnos con ello de otra forma. Cuando los síntomas son intensos, existe un trauma o la ansiedad interfiere mucho en la vida, conviene hacerlo con acompañamiento profesional.</p>
-<p>Una vez aclarados estos puntos, quizá te preguntes: ¿qué hábitos aportan más orden y cuáles pueden añadir más caos a mi vida?</p>
+<h2>Canalizando la ansiedad</h2>
+<p>A diferencia de la depresión, la ansiedad es un sentimiento de agitación. Al tener agitación, tenemos energía y esta se puede canalizar de dos maneras: Orden y Caos.</p>
+<p>Antes de explicar qué hábitos se encasillan en cada uno de ellos, me gustaría aclarar que la ansiedad puede llevarse a un estado de crecimiento o de destrucción. Esto se debe a que podemos afrontar y aceptar la ansiedad poco a poco e iremos revitalizando nuestro ser, o podemos huir y no aceptar el sentimiento, provocando una reacción contraria a lo que queremos conseguir.</p>
+<p>Querer huir y no aceptar el sentimiento ocasiona un círculo tóxico que cada vez se agranda más. Es decir, al tener esta conducta nos podemos sentir aliviados a corto plazo; sin embargo, nuestro cerebro lo va a interpretar como una situación peligrosa y, por tanto, acrecentará la sensación de miedo y de terror.</p>
+<p>Sin embargo, enfrentar la ansiedad y permitir que conviva con nosotros ocasionará un nuevo hábito mental en el cerebro. Nuestro cerebro comenzará a vincular dicha situación con el sentimiento de que no es un peligro real. Esto, por sí solo, nos mantendrá más conscientes, más calmados y, por este motivo, la ansiedad acabará desapareciendo.</p>
+<p>Una vez aclarados estos puntos, te estarás preguntando: ¿qué hábitos son los que me hacen tener más orden o más caos en mi vida?</p>
+<p>Te los desgloso a continuación:</p>
 
-<h2>Orden: hábitos que pueden ayudarte</h2>
+<h2>Orden</h2>
 
 <h3>Argumentación racional y consciente</h3>
-<p>Es importante dejar de terribilizar las situaciones y comprobar si les estamos concediendo una gravedad mayor de la que realmente tienen. A mí me ayuda recordar que muchos problemas admiten una respuesta, aunque no siempre sea inmediata ni dependa por completo de mí.</p>
-<p>No se trata de negar lo difícil, sino de revisar el diálogo interior: ¿qué hechos tengo?, ¿qué parte estoy imaginando?, ¿cuál sería una respuesta proporcionada? Esta renuncia consciente a dramatizar puede ayudarnos a tomar decisiones con más serenidad.</p>
+<p>Es importante dejar de terribilizar las situaciones de la vida y saber que todo tiene solución, excepto la muerte. Es una cuestión de actitud que viene acompañada siempre de una renuncia consciente.</p>
 
 <h3>Actividad física</h3>
-<p>Practicar deporte, caminar o mover el cuerpo con regularidad puede ayudar a reducir el estrés y algunos síntomas de ansiedad. También puede favorecer el descanso y el bienestar general.</p>
-<p>La actividad física no sustituye un tratamiento cuando es necesario, pero sí puede convertirse en una forma saludable de canalizar la tensión y recuperar la sensación de avance.</p>
+<p>Practicar deporte o pasear es fundamental para poder canalizar bien la ansiedad. Es importante reeducar nuestro sistema nervioso; por ello, al terminar una actividad física, el cerebro interpreta que «hemos escapado del peligro». Además, nos beneficiamos de la secreción de hormonas como las endorfinas, la serotonina y la dopamina.</p>
 
-<h3>Meditación y respiración consciente</h3>
-<p>Practicar mindfulness, meditación o respiración consciente puede ayudarnos a permanecer en el presente y a observar los pensamientos sin reaccionar inmediatamente ante ellos.</p>
-<p>Estas prácticas pueden reducir los síntomas en algunas personas, aunque sus resultados varían y la investigación no permite prometer cambios concretos en el cerebro. El <a href="https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety" target="_blank" rel="noopener noreferrer">Centro Nacional de Salud Complementaria e Integral</a> señala que la evidencia es prometedora, pero también que debe interpretarse con prudencia.</p>
-<p>Para mí, meditar no consiste en dejar la mente en blanco. Consiste en entrenar la capacidad de notar un pensamiento, respirar y decidir qué hacer con él.</p>
+<h3>Meditación</h3>
+<p>Practicar mindfulness o respiración consciente nos permite saber comunicar a nuestro sistema nervioso que todo está bien.</p>
+<p>Primero calma nuestro nervio vago, provocando un sistema de recuperación que nos ayuda a estar en el aquí y ahora. Además, estudios de neurociencia han mostrado cómo la meditación constante reduce físicamente el tamaño y, por tanto, la reactividad de la amígdala —región del cerebro responsable de disparar el miedo y la ansiedad—. Aparte, han demostrado cómo la corteza prefrontal —área del cerebro encargada de la lógica, la concentración y el control de los impulsos— se vuelve más densa, permitiendo una mayor capacidad mental para observar los pensamientos y controlar nuestro comportamiento hacia ellos.</p>
 
-<h2>Caos: conductas que alimentan la evitación</h2>
-<p>Cuando sentimos que no soportamos la ansiedad, es comprensible que busquemos algo que la calme de inmediato. El problema aparece cuando ese alivio externo se convierte en nuestra única estrategia y nos impide trabajar lo que sucede por dentro.</p>
-<p>No considero que una actividad sea «mala» de forma automática. Me pregunto si la estoy eligiendo libremente o si la utilizo para huir, si me ayuda a largo plazo o si acaba generando más malestar.</p>
+<h2>Caos</h2>
+<p>Cuando huimos de la ansiedad, nos adentramos en el círculo tóxico mencionado en párrafos anteriores. Este tipo de conductas o hábitos son a los que habitualmente acudimos porque no soportamos tener la emoción de la ansiedad en nosotros y acudimos a ellos para que nos calmen.</p>
+<p>Esto es un error porque, al «calmarnos», solo nos estamos haciendo la ilusión de que algo externo va a aliviar nuestro malestar.</p>
+<p>Estos hábitos neuróticos suelen ser los siguientes:</p>
 
-<h3>Alcohol, tabaco y otras drogas</h3>
-<p>El alcohol, el tabaco, la cocaína y otras sustancias pueden ofrecer una sensación momentánea de desinhibición o alivio. Sin embargo, también pueden empeorar los síntomas, afectar al sueño y dificultar que desarrollemos recursos internos para afrontar la ansiedad.</p>
-<p>Si existe consumo frecuente o resulta difícil reducirlo, pedir ayuda profesional no es una derrota: es una decisión de orden.</p>
+<h3>Drogas</h3>
+<p>Todo lo que tenga relación con desinhibirse, como el alcohol, el tabaco, la cocaína u otro tipo de sustancia, nos va a saciar la ansiedad a corto plazo, pero no vamos a conseguir trabajar internamente para poder solucionar los mecanismos interiores a largo plazo.</p>
 
-<h3>Automedicación y fármacos sin seguimiento</h3>
-<p>Durante mucho tiempo tendí a ver los ansiolíticos como una trampa. Hoy prefiero expresarlo con más precisión: no todos los medicamentos son iguales ni todas las personas responden de la misma manera.</p>
-<p>En algunos casos, la medicación puede formar parte de un tratamiento eficaz. Determinados antidepresivos se utilizan para tratar trastornos de ansiedad, mientras que las <a href="https://www.nice.org.uk/guidance/cg113/chapter/Recommendations" target="_blank" rel="noopener noreferrer">benzodiacepinas requieren un seguimiento especial</a> por su riesgo de tolerancia y dependencia y suelen reservarse para situaciones concretas o periodos limitados.</p>
-<p>Cualquier inicio, cambio de dosis o retirada debe hacerse siempre con supervisión médica. Nunca conviene suspender un tratamiento de forma brusca ni por cuenta propia. Las opciones deben valorarse con un profesional, atendiendo a los beneficios, los riesgos y las circunstancias de cada persona.</p>
+<h3>Fármacos</h3>
+<p>Los ansiolíticos, bajo mi punto de vista, son unos medicamentos trampa que nos venden. Nos dan una sensación de calma en las primeras tomas, pero, a medida que el cuerpo se acaba adaptando, se tiene que subir la dosis o uno acaba desesperado porque no le hacen efecto.</p>
+<p>Esto le transmite al cerebro que queremos huir de la sensación y, por ende, acaba viéndola como peligrosa, dejándonos con más ansiedad y, por lo tanto, con más miedo a la sensación por no marcharse. Acabas teniendo miedo al propio miedo.</p>
+<p><strong>Cualquier tratamiento farmacológico debe estar indicado y supervisado por un médico. No cambies la dosis ni suspendas la medicación sin consultarlo previamente con un profesional sanitario.</strong></p>
 
-<h3>Conductas compulsivas como vía de escape</h3>
-<p>La masturbación no es un problema por sí misma. Sin embargo, como cualquier otra actividad —el sexo, la pornografía, el juego, las redes sociales o la comida— puede convertirse en una vía de evitación cuando se vuelve compulsiva, es la única forma de aliviar el malestar o empieza a interferir en nuestras relaciones, responsabilidades o bienestar.</p>
-<p>El problema no es buscar placer o descanso, sino sentir que hemos perdido la capacidad de elegir.</p>
+<h3>Masturbación</h3>
+<p>Existe la masturbación compulsiva, que funciona como un refugio ilusorio. Pensamos que detrás de la masturbación viene un momento de «desestrés»; sin embargo, es una conducta compulsiva que nos lleva a estar peor de lo que estábamos y, si se utilizan medios externos como el porno, pueden llegar a crear dependencia y cambios conductuales.</p>
 
-<h3>El trabajo como refugio</h3>
-<p>También conviene observar nuestra relación con el trabajo. ¿Me estoy refugiando en él porque me permite evitar lo que siento o porque la actividad me resulta satisfactoria y he decidido dedicarle ese tiempo?</p>
-<p>Trabajar puede aportar sentido y estructura. Convertirlo en una forma permanente de no parar, no sentir o no pedir ayuda puede terminar agotándonos.</p>
+<h3>Trabajo</h3>
+<p>La obsesión por el trabajo habría que comprenderla para saber si nos estamos ocultando en el trabajo porque nos está aliviando o porque de verdad queremos pasar tiempo en la actividad debido a que nos está resultando satisfactoria.</p>
 
-<h2>Lo que me ayuda: escritura e introspección</h2>
-<p>A mí me ayuda escribir y hacer introspección. Intento comprender si acudo a una actividad porque la deseo realmente o porque quiero evitar una sensación incómoda.</p>
-<p>Este ejercicio me hace más consciente de mi interior y de mi entorno. Me permite pensar con perspectiva a corto y largo plazo y preguntarme:</p>
-<ul>
-  <li>¿Esto me está ayudando a afrontar lo que siento o me está haciendo huir?</li>
-  <li>¿Cómo me voy a sentir después?</li>
-  <li>¿Estoy eligiendo esta conducta o siento que no puedo evitarla?</li>
-  <li>¿Qué pequeño paso podría dar hoy hacia aquello que temo?</li>
-</ul>
-<p>Cada persona necesita reflexionar sobre sus propios miedos e inseguridades para reconocer cómo reacciona ante ellos y cómo los maneja emocionalmente. En este proceso también puede ayudarte aprender a <a href="/blog/como-afrontar-el-miedo">afrontar tus miedos con más perspectiva</a>.</p>
-
-<h2>Cuándo pedir ayuda profesional</h2>
-<p>Si la ansiedad es intensa, se mantiene durante semanas, resulta difícil de controlar o afecta a tu descanso, tu trabajo o tus relaciones, pedir ayuda no es huir: es empezar a afrontarla con más recursos.</p>
-<p>Un médico, psicólogo o psiquiatra puede valorar qué enfoque resulta adecuado. La psicoterapia, la medicación o una combinación de ambas pueden ser útiles según el caso. Estas herramientas personales pueden acompañar el proceso, pero no sustituyen una evaluación profesional cuando esta es necesaria.</p>
-
-<h2>No se trata de eliminar la ansiedad</h2>
-<p>La ansiedad forma parte de nuestra capacidad de detectar amenazas y prepararnos para actuar. Por eso, el objetivo no es convertirnos en personas que jamás la sienten.</p>
-<p>Se trata de aprender a escucharla sin obedecerla automáticamente; distinguir un peligro real de una anticipación; dejar de alimentar la evitación y elegir hábitos que aporten más orden, calma y perspectiva.</p>
-<p>Con práctica, paciencia y el apoyo adecuado, la ansiedad puede dejar de ocupar el centro de nuestra vida.</p>
-<p><strong>Y tú, querido lector: ¿qué conducta podrías cambiar hoy para dejar de huir y empezar a afrontar lo que sientes?</strong></p>
+<p>Lo que me ayuda es escribir y hacer una introspección. Comprendo si realmente estoy acudiendo a cierto tipo de actividades o materias por el hecho de querer evitar la sensación o no en ese momento. Por eso, acabo siendo más consciente de mi interior y de mi exterior. Pienso con perspectiva a corto y a largo plazo; es decir, me pregunto lo siguiente: ¿esto me está haciendo huir o no? ¿Y cómo me voy a sentir después de esto?</p>
+<p>Cada uno tiene que reflexionar sobre sus «miedos» e «inseguridades» para estar atento a cómo reacciona ante ellos y cómo los maneja emocionalmente.</p>
 `.trim();
 
 const data = {
-    title: 'Cómo calmar la ansiedad: hábitos para afrontarla',
+    title: 'Cómo quitar la ansiedad',
     slug,
     content,
-    excerpt: 'Una guía personal para comprender la ansiedad, dejar de huir de ella y canalizarla mediante el razonamiento, el ejercicio y la meditación.',
-    metaDescription: 'Comprende la ansiedad y aprende a afrontarla sin huir: razonamiento consciente, ejercicio, meditación y hábitos que devuelven orden a tu vida.',
+    excerpt: 'Una reflexión personal sobre cómo controlar y canalizar la ansiedad mediante el orden, la actividad física, la meditación y la introspección.',
+    metaDescription: 'Cómo quitar la ansiedad: una reflexión personal sobre el orden, el caos y los hábitos que pueden ayudarnos a afrontarla con mayor fortaleza mental.',
     category: categories[0],
     categories,
     featuredImage: '/como-calmar-ansiedad-portada.webp',
